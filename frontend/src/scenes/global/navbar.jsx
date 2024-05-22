@@ -18,9 +18,8 @@ import BreakfastDiningIcon from "@mui/icons-material/BreakfastDining";
 
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
-const settings = ["Profile", "Account", "Admin", "Logout"];
 
-const NavBar = () => {
+const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
@@ -39,6 +38,17 @@ const NavBar = () => {
   const handleCloseUserMenu = () => {
     setUserAnchor(null);
   };
+
+  const userMenuItems = isLoggedIn
+    ? [
+        { label: "Profile", action: handleCloseUserMenu },
+        { label: "Admin", action: handleCloseUserMenu },
+        { label: "Logout", action: onLogout },
+      ]
+    : [
+        { label: "Login", action: onOpenAuthModal },
+        { label: "Register", action: onOpenAuthModal },
+      ];
 
   console.log("NavBar mode:", mode);
 
@@ -180,9 +190,9 @@ const NavBar = () => {
               open={Boolean(userAnchor)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {userMenuItems.map((item) => (
+                <MenuItem key={item.label} onClick={item.action}>
+                  <Typography textAlign="center">{item.label}</Typography>
                 </MenuItem>
               ))}
             </Menu>
