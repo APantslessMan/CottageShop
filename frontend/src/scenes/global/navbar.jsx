@@ -38,16 +38,25 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
   const handleCloseUserMenu = () => {
     setUserAnchor(null);
   };
+  const handleUserMenuClick = (actions) => {
+    actions.forEach((action) => {
+      if (action === onLogout) {
+        setTimeout(action, 500); // delay in milliseconds
+      } else {
+        action();
+      }
+    });
+  };
 
   const userMenuItems = isLoggedIn
     ? [
-        { label: "Profile", action: handleCloseUserMenu },
-        { label: "Admin", action: handleCloseUserMenu },
-        { label: "Logout", action: onLogout },
+        { label: "Profile", action: [handleCloseUserMenu] },
+        { label: "Admin", action: [handleCloseUserMenu] },
+        { label: "Logout", action: [handleCloseUserMenu, onLogout] },
       ]
     : [
-        { label: "Login", action: onOpenAuthModal },
-        { label: "Register", action: onOpenAuthModal },
+        { label: "Login", action: [onOpenAuthModal] },
+        { label: "Register", action: [onOpenAuthModal] },
       ];
 
   console.log("NavBar mode:", mode);
@@ -191,7 +200,10 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
               onClose={handleCloseUserMenu}
             >
               {userMenuItems.map((item) => (
-                <MenuItem key={item.label} onClick={item.action}>
+                <MenuItem
+                  key={item.label}
+                  onClick={() => handleUserMenuClick(item.action)}
+                >
                   <Typography textAlign="center">{item.label}</Typography>
                 </MenuItem>
               ))}
