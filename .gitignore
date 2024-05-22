@@ -1,0 +1,22 @@
+# Dependency directories
+/Flask_venv
+/node_modules
+/.pnp
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+
+# Build directories
+/build
+/dist
+
+# macOS specific files
+.DS_Store
+
+# Log files
+*.log
+
+# Coverage reports
+/coverage
