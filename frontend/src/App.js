@@ -62,7 +62,7 @@ function App() {
             />
             <Routes>
               <Route element={<SecureRoutes />}>
-                <Route path="/admin" element={<Dashboard />} />
+                <Route path="/admin/*" element={<Dashboard />} />
               </Route>
               <Route
                 path="/login"
