@@ -53,7 +53,15 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
 
   const userMenuItems = isLoggedIn
     ? [
-        { label: "Profile", action: [handleCloseUserMenu] },
+        {
+          label: "Profile",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              navigate("/login");
+            },
+          ],
+        },
         {
           label: "Admin",
           action: [
@@ -63,10 +71,19 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
             },
           ],
         },
-        { label: "Logout", action: [handleCloseUserMenu, onLogout] },
+        {
+          label: "Logout",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              onLogout();
+              navigate("/");
+            },
+          ],
+        },
       ]
     : [
-        { label: "Login", action: [onOpenAuthModal] },
+        { label: "Login", action: [() => navigate("/login")] },
         { label: "Register", action: [onOpenAuthModal] },
       ];
 

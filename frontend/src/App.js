@@ -3,19 +3,22 @@ import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Navbar from "./scenes/global/navbar";
 import AuthModal from "./components/utils/authModal";
+import Login from "./scenes/login";
 import Cookies from "js-cookie";
+import Wrapper from "./utils/wrapper";
 import ProtectedRoute from "./components/utils/ProtectedRoutes";
 import Dashboard from "./scenes/dashboard/index";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import authService from "./components/api/authService";
 
 function App() {
   const [theme, colorMode, mode] = useMode();
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const apiUrl = process.env.REACT_APP_API_URL;
+  // const apiUrl = process.env.REACT_APP_API_URL;
   const [role, setRole] = useState(localStorage.getItem("role") || "user");
   const [userName, setUserName] = useState("");
-
+  const navigate = useNavigate();
   const handleOpenAuthModal = () => {
     setOpenAuthModal(true);
   };
@@ -25,44 +28,22 @@ function App() {
   };
 
   const handleLogin = async (login, password, email = null) => {
-    const mode = "login";
     try {
-      const endpoint = mode === "login" ? "/login" : "/register";
-      const body =
-        mode === "login"
-          ? JSON.stringify({ login, password })
-          : JSON.stringify({ username: login, email, password });
-      console.log(`${apiUrl}${endpoint}`);
-      const response = await fetch(`${apiUrl}${endpoint}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: body,
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setIsLoggedIn(true);
-        setUserName(data.login);
-        setRole(data.role);
-        handleCloseAuthModal(false);
-        console.log("Authentication successful:", data);
-
-        if (data.access_token) {
-          console.log("access_token_cookie", data.access_token);
-          Cookies.set("access_token_cookie", data.access_token);
-          console.log(Cookies.get("access_token_cookie"));
-        }
-      } else {
-        console.error(data.message);
-      }
+      const data = await authService.login(login, password, email);
+      setIsLoggedIn(true);
+      setUserName(data.login);
+      setRole(data.role);
+      handleCloseAuthModal();
+      navigate("/");
+      console.log("Authentication successful:", data);
     } catch (error) {
-      console.error("Error during authentication:", error);
+      console.error("Login failed:", error.message);
     }
   };
+
   const handleLogout = () => {
     // Handle logout logic here
+
     Cookies.remove("access_token_cookie");
     setIsLoggedIn(false);
   };
@@ -87,9 +68,10 @@ function App() {
                 path="/admin"
                 element={<ProtectedRoute adminComponent={Dashboard} />}
               />
-              {/* <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="*" element={<NotFound />} /> */}
+              <Route
+                path="/login"
+                element={<Wrapper component={Login} onLogin={handleLogin} />}
+              />
             </Routes>
 
             <AuthModal
