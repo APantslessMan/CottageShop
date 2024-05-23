@@ -147,12 +147,14 @@ def login():
 @app.route('/role', methods=['GET'])
 @jwt_required(locations=['cookies'])
 def get_role():
-    print("test")
     identity = get_jwt_identity()
-    app.logger.warning('testing warning log')
-    print(jsonify({'role': identity['role']}), file=sys.stderr)
-
     return jsonify({'role': identity['role']}), 200
+
+@app.route('/auth', methods=['GET'])
+@jwt_required(locations=['cookies'])  # Requires authentication
+def check_authentication():
+    user_id = get_jwt_identity()
+    return jsonify({'message': 'Authentication successful'}), 200
 
 @app.route('/protected', methods=['GET'])
 @jwt_required()

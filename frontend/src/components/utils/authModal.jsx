@@ -16,7 +16,6 @@ const AuthModal = ({ open, handleClose, onLogin }) => {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    confirmPassword: "",
   });
 
   const handleInputChange = (e) => {

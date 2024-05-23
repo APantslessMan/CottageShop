@@ -6,7 +6,8 @@ import AuthModal from "./components/utils/authModal";
 import Login from "./scenes/login";
 import Cookies from "js-cookie";
 import Wrapper from "./utils/wrapper";
-import ProtectedRoute from "./components/utils/ProtectedRoutes";
+import Home from "./scenes/home";
+import SecureRoutes from "./components/utils/secureroutes";
 import Dashboard from "./scenes/dashboard/index";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import authService from "./components/api/authService";
@@ -60,18 +61,14 @@ function App() {
               onLogout={handleLogout}
             />
             <Routes>
-              {/* <Route path="/" element={<Home />} /> */}
-              {/* <Route path="/about" element={<About />} />
-              <Route path="/profile" element={<Profile />} /> */}
-              {/* <ProtectedRoute path="/admin" component={Dashboard} /> */}
-              <Route
-                path="/admin"
-                element={<ProtectedRoute adminComponent={Dashboard} />}
-              />
+              <Route element={<SecureRoutes />}>
+                <Route path="/admin" element={<Dashboard />} />
+              </Route>
               <Route
                 path="/login"
                 element={<Wrapper component={Login} onLogin={handleLogin} />}
               />
+              <Route path="/" element={<Home />} />
             </Routes>
 
             <AuthModal

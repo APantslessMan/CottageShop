@@ -51,6 +51,21 @@ const authService = {
       throw error;
     }
   },
+  isAuthenticated: async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/auth`, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        return true;
+      } else {
+        throw new Error("Not authenticated");
+      }
+    } catch (error) {
+      console.error("Error checking authentication:", error);
+      throw error;
+    }
+  },
 };
 
 export default authService;
