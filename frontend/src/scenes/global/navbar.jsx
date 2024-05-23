@@ -15,6 +15,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import BreakfastDiningIcon from "@mui/icons-material/BreakfastDining";
+import { useNavigate } from "react-router-dom";
 
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
@@ -43,23 +44,31 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
       if (action === onLogout) {
         setTimeout(action, 500); // delay in milliseconds
       } else {
+        console.log("Action:", action);
         action();
       }
     });
   };
+  const navigate = useNavigate();
 
   const userMenuItems = isLoggedIn
     ? [
         { label: "Profile", action: [handleCloseUserMenu] },
-        { label: "Admin", action: [handleCloseUserMenu] },
+        {
+          label: "Admin",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              navigate("/admin");
+            },
+          ],
+        },
         { label: "Logout", action: [handleCloseUserMenu, onLogout] },
       ]
     : [
         { label: "Login", action: [onOpenAuthModal] },
         { label: "Register", action: [onOpenAuthModal] },
       ];
-
-  console.log("NavBar mode:", mode);
 
   return (
     <AppBar position="static">

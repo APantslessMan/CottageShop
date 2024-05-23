@@ -24,9 +24,10 @@ const AuthModal = ({ open, handleClose, onLogin }) => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    onLogin();
+    onLogin(form.email, form.password);
+
     // Handle form submission logic here
     console.log("Form data:", form);
   };

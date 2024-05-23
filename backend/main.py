@@ -9,10 +9,11 @@ from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-
+import sys
+import logging
 # Optional: add contact me email functionality (Day 60)
 # import smtplib
 import os
@@ -20,8 +21,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "secret-key"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///cottage.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-CORS(app) 
-CORS(app, origins=['http://localhost:3000'])
+
+CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
@@ -136,10 +137,22 @@ def login():
     if user and check_password_hash(user.password, password):
   
         access_token = create_access_token(identity={'email': user.email, 'username': user.username, 'role': user.role})
-        return jsonify(access_token=access_token, role=user.role), 200
+        bakecookies = make_response(jsonify(message="Logged in", role=user.role), 200)
+        bakecookies.set_cookie("access_token_cookie", access_token, httponly=True)
+        return bakecookies
     else:
         print("Password check failed")
         return jsonify({"message": "Invalid credentials"}), 401
+
+@app.route('/role', methods=['GET'])
+@jwt_required(locations=['cookies'])
+def get_role():
+    print("test")
+    identity = get_jwt_identity()
+    app.logger.warning('testing warning log')
+    print(jsonify({'role': identity['role']}), file=sys.stderr)
+
+    return jsonify({'role': identity['role']}), 200
 
 @app.route('/protected', methods=['GET'])
 @jwt_required()
@@ -164,4 +177,5 @@ def admin():
     return jsonify({"message": "Welcome, admin!"}), 200
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     app.run(debug=True)
