@@ -192,6 +192,7 @@ export const themeSettings = (mode) => {
             },
             background: {
               default: "#2d3142",
+              paper: "#1b1d28",
             },
             text: {
               primary: "#ffffff",
