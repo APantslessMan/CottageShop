@@ -18,7 +18,7 @@ Also planned is a Plugin system, with plugins for different aspects of the indus
 
 ## Technologies Used
 
-- **Frontend**: React.js, React Router, Tailwind CSS, MaterialUI
+- **Frontend**: React.js, React Router, MaterialUI
 - **Backend**: Flask (Python), Flask-RESTful, SQLAlchemy
 - **Database**: SQLite (for development), PostgreSQL (for production)
 - **Authentication**: JSON Web Tokens (JWT)
