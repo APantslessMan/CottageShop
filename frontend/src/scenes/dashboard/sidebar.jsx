@@ -7,25 +7,7 @@ import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import { MenuItem } from "react-pro-sidebar";
-import styled from "@emotion/styled";
 import "./sidebar.css";
-
-// const MenuItem = styled(({ isSelected, ...props }) => {
-//   console.log("isSelected:", isSelected); // Log the value of isSelected
-//   console.log("props:", props); // Log all props passed to the styled component
-
-//   return <ProSidebarMenuItem {...props} />;
-// };
-// })`
-//   &.ps-menuitem-root.ps-active .ps-menu-button {
-//     background: ${(props) =>
-//       props.isSelected ? props.theme.palette.secondary.main : "transparent"};
-//     color: ${(props) =>
-//       props.isSelected
-//         ? props.theme.palette.text.secondary
-//         : props.theme.palette.text.main};
-
-// `;
 
 const Item = ({ value, title, icon, onClick, selected, theme }) => {
   const isSelected = selected === value;
@@ -94,19 +76,6 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
   };
 
   return (
-    // <Box
-    //   className="sideBar"
-    //   sx={{
-    //     "& .ps-menu-button:hover": {
-    //       color: theme.palette.text.secondary + "!important",
-    //       background: theme.palette.background.default + "!important",
-    //     },
-    //     //   "& .ps-menu-button": {
-    //     //     color: theme.palette.text.main + "!important",
-    //     //     background: theme.palette.background.paper + "!important",
-    //     //   },
-    //   }}
-    // >
     <Paper elevation={10} sx={{ "&&": { border: 0 } }}>
       <Sidebar
         collapsed={isCollapsed}
@@ -118,7 +87,6 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
         <Menu
           iconShape="round"
           rootStyles={{
-            // color: sideBarThemes[sideBarMode].sidebar.color,
             border: "none",
             overflow: "hidden",
             height: "100%",
@@ -126,7 +94,6 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
           menuItemStyles={{
             root: { border: "none" },
             button: ({ level, active, disabled }) => {
-              // only apply styles on first level elements of the tree
               if (level === 0) {
                 return {
                   color: disabled ? "black" : theme.palette.text.main,
@@ -134,7 +101,6 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
                     ? theme.palette.background.paper
                     : theme.palette.background.default,
                   "&:hover": {
-                    // Add your hover styles here
                     color: theme.palette.text.secondary + "!important",
                     background: theme.palette.background.paper + "!important",
                   },

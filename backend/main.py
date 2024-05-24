@@ -65,14 +65,16 @@ def get_products():
     return jsonify(products_data)
 
 @app.route('/api/user')
+@jwt_required(locations=['cookies'])
 def get_user():
     users = User.query.all()
     user_data = [
         {
             "id": user.id,
-            "name": user.name, 
+            "name": user.username,
             "email": user.email, 
-            "purchases": user.purchases, 
+            "purchases": user.purchases,
+            "role": user.role
         }
         for user in users
     ]

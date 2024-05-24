@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import Navbar from "./scenes/global/navbar";
 import AuthModal from "./components/utils/authModal";
 import Login from "./scenes/login";
+import Register from "./scenes/register";
 import Cookies from "js-cookie";
 import Wrapper from "./utils/wrapper";
 import Home from "./scenes/home";
@@ -66,6 +67,10 @@ function App() {
               <Route
                 path="/login"
                 element={<Wrapper component={Login} onLogin={handleLogin} />}
+              />
+              <Route
+                path="/register"
+                element={<Wrapper component={Register} />}
               />
               <Route path="/" element={<Home />} />
             </Routes>

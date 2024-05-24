@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Box } from "@mui/material";
+import UserEditor from "../components/UserEditor";
 
 const Panel = ({ selectedItem }) => {
   useEffect(() => {}, [selectedItem]);
@@ -7,7 +8,7 @@ const Panel = ({ selectedItem }) => {
   const renderContent = () => {
     switch (selectedItem) {
       case "userManagement":
-        return <div>User Management</div>;
+        return <UserEditor />;
       case "productManagement":
         return <div>Product Management</div>;
       case "analytics":

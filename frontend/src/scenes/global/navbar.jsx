@@ -83,7 +83,7 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
       ]
     : [
         { label: "Login", action: [() => navigate("/login")] },
-        { label: "Register", action: [onOpenAuthModal] },
+        { label: "Register", action: [() => navigate("/register")] },
       ];
 
   return (
