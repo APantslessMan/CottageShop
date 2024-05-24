@@ -23,7 +23,14 @@ const authService = {
       const data = response.data;
       if (response.status === 200) {
         if (data.access_token) {
-          Cookies.set("access_token_cookie", data.access_token, { path: "/" });
+          const expiryDate = new Date();
+          expiryDate.setDate(expiryDate.getDate() + 30);
+          Cookies.set(
+            "access_token_cookie",
+            data.access_token,
+            { path: "/" },
+            { expires: expiryDate }
+          );
         }
         return data;
       } else {
@@ -36,12 +43,10 @@ const authService = {
   },
   getRole: async () => {
     try {
-      console.log(`${apiUrl}/role`);
       const response = await axios.get(`${apiUrl}/role`, {
         withCredentials: true,
       });
       if (response.status === 200) {
-        console.log("Role response:", response.data.role);
         return response.data.role;
       } else {
         throw new Error("Failed to get role");

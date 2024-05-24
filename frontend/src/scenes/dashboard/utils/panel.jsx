@@ -2,9 +2,7 @@ import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 
 const Panel = ({ selectedItem }) => {
-  useEffect(() => {
-    console.log("Selected item changed:", selectedItem);
-  }, [selectedItem]);
+  useEffect(() => {}, [selectedItem]);
 
   const renderContent = () => {
     switch (selectedItem) {

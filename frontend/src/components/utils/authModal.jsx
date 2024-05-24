@@ -28,7 +28,6 @@ const AuthModal = ({ open, handleClose, onLogin }) => {
     onLogin(form.email, form.password);
 
     // Handle form submission logic here
-    console.log("Form data:", form);
   };
 
   const toggleAuthMode = () => {

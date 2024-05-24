@@ -11,8 +11,11 @@ const Dashboard = () => {
   };
 
   return (
-    <Box display="flex">
-      <AdminSidebar handleItemClick={handleItemClick} />
+    <Box display="flex" sx={{ border: 0 }}>
+      <AdminSidebar
+        handleItemClick={handleItemClick}
+        selectedItem={selectedItem}
+      />
       <Panel selectedItem={selectedItem} />
     </Box>
   );

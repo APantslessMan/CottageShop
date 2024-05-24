@@ -44,7 +44,6 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
       if (action === onLogout) {
         setTimeout(action, 500); // delay in milliseconds
       } else {
-        console.log("Action:", action);
         action();
       }
     });

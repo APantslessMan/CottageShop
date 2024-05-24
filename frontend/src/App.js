@@ -36,7 +36,6 @@ function App() {
       setRole(data.role);
       handleCloseAuthModal();
       navigate("/");
-      console.log("Authentication successful:", data);
     } catch (error) {
       console.error("Login failed:", error.message);
     }

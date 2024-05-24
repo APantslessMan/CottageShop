@@ -1,35 +1,43 @@
 import React, { useState } from "react";
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Sidebar, Menu } from "react-pro-sidebar";
+import { Box, IconButton, Typography, useTheme, Paper } from "@mui/material";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+import { MenuItem } from "react-pro-sidebar";
+import styled from "@emotion/styled";
+import "./sidebar.css";
 
-const Item = ({ title, icon, onClick, selected }) => {
-  const theme = useTheme();
-  const isSelected = selected === title;
+// const MenuItem = styled(({ isSelected, ...props }) => {
+//   console.log("isSelected:", isSelected); // Log the value of isSelected
+//   console.log("props:", props); // Log all props passed to the styled component
+
+//   return <ProSidebarMenuItem {...props} />;
+// };
+// })`
+//   &.ps-menuitem-root.ps-active .ps-menu-button {
+//     background: ${(props) =>
+//       props.isSelected ? props.theme.palette.secondary.main : "transparent"};
+//     color: ${(props) =>
+//       props.isSelected
+//         ? props.theme.palette.text.secondary
+//         : props.theme.palette.text.main};
+
+// `;
+
+const Item = ({ value, title, icon, onClick, selected, theme }) => {
+  const isSelected = selected === value;
 
   return (
-    console.log("color:", theme.palette.primary),
+    console.log(`${title} isSelected:`, isSelected),
     (
       <MenuItem
         active={isSelected}
         onClick={onClick}
         icon={icon}
-        style={{
-          color: isSelected
-            ? theme.palette.primary.contrastText
-            : theme.palette.text.primary,
-          backgroundColor: isSelected
-            ? theme.palette.primary.secondary
-            : "transparent",
-          "&:hover": {
-            color: theme.palette.secondary,
-            backgroundColor: theme.palette.primary.light,
-          },
-        }}
+        isSelected={isSelected}
       >
         <Typography>{title}</Typography>
       </MenuItem>
@@ -37,24 +45,47 @@ const Item = ({ title, icon, onClick, selected }) => {
   );
 };
 
-const AdminSidebar = ({ handleItemClick }) => {
+const AdminSidebar = ({ handleItemClick, selectedItem }) => {
   const theme = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
 
   const menuItems = [
-    { title: "Dashboard", icon: <HomeOutlinedIcon />, value: "dashboard" },
     {
-      title: "User Management",
-      icon: <PeopleOutlinedIcon />,
-      value: "userManagement",
+      type: "item",
+      title: "Dashboard",
+      icon: <HomeOutlinedIcon />,
+      value: "dashboard",
+      display: "true",
     },
     {
+      type: "title",
+      title: "Users",
+      icon: <ContactsOutlinedIcon />,
+      value: "userManagement",
+      display: "true",
+    },
+
+    {
+      type: "item",
+      title: "User Editor",
+      icon: <PeopleOutlinedIcon />,
+      value: "userManagement",
+      display: "true",
+    },
+    {
+      type: "item",
       title: "Product Management",
       icon: <ContactsOutlinedIcon />,
       value: "productManagement",
+      display: "true",
     },
-    { title: "Analytics", icon: <BarChartOutlinedIcon />, value: "analytics" },
+    {
+      type: "item",
+      title: "Analytics",
+      icon: <BarChartOutlinedIcon />,
+      value: "analytics",
+    },
   ];
 
   const handleItemClickInternal = (item) => {
@@ -63,36 +94,59 @@ const AdminSidebar = ({ handleItemClick }) => {
   };
 
   return (
-    <Box
-      sx={{
-        "& .pro-sidebar-inner": {
-          background: theme.palette.background.paper,
-        },
-        "& .pro-icon-wrapper": {
-          backgroundColor: "transparent !important",
-        },
-        "& .pro-inner-item": {
-          padding: "5px 35px 5px 20px !important",
-        },
-        "& .pro-inner-item:hover": {
-          color: theme.palette.secondary + " !important",
-          backgroundColor: theme.palette.secondary + " !important",
-        },
-        "& .pro-menu-item.active": {
-          color: theme.palette.secondary + " !important",
-          backgroundColor: theme.palette.secondary + " !important",
-        },
-      }}
-    >
-      <Sidebar collapsed={isCollapsed}>
-        <Menu iconShape="square">
+    // <Box
+    //   className="sideBar"
+    //   sx={{
+    //     "& .ps-menu-button:hover": {
+    //       color: theme.palette.text.secondary + "!important",
+    //       background: theme.palette.background.default + "!important",
+    //     },
+    //     //   "& .ps-menu-button": {
+    //     //     color: theme.palette.text.main + "!important",
+    //     //     background: theme.palette.background.paper + "!important",
+    //     //   },
+    //   }}
+    // >
+    <Paper elevation={10} sx={{ "&&": { border: 0 } }}>
+      <Sidebar
+        collapsed={isCollapsed}
+        style={{ height: "100vh", border: "none !important" }}
+        sx={{ "&&": { border: "none" } }}
+        backgroundColor={theme.palette.background.default}
+        className="custom-sidebar"
+      >
+        <Menu
+          iconShape="round"
+          rootStyles={{
+            // color: sideBarThemes[sideBarMode].sidebar.color,
+            border: "none",
+            overflow: "hidden",
+            height: "100%",
+          }}
+          menuItemStyles={{
+            root: { border: "none" },
+            button: ({ level, active, disabled }) => {
+              // only apply styles on first level elements of the tree
+              if (level === 0) {
+                return {
+                  color: disabled ? "black" : theme.palette.text.main,
+                  backgroundColor: active
+                    ? theme.palette.background.paper
+                    : theme.palette.background.default,
+                  "&:hover": {
+                    // Add your hover styles here
+                    color: theme.palette.text.secondary + "!important",
+                    background: theme.palette.background.paper + "!important",
+                  },
+                  border: "none",
+                };
+              }
+            },
+          }}
+        >
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
-            style={{
-              margin: "10px 0 20px 0",
-              color: theme.palette.text.primary,
-            }}
           >
             {!isCollapsed && (
               <Box
@@ -101,7 +155,7 @@ const AdminSidebar = ({ handleItemClick }) => {
                 alignItems="center"
                 ml="15px"
               >
-                <Typography variant="h3" color={theme.palette.text.primary}>
+                <Typography variant="h3" color={theme.palette.text.main}>
                   Admin Panel
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -112,20 +166,35 @@ const AdminSidebar = ({ handleItemClick }) => {
           </MenuItem>
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            {menuItems.map((item) => (
-              <Item
-                key={item.value}
-                title={item.title}
-                icon={item.icon}
-                onClick={() => handleItemClickInternal(item.value)}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            ))}
+            {menuItems.map(
+              (item) =>
+                item.display &&
+                (item.type === "item" ? (
+                  <Item
+                    key={item.value}
+                    title={item.title}
+                    icon={item.icon}
+                    onClick={() => handleItemClickInternal(item.value)}
+                    selected={selectedItem}
+                    setSelected={setSelected}
+                    theme={theme}
+                    value={item.value}
+                  />
+                ) : (
+                  <Typography
+                    key={item.title}
+                    variant="h6"
+                    color={theme.palette.text.main}
+                    sx={{ m: "15px 0 5px 20px" }}
+                  >
+                    {item.title}
+                  </Typography>
+                ))
+            )}
           </Box>
         </Menu>
       </Sidebar>
-    </Box>
+    </Paper>
   );
 };
 
