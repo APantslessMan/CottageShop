@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useState } from "react";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -39,6 +40,19 @@ const authService = {
     } catch (error) {
       console.error("Error during authentication:", error);
       throw error;
+    }
+  },
+  register: async (username, email, password) => {
+    try {
+      const response = await axios.post(`${apiUrl}/register`, {
+        username,
+        email,
+        password,
+      });
+      // return { error: null };
+    } catch (error) {
+      console.error("Error during registration:", error);
+      return { error: error.response.data.message };
     }
   },
   getRole: async () => {

@@ -59,6 +59,7 @@ function App() {
               onOpenAuthModal={handleOpenAuthModal}
               isLoggedIn={isLoggedIn}
               onLogout={handleLogout}
+              userName={userName}
             />
             <Routes>
               <Route element={<SecureRoutes />}>
@@ -70,7 +71,7 @@ function App() {
               />
               <Route
                 path="/register"
-                element={<Wrapper component={Register} />}
+                element={<Register onLogin={handleLogin} />}
               />
               <Route path="/" element={<Home />} />
             </Routes>

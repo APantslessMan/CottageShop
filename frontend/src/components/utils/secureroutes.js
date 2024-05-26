@@ -51,6 +51,7 @@ const SecureRoutes = () => {
   }
 
   // Render routes based on authentication status
+  //TODO: add role check to make sure can enter secureRoute they are targeting
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 };
 

@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
 
-const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
+const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout, userName }) => {
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
@@ -196,7 +196,7 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout }) => {
             </IconButton>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar>{userName && userName.charAt(0)}</Avatar>
               </IconButton>
             </Tooltip>
             <Menu

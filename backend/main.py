@@ -119,7 +119,8 @@ def register():
 
     if User.query.filter_by(email=email).first():
         return jsonify({"message": "Email already exists"}), 409
-
+    if User.query.filter_by(username=username).first():
+        return jsonify({"message": "Username already exists"}), 409
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
     new_user = User(username=username, email=email, password=hashed_password, role=role)
     db.session.add(new_user)
