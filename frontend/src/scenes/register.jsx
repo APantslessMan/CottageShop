@@ -12,16 +12,16 @@ import {
 import "./Register.css";
 import authService from "../components/api/authService";
 
-const Register = ({ onLogin }) => {
+const Register = ({ onLogin, showSb }) => {
   const theme = useTheme();
 
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [sbError, setSbError] = useState("");
-  const [sbType, setSbType] = useState("");
+  //   const [showSnackbar, setShowSnackbar] = useState(false);
+  //   const [sbError, setSbError] = useState("");
+  //   const [sbType, setSbType] = useState("");
 
-  const handleshowSnackBar = () => {
-    setShowSnackbar(false);
-  };
+  //   const handleshowSnackBar = () => {
+  //     setShowSnackbar(false);
+  //   };
 
   useEffect(() => {
     // Dynamically set the CSS variables for background and text colors
@@ -52,8 +52,9 @@ const Register = ({ onLogin }) => {
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
     if (password !== confirmPassword) {
-      setSbError("Password Mismatch");
-      setShowSnackbar(true);
+      //   setSbError("Password Mismatch");
+      //   setShowSnackbar(true);
+      showSb("Password Mismatch", "Error");
       return;
     }
 
@@ -61,13 +62,15 @@ const Register = ({ onLogin }) => {
     // console.log(`Error: ${error}`);
     if (error) {
       console.log(`Error: ${error.response}`);
-      setSbError(`Registration Failed: ${error}`);
-      setSbType("error");
-      setShowSnackbar(true);
+      //   setSbError(`Registration Failed: ${error}`);
+      //   setSbType("error");
+      showSb(`Registration Failed: ${error}`, "Error");
+      //   setShowSnackbar(true);
     } else {
-      setSbError(`Registration Successful`);
-      setSbType("success");
-      setShowSnackbar(true);
+      //   setSbError(`Registration Successful`);
+      //   setSbType("success");
+      //   setShowSnackbar(true);
+      showSb(`Registration Successful`, "success");
       onLogin(email, password);
     }
   };
@@ -151,7 +154,7 @@ const Register = ({ onLogin }) => {
           </Paper>
         </Box>
       </Box>
-      <Snackbar
+      {/* <Snackbar
         open={showSnackbar}
         severity="error"
         autoHideDuration={6000} // Adjust as needed
@@ -166,7 +169,7 @@ const Register = ({ onLogin }) => {
         >
           {sbError}
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
     </div>
   );
 };

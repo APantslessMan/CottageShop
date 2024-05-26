@@ -157,7 +157,8 @@ def get_role():
 @jwt_required(locations=['cookies'])  # Requires authentication
 def check_authentication():
     user_id = get_jwt_identity()
-    return jsonify({'message': 'Authentication successful'}), 200
+    print(user_id)
+    return jsonify({'message': 'Authentication successful', 'username': user_id['username']}), 200
 
 @app.route('/protected', methods=['GET'])
 @jwt_required()
@@ -180,6 +181,12 @@ def admin():
     if claims['role'] != 'admin':
         return jsonify(message='Access denied'), 403
     return jsonify({"message": "Welcome, admin!"}), 200
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    response = make_response({"msg": "Logged out"})
+    response.set_cookie('access_token_cookie', '', expires=0)
+    return response
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

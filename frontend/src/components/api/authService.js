@@ -75,14 +75,28 @@ const authService = {
       const response = await axios.get(`${apiUrl}/auth`, {
         withCredentials: true,
       });
+      console.log("response", response.data.username);
       if (response.status === 200) {
-        return true;
+        return { isAuthenticated: true, userName: response.data.username };
       } else {
         throw new Error("Not authenticated");
       }
     } catch (error) {
       console.error("Error checking authentication:", error);
       throw error;
+    }
+  },
+  logout: async () => {
+    try {
+      const response = await axios.post(`${apiUrl}/logout`, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      return { error: error.response.data.message };
     }
   },
 };
