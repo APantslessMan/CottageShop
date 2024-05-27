@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import UserEditor from "../components/UserEditor";
 
-const Panel = ({ selectedItem }) => {
+const Panel = ({ selectedItem, showSb }) => {
   useEffect(() => {}, [selectedItem]);
 
   const renderContent = () => {
     switch (selectedItem) {
       case "userManagement":
-        return <UserEditor />;
+        return <UserEditor showSb={showSb} />;
       case "productManagement":
         return <div>Product Management</div>;
       case "analytics":

@@ -18,10 +18,10 @@ from flask_jwt_extended import (
     set_refresh_cookies, unset_jwt_cookies,
     get_csrf_token
 )
-
+import json
 import sys
 import logging
-from flask_wtf.csrf import csrf_exempt
+
 # Optional: add contact me email functionality (Day 60)
 # import smtplib
 import os
@@ -34,7 +34,7 @@ app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_SECURE'] = False
 app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
 app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
-app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
 app.config['JWT_CSRF_IN_COOKIES'] = False
 
@@ -173,25 +173,57 @@ def get_user():
 
 @app.route('/useredit', methods=['POST'])
 @jwt_required(locations=['cookies'])
-@csrf_exempt
-def edit_user(userid):
-
-    requested = [request['op'], request['userid']]
-    user = User.query.get(requested[1])
+def edit_user():
+    raw_data = request.get_data()
+    data_string = raw_data.decode('utf-8')
+    data_dict = json.loads(data_string)
+    operation = data_dict['op']
+    operation_id = data_dict['userid']
+    print('Operation:', operation)
+    print('User ID:', operation_id)
+    # requested = [request['op'], request['userid']]
+    # user = User.query.get(requested[1])
     user_id = get_jwt_identity()
     if user_id['role'] == 'admin':
-        if request == 'del':
-            #db.session.delete(user)
-            print("deleting user")
-        elif request == 'res':
-            print("reset password for user")
-        elif request == 'role':
-            print("change role for user")
+        session = db.session
+        operation_user = session.get(User, operation_id)
+        if operation_user:
+            if operation == 'del':
+                session.delete(operation_user)
+                session.commit()
+                print("deleting user")
+                return jsonify({"message": "User Deleted"}), 200
+            elif operation == 'res':
+                new_pass = "password"
+                new_pass_hash = generate_password_hash(new_pass, method='pbkdf2:sha256', salt_length=8)
+                operation_user.password = new_pass_hash
+                session.commit()
+                return jsonify({"message": "Password reset for user"}), 200
+                print("reset password for user")
+            elif operation == 'role_up':
+                if operation_user != 'admin':
+                    operation_user.role = 'admin'
+                    session.commit()
+                    print("change role for user")
+                    return jsonify({"message": "User Upgraded"}), 200
+                else:
+                    return jsonify({"message": "User is already top role"}), 400
+            elif operation == 'role_down':
+                if operation_user != 'user':
+                    operation_user.role = 'user'
+                    session.commit()
+                    print("change role for user")
+                    return jsonify({"message": "User downgraded"}), 200
+                else:
+                    return jsonify({"message": "User is already bottom role"}), 400
+            else:
+                print("invalid request")
+            print("granted access")
+            return jsonify({"message": "Invalid request"}), 400
         else:
-            print("invalid request")
-        print("granted access")
-        return jsonify({"message": "User "}), 401
-    return jsonify({"message": "User "}), 200
+            print("User not found")
+            return jsonify({"message": "User not found"}), 404
+    return jsonify({"message": "Unauthorized"}), 401
 
 
 @app.route('/api/order')

@@ -3,7 +3,7 @@ import AdminSidebar from "./sidebar";
 import Panel from "./utils/panel";
 import { Box } from "@mui/material";
 
-const Dashboard = () => {
+const Dashboard = ({ showSb }) => {
   const [selectedItem, setSelectedItem] = useState("Dashboard");
 
   const handleItemClick = (item) => {
@@ -16,7 +16,7 @@ const Dashboard = () => {
         handleItemClick={handleItemClick}
         selectedItem={selectedItem}
       />
-      <Panel selectedItem={selectedItem} />
+      <Panel selectedItem={selectedItem} showSb={showSb} />
     </Box>
   );
 };

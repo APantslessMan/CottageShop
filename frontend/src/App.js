@@ -11,7 +11,7 @@ import SecureRoutes from "./components/utils/secureroutes";
 import Dashboard from "./scenes/dashboard/index";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import authService from "./components/api/authService";
-
+import UserEditor from "./scenes/dashboard/components/UserEditor";
 function App() {
   const [theme, colorMode, mode] = useMode();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -43,6 +43,7 @@ function App() {
       handleOpenSnackbar("Logged In", "success");
     } catch (error) {
       console.error("Login failed:", error.message);
+      handleOpenSnackbar(`Login Failed: ${error.message}`, "error");
     }
   };
 
@@ -89,7 +90,10 @@ function App() {
             />
             <Routes>
               <Route element={<SecureRoutes />}>
-                <Route path="/admin/*" element={<Dashboard />} />
+                <Route
+                  path="/admin/*"
+                  element={<Dashboard showSb={handleOpenSnackbar} />}
+                />
               </Route>
               <Route
                 path="/login"

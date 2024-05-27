@@ -35,12 +35,16 @@ const UserEditor = ({ showSb }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    const error = await authService.editUser("del", id);
-    if (error) {
-      console.log(`Error: ${error.response}`);
-      showSb(`User Delete Failed: ${error}`, "Error");
-    } else {
-      showSb(`User Delete Successful`, "success");
+    try {
+      await authService.editUser("del", id);
+      const response = await axios.get(`${apiUrl}/api/user`, {
+        withCredentials: true,
+      });
+      setUsers(response.data);
+
+      showSb(`User Deleted`, "success");
+    } catch (error) {
+      showSb(`User Delete Failed: ${error}`, "error");
     }
 
     console.log(`Delete user with ID: ${id}`);
@@ -51,19 +55,47 @@ const UserEditor = ({ showSb }) => {
     console.log(`Update user with ID: ${id}`);
   };
 
-  const handleResetPassword = (id) => {
-    // Implement the reset password logic here
-    console.log(`Reset password for user with ID: ${id}`);
+  const handleResetPassword = async (id) => {
+    try {
+      await authService.editUser("res", id);
+      const response = await axios.get(`${apiUrl}/api/user`, {
+        withCredentials: true,
+      });
+
+      setUsers(response.data);
+      showSb(`Password Reset`, "success");
+    } catch (error) {
+      showSb(`Password Reset Failed: ${error}`, "error");
+    }
+    console.log(`Password Reset to "Password": ${id}`);
   };
 
-  const handleUpgradeRole = (id) => {
-    // Implement the upgrade role logic here
-    console.log(`Upgrade role for user with ID: ${id}`);
+  const handleUpgradeRole = async (id) => {
+    try {
+      await authService.editUser("role_up", id);
+      const response = await axios.get(`${apiUrl}/api/user`, {
+        withCredentials: true,
+      });
+
+      setUsers(response.data);
+      showSb(`User Upgraded`, "success");
+    } catch (error) {
+      showSb(`User Upgrade Failed: ${error}`, "error");
+    }
   };
 
-  const handleDowngradeRole = (id) => {
-    // Implement the downgrade role logic here
-    console.log(`Downgrade role for user with ID: ${id}`);
+  const handleDowngradeRole = async (id) => {
+    try {
+      await authService.editUser("role_down", id);
+      const response = await axios.get(`${apiUrl}/api/user`, {
+        withCredentials: true,
+      });
+
+      setUsers(response.data);
+      showSb(`User Downgrade`, "success");
+    } catch (error) {
+      showSb(`User Downgrade Failed: ${error}`, "error");
+    }
   };
 
   return (
