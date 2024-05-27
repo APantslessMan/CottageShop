@@ -22,7 +22,7 @@ import json
 import sys
 import logging
 
-# Optional: add contact me email functionality (Day 60)
+
 # import smtplib
 import os
 

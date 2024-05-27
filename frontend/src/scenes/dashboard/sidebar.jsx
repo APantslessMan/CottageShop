@@ -13,17 +13,9 @@ const Item = ({ value, title, icon, onClick, selected, theme }) => {
   const isSelected = selected === value;
 
   return (
-    console.log(`${title} isSelected:`, isSelected),
-    (
-      <MenuItem
-        active={isSelected}
-        onClick={onClick}
-        icon={icon}
-        isSelected={isSelected}
-      >
-        <Typography>{title}</Typography>
-      </MenuItem>
-    )
+    <MenuItem active={isSelected} onClick={onClick} icon={icon}>
+      <Typography>{title}</Typography>
+    </MenuItem>
   );
 };
 

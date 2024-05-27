@@ -65,38 +65,28 @@ const UserEditCell = ({
           <PasswordIcon style={{ color: theme.palette.text.primary }} />
         </IconButton>
       </Tooltip>
-      <Tooltip title="Upgrade User Role">
-        <IconButton
-          onClick={onUpgradeRole}
-          aria-label="upgrade role"
-          disabled={userrole === "admin"}
-        >
-          <ArrowUpwardIcon
-            style={{
-              color:
-                userrole === "admin"
-                  ? theme.palette.text.disabled
-                  : theme.palette.text.primary,
-            }}
-          />
+      {userrole === "admin" ? (
+        <IconButton aria-label="upgrade role" disabled>
+          <ArrowUpwardIcon style={{ color: theme.palette.text.disabled }} />
         </IconButton>
-      </Tooltip>
-      <Tooltip title="Downgrade User Role">
-        <IconButton
-          onClick={onDowngradeRole}
-          aria-label="downgrade role"
-          disabled={userrole !== "admin"}
-        >
-          <ArrowDownwardIcon
-            style={{
-              color:
-                userrole !== "admin"
-                  ? theme.palette.text.disabled
-                  : theme.palette.text.primary,
-            }}
-          />
+      ) : (
+        <Tooltip title="Upgrade User Role">
+          <IconButton aria-label="upgrade role" onClick={onUpgradeRole}>
+            <ArrowUpwardIcon style={{ color: theme.palette.text.primary }} />
+          </IconButton>
+        </Tooltip>
+      )}
+      {userrole !== "admin" ? (
+        <IconButton aria-label="downgrade role" disabled>
+          <ArrowDownwardIcon style={{ color: theme.palette.text.disabled }} />
         </IconButton>
-      </Tooltip>
+      ) : (
+        <Tooltip title="Downgrade User Role">
+          <IconButton aria-label="downgrade role" onClick={onDowngradeRole}>
+            <ArrowDownwardIcon style={{ color: theme.palette.text.primary }} />
+          </IconButton>
+        </Tooltip>
+      )}
       <Dialog
         open={open}
         onClose={handleClose}
