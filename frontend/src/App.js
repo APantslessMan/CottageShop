@@ -15,22 +15,14 @@ import authService from "./components/api/authService";
 
 function App() {
   const [theme, colorMode, mode] = useMode();
-  // const [openAuthModal, setOpenAuthModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const apiUrl = process.env.REACT_APP_API_URL;
   const [role, setRole] = useState(localStorage.getItem("role") || "user");
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
-  // const handleOpenAuthModal = () => {
-  //   setOpenAuthModal(true);
-  // };
 
-  // const handleCloseAuthModal = () => {
-  //   setOpenAuthModal(false);
-  // };
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);
     setSbType(type);
@@ -113,11 +105,6 @@ function App() {
               <Route path="/" element={<Home />} />
             </Routes>
 
-            {/* <AuthModal
-              open={openAuthModal}
-              handleClose={handleCloseAuthModal}
-              onLogin={handleLogin}
-            /> */}
             <Snackbar
               open={showSnackbar}
               severity="error"
