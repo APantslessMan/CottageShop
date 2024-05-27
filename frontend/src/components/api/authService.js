@@ -1,14 +1,16 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useState } from "react";
 
 const apiUrl = process.env.REACT_APP_API_URL;
+// const csrfToken = document
+//   .querySelector('meta[name="csrf-token"]')
+//   .getAttribute("content");
 
 const authService = {
   login: async (login, password, email = null) => {
     const mode = "login";
     try {
-      const endpoint = mode === "login" ? "/login" : "/register";
+      const endpoint = mode === "login" ? "/login" : "/refresh";
       const body =
         mode === "login"
           ? { login, password }
@@ -24,14 +26,8 @@ const authService = {
       const data = response.data;
       if (response.status === 200) {
         if (data.access_token) {
-          const expiryDate = new Date();
-          expiryDate.setDate(expiryDate.getDate() + 30);
-          Cookies.set(
-            "access_token_cookie",
-            data.access_token,
-            { path: "/" },
-            { expires: expiryDate }
-          );
+          localStorage.setItem("access_token", data.access_token);
+          console.log("data", data);
         }
         return data;
       } else {
@@ -99,6 +95,30 @@ const authService = {
       return { error: error.response.data.message };
     }
   },
-};
+  editUser: async (op, userid) => {
+    try {
+      const response = await axios.post(
+        `${apiUrl}/useredit`,
+        {
+          op,
+          userid,
+        },
+        {
+          headers: {
+            // "X-CSRF-TOKEN": csrfToken,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          withCredentials: true, // Include cookies in the request
+        }
+      );
 
+      if (response.status === 200) {
+        return true;
+      }
+    } catch (error) {
+      console.error("Error during Useredit:", error);
+      return { error: error.response.data.message };
+    }
+  },
+};
 export default authService;

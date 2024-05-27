@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider, Snackbar, Alert } from "@mui/material";
 import Navbar from "./scenes/global/navbar";
-import AuthModal from "./components/utils/authModal";
 import Login from "./scenes/login";
 import Register from "./scenes/register";
 import Cookies from "js-cookie";
@@ -108,7 +107,7 @@ function App() {
             <Snackbar
               open={showSnackbar}
               severity="error"
-              autoHideDuration={6000} // Adjust as needed
+              autoHideDuration={6000}
               onClose={handleshowSnackBar}
               message={sbError}
             >

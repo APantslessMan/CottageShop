@@ -20,6 +20,7 @@ export const themeSettings = (mode) => {
               primary: "#ffffff",
               secondary: "#cccccc",
               menuSelected: "#888",
+              disabled: "grey",
             },
           }
         : {
@@ -37,6 +38,7 @@ export const themeSettings = (mode) => {
               primary: "#000000",
               secondary: "#333333",
               menuSelected: "#888",
+              disabled: "grey",
             },
           }),
     },

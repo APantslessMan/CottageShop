@@ -11,9 +11,11 @@ import {
   useTheme,
 } from "@mui/material";
 import axios from "axios";
+import UserTools from "../utils/UserTools";
+import authService from "../../../components/api/authService";
 
-const UserEditor = () => {
-  const theme = useTheme();
+const UserEditor = ({ showSb }) => {
+  //   const theme = useTheme();
   const [users, setUsers] = useState([]);
   const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
@@ -22,7 +24,7 @@ const UserEditor = () => {
       try {
         const response = await axios.get(`${apiUrl}/api/user`, {
           withCredentials: true,
-        }); // Replace with your API endpoint
+        });
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -31,6 +33,38 @@ const UserEditor = () => {
 
     fetchUsers();
   }, []);
+
+  const handleDelete = async (id) => {
+    const error = await authService.editUser("del", id);
+    if (error) {
+      console.log(`Error: ${error.response}`);
+      showSb(`User Delete Failed: ${error}`, "Error");
+    } else {
+      showSb(`User Delete Successful`, "success");
+    }
+
+    console.log(`Delete user with ID: ${id}`);
+  };
+
+  const handleUpdate = (id) => {
+    // Implement the update user logic here
+    console.log(`Update user with ID: ${id}`);
+  };
+
+  const handleResetPassword = (id) => {
+    // Implement the reset password logic here
+    console.log(`Reset password for user with ID: ${id}`);
+  };
+
+  const handleUpgradeRole = (id) => {
+    // Implement the upgrade role logic here
+    console.log(`Upgrade role for user with ID: ${id}`);
+  };
+
+  const handleDowngradeRole = (id) => {
+    // Implement the downgrade role logic here
+    console.log(`Downgrade role for user with ID: ${id}`);
+  };
 
   return (
     <Paper
@@ -45,10 +79,10 @@ const UserEditor = () => {
     >
       <TableContainer
         style={{
-          width: "80%", // Adjust width as needed
-          border: "2px solid white", // Add border
-          borderRadius: "15px", // Add border radius
-          overflow: "hidden", // Hide overflow
+          width: "80%",
+          border: "2px solid white",
+          borderRadius: "15px",
+          overflow: "hidden",
         }}
       >
         <Typography
@@ -68,10 +102,10 @@ const UserEditor = () => {
               <TableCell style={{ fontWeight: "bold" }}>Email</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>Purchases</TableCell>
               <TableCell style={{ fontWeight: "bold" }}>Role</TableCell>
+              <TableCell style={{ fontWeight: "bold" }}>Edit</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Example user data */}
             {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>{user.id}</TableCell>
@@ -82,9 +116,19 @@ const UserEditor = () => {
                   {user.purchases ? user.purchases.length : "None"}
                 </TableCell>
                 <TableCell>{user.role}</TableCell>
+                {/* Need to add 4 icons, each icon to either delete user, update user, 
+                reset password, upgrade user role and downgrade */}
+                <UserTools
+                  userid={user.id}
+                  userrole={user.role}
+                  handleDelete={handleDelete}
+                  handleUpdate={handleUpdate}
+                  handleResetPassword={handleResetPassword}
+                  handleUpgradeRole={handleUpgradeRole}
+                  handleDowngradeRole={handleDowngradeRole}
+                />
               </TableRow>
             ))}
-            {/* Add more user data rows as needed */}
           </TableBody>
         </Table>
       </TableContainer>

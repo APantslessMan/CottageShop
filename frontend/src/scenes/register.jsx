@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Paper,
@@ -6,8 +6,6 @@ import {
   Button,
   Typography,
   useTheme,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 import "./Register.css";
 import authService from "../components/api/authService";
@@ -15,16 +13,7 @@ import authService from "../components/api/authService";
 const Register = ({ onLogin, showSb }) => {
   const theme = useTheme();
 
-  //   const [showSnackbar, setShowSnackbar] = useState(false);
-  //   const [sbError, setSbError] = useState("");
-  //   const [sbType, setSbType] = useState("");
-
-  //   const handleshowSnackBar = () => {
-  //     setShowSnackbar(false);
-  //   };
-
   useEffect(() => {
-    // Dynamically set the CSS variables for background and text colors
     document.documentElement.style.setProperty(
       "--background-paper",
       theme.palette.background.paper
@@ -45,36 +34,25 @@ const Register = ({ onLogin, showSb }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Get form values
     const form = e.target;
     const email = form.email.value;
     const username = form.username.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
     if (password !== confirmPassword) {
-      //   setSbError("Password Mismatch");
-      //   setShowSnackbar(true);
       showSb("Password Mismatch", "Error");
       return;
     }
 
     const error = await authService.register(username, email, password);
-    // console.log(`Error: ${error}`);
     if (error) {
       console.log(`Error: ${error.response}`);
-      //   setSbError(`Registration Failed: ${error}`);
-      //   setSbType("error");
       showSb(`Registration Failed: ${error}`, "Error");
-      //   setShowSnackbar(true);
     } else {
-      //   setSbError(`Registration Successful`);
-      //   setSbType("success");
-      //   setShowSnackbar(true);
       showSb(`Registration Successful`, "success");
       onLogin(email, password);
     }
   };
-  // console.log({ email, username, password, confirmPassword });
 
   return (
     <div>
@@ -154,22 +132,6 @@ const Register = ({ onLogin, showSb }) => {
           </Paper>
         </Box>
       </Box>
-      {/* <Snackbar
-        open={showSnackbar}
-        severity="error"
-        autoHideDuration={6000} // Adjust as needed
-        onClose={handleshowSnackBar}
-        message={sbError}
-      >
-        <Alert
-          onClose={handleshowSnackBar}
-          severity={sbType}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {sbError}
-        </Alert>
-      </Snackbar> */}
     </div>
   );
 };
