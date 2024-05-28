@@ -32,8 +32,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///cottage.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_SECURE'] = False
-app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
-app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
+app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
+app.config['JWT_REFRESH_COOKIE_PATH'] = '/'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
 app.config['JWT_CSRF_IN_COOKIES'] = False
@@ -43,33 +45,92 @@ jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
 
+# class User(db.Model):
+#     __tablename__ = "users"
+#     id = db.Column(db.Integer, primary_key=True)
+#     email = db.Column(db.String(250), unique=True, nullable=False)
+#     password = db.Column(db.String(250), nullable=False)
+#     username = db.Column(db.String(250), unique=True, nullable=False)
+#     purchases = db.Column(db.String(250), nullable=True)
+#     role = db.Column(db.String(80), nullable=False, default='user')  # Add a role column
+#     orders = relationship("Orders", back_populates="user")
+#
+#
+# class Products(db.Model):
+#     __tablename__ = "products"
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(250), nullable=False)
+#     description = db.Column(db.String(250), nullable=False)
+#     price = db.Column(db.String(250), nullable=False)
+#     img_url = db.Column(db.String(250), nullable=False)
+#
+#
+# Base = DeclarativeBase()
 class User(db.Model):
-    __tablename__ = "users"
+    __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
     purchases = db.Column(db.String(250), nullable=True)
-    role = db.Column(db.String(80), nullable=False, default='user')  # Add a role column
-    orders = relationship("Orders", back_populates="user")
+    role = db.Column(db.String(80), nullable=False, default='user')
+    orders = relationship("Order", back_populates="user")
 
+class Product(db.Model):
+    __tablename__ = 'products'
 
-class Products(db.Model):
-    __tablename__ = "products"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
-    description = db.Column(db.String(250), nullable=False)
-    price = db.Column(db.String(250), nullable=False)
-    img_url = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.String(250), nullable=True)
+    price = db.Column(db.Integer, nullable=False)
+    img_url = db.Column(db.String(250), nullable=True)
+    stockparts = relationship("Stock", secondary="product_stock_association", back_populates="products")
 
+class Stock(db.Model):
+    __tablename__ = 'stocks'
 
-class Orders(db.Model):
-    __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
-    order_status = db.Column(db.String(250), nullable=False)
+    name = db.Column(db.String(250), nullable=False)
+    qty = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(250), nullable=True)
+    vendor = db.Column(db.String(250), nullable=True)
+    cost = db.Column(db.Integer, nullable=False)
+    unit = db.Column(db.String(250), nullable=False)
+    products = relationship("Product", secondary="product_stock_association", back_populates="stockparts")
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+
+    id = db.Column(db.Integer, primary_key=True)
+    items = db.Column(db.String(250), nullable=True)
+    status = db.Column(db.String(250), nullable=False)
+    user_id = db.Column(db.Integer, ForeignKey('users.id'))
     user = relationship("User", back_populates="orders")
+
+class Site(db.Model):
+    __tablename__ = 'sites'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    toggle = db.Column(db.String(250), nullable=False)
+    prefs = db.Column(db.String(250), nullable=True)
+
+class Plugin(db.Model):
+    __tablename__ = 'plugins'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    toggle = db.Column(db.String(250), nullable=False)
+    prefs = db.Column(db.String(250), nullable=True)
+
+# class Orders(db.Model):
+#     __tablename__ = "orders"
+#     id = db.db.Column(db.db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+#     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
+#     order_status = db.Column(db.String(250), nullable=False)
+#     user = relationship("User", back_populates="orders")
 
 
 with app.app_context():
@@ -286,16 +347,46 @@ def login():
     user = User.query.filter((User.email == login) | (User.username == login)).first()
 
     if user and check_password_hash(user.password, password):
-        expiry_days = 30
-        expiry_time = datetime.now(timezone.utc) + timedelta(days=expiry_days)
-
         access_token = create_access_token(identity={'email': user.email, 'username': user.username, 'role': user.role})
-        bakecookies = make_response(jsonify(message="Logged in", role=user.role, access_token=access_token), 200)
-        bakecookies.set_cookie("access_token_cookie", value=access_token, httponly=True, expires=expiry_time)
-        return bakecookies
+        refresh_token = create_refresh_token(
+            identity={'email': user.email, 'username': user.username, 'role': user.role})
+
+        response = make_response(jsonify(message="Logged in", role=user.role), 200)
+        response.set_cookie("access_token_cookie", value=access_token, httponly=True,
+                            expires=datetime.now(timezone.utc) + timedelta(minutes=15))
+        response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
+                            expires=datetime.now(timezone.utc) + timedelta(days=30))
+
+
+
+
+        # access_token = create_access_token(identity={'email': user.email, 'username': user.username, 'role': user.role})
+        # bakecookies = make_response(jsonify(message="Logged in", role=user.role, access_token=access_token), 200)
+        # bakecookies.set_cookie("access_token_cookie", value=access_token, httponly=True, expires=expiry_time)
+
+        return response
     else:
         print("Password check failed")
         return jsonify({"message": "Invalid credentials"}), 401
+
+
+@app.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    print(identity)
+    access_token = create_access_token(identity=identity)
+    response = make_response(jsonify(access_token=access_token), 200)
+    response.set_cookie("access_token_cookie", value=access_token, httponly=True, expires=datetime.now(timezone.utc) + timedelta(minutes=15))
+    print(response)
+    return response
+
+
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    refresh_user = get_jwt_identity()
+    return jsonify(logged_in_as=refresh_user), 200
 
 
 @app.route('/role', methods=['GET'])
@@ -312,12 +403,6 @@ def check_authentication():
     print(user_id)
     return jsonify({'message': 'Authentication successful', 'username': user_id['username']}), 200
 
-
-@app.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
 
 
 # @app.route('/admin', methods=['GET'])
@@ -339,8 +424,9 @@ def admin():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    response = make_response({"msg": "Logged out"})
-    response.set_cookie('access_token_cookie', '', expires=0)
+    response = make_response(jsonify(message="Logged out"))
+    response.delete_cookie("access_token_cookie")
+    response.delete_cookie("refresh_token_cookie")
     return response
 
 

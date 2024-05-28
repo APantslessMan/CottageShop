@@ -2,42 +2,54 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const apiUrl = process.env.REACT_APP_API_URL;
-// const csrfToken = document
-//   .querySelector('meta[name="csrf-token"]')
-//   .getAttribute("content");
 
 const authService = {
-  login: async (login, password, email = null) => {
-    const mode = "login";
+  login: async (login, password) => {
     try {
-      const endpoint = mode === "login" ? "/login" : "/refresh";
-      const body =
-        mode === "login"
-          ? { login, password }
-          : { username: login, email, password };
-
-      const response = await axios.post(`${apiUrl}${endpoint}`, body, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-
-      const data = response.data;
-      if (response.status === 200) {
-        if (data.access_token) {
-          localStorage.setItem("access_token", data.access_token);
-          console.log("data", data);
+      const response = await axios.post(
+        `${apiUrl}/login`,
+        { login, password },
+        {
+          withCredentials: true,
         }
-        return data;
+      );
+
+      if (response.status === 200) {
+        Cookies.set("access_token_cookie", response.data.access_token, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        Cookies.set("refresh_token_cookie", response.data.refresh_token, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        return response.data;
       } else {
-        throw new Error(data.message);
+        throw new Error(response.data.message);
       }
     } catch (error) {
       console.error("Error during authentication:", error);
       throw error;
     }
   },
+
+  refreshToken: async () => {
+    const refreshToken = Cookies.get("refresh_token_cookie");
+    if (!refreshToken) {
+      throw new Error("No refresh token available");
+    }
+
+    const response = await axios.post(
+      `${apiUrl}/refresh`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    Cookies.set("access_token_cookie", response.data.access_token);
+    return { isAuthenticated: true, userName: response.data.username };
+  },
+
   register: async (username, email, password) => {
     try {
       const response = await axios.post(`${apiUrl}/register`, {
@@ -45,12 +57,13 @@ const authService = {
         email,
         password,
       });
-      // return { error: null };
+      return response.data;
     } catch (error) {
       console.error("Error during registration:", error);
-      return { error: error.response.data.message };
+      throw error;
     }
   },
+
   getRole: async () => {
     try {
       const response = await axios.get(`${apiUrl}/role`, {
@@ -66,49 +79,55 @@ const authService = {
       throw error;
     }
   },
+
   isAuthenticated: async () => {
     try {
       const response = await axios.get(`${apiUrl}/auth`, {
         withCredentials: true,
       });
-      console.log("response", response.data.username);
       if (response.status === 200) {
         return { isAuthenticated: true, userName: response.data.username };
       } else {
-        throw new Error("Not authenticated");
+        return { isAuthenticated: false, userName: "" };
       }
     } catch (error) {
       console.error("Error checking authentication:", error);
-      throw error;
+      return { isAuthenticated: false, userName: "" };
     }
   },
+
   logout: async () => {
     try {
-      const response = await axios.post(`${apiUrl}/logout`, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${apiUrl}/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       if (response.status === 200) {
+        Cookies.remove("access_token_cookie");
+        Cookies.remove("refresh_token_cookie");
         return true;
       }
     } catch (error) {
-      console.error("Error during registration:", error);
-      return { error: error.response.data.message };
+      console.error("Error during logout:", error);
+      throw error;
     }
   },
+
   editUser: async (op, userid) => {
     try {
+      const csrfToken = Cookies.get("csrf_token"); // Assuming you are using CSRF token from cookies
       const response = await axios.post(
         `${apiUrl}/useredit`,
-        {
-          op,
-          userid,
-        },
+        { op, userid },
         {
           headers: {
-            // "X-CSRF-TOKEN": csrfToken,
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "X-CSRF-TOKEN": csrfToken,
+            Authorization: `Bearer ${Cookies.get("access_token_cookie")}`,
           },
-          withCredentials: true, // Include cookies in the request
+          withCredentials: true,
         }
       );
 
@@ -117,8 +136,9 @@ const authService = {
       }
     } catch (error) {
       console.error("Error during Useredit:", error);
-      return { error: error.response.data.message };
+      throw error;
     }
   },
 };
+
 export default authService;

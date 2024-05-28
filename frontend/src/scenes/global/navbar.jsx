@@ -1,4 +1,4 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext, useState } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -20,7 +20,8 @@ import { useNavigate } from "react-router-dom";
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
 
-const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout, userName }) => {
+const NavBar = ({ isLoggedIn, onLogout, userName }) => {
+  const theme = useTheme();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
@@ -196,7 +197,18 @@ const NavBar = ({ onOpenAuthModal, isLoggedIn, onLogout, userName }) => {
             </IconButton>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar>{userName && userName.charAt(0)}</Avatar>
+                <Avatar
+                  key={userName}
+                  sx={{
+                    bgcolor: theme.palette.background.default,
+                    color: theme.palette.text.primary,
+                    textTransform: "capitalize",
+                    fontSize: 24,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {userName && userName.charAt(0)}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu

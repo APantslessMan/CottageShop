@@ -21,6 +21,7 @@ function App() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
+  const [navKey, setNavKey] = useState(0);
 
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);
@@ -41,6 +42,8 @@ function App() {
       // handleCloseAuthModal();
       navigate("/");
       handleOpenSnackbar("Logged In", "success");
+      setNavKey((prevKey) => prevKey + 1);
+      window.location.reload();
     } catch (error) {
       console.error("Login failed:", error.message);
       handleOpenSnackbar(`Login Failed: ${error.message}`, "error");
@@ -56,6 +59,7 @@ function App() {
       Cookies.remove("access_token_cookie");
       handleOpenSnackbar("Logged Out", "success");
       navigate("/");
+      setNavKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.error("Logout failed:", error.message);
     }
@@ -67,8 +71,9 @@ function App() {
         const auth = await authService.isAuthenticated();
         setIsLoggedIn(auth.isAuthenticated);
         setUserName(auth.userName);
+        setNavKey((prevKey) => prevKey + 1);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("App.js Error:", error);
       }
     };
 
@@ -81,9 +86,7 @@ function App() {
         <CssBaseline />
         <div className="app">
           <main className="content">
-            {console.log("username", userName)}
             <Navbar
-              // onOpenAuthModal={handleOpenAuthModal}
               isLoggedIn={isLoggedIn}
               onLogout={handleLogout}
               userName={userName}
