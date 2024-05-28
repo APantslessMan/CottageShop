@@ -44,14 +44,9 @@ const Register = ({ onLogin, showSb }) => {
       return;
     }
 
-    const error = await authService.register(username, email, password);
-    if (error) {
-      console.log(`Error: ${error.response}`);
-      showSb(`Registration Failed: ${error}`, "Error");
-    } else {
-      showSb(`Registration Successful`, "success");
-      onLogin(email, password);
-    }
+    await authService.register(username, email, password);
+    showSb(`Registration Successful`, "success");
+    // onLogin(email, password);
   };
 
   return (

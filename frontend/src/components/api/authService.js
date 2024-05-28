@@ -52,15 +52,21 @@ const authService = {
 
   register: async (username, email, password) => {
     try {
-      const response = await axios.post(`${apiUrl}/register`, {
-        username,
-        email,
-        password,
-      });
-      return response.data;
+      const response = await axios.post(
+        `${apiUrl}/register`,
+        { username, email, password },
+        { withCredentials: true }
+      );
+      if (response.status === 201) {
+        console.log("Registration successful:", response.data);
+        return response.data; // Return success message
+      } else {
+        console.error("Registration failed:", response.data.message);
+        throw new Error(response.data.message);
+      }
     } catch (error) {
       console.error("Error during registration:", error);
-      throw error;
+      return error; // Return error object
     }
   },
 
@@ -118,15 +124,10 @@ const authService = {
 
   editUser: async (op, userid) => {
     try {
-      const csrfToken = Cookies.get("csrf_token"); // Assuming you are using CSRF token from cookies
       const response = await axios.post(
         `${apiUrl}/useredit`,
         { op, userid },
         {
-          headers: {
-            "X-CSRF-TOKEN": csrfToken,
-            Authorization: `Bearer ${Cookies.get("access_token_cookie")}`,
-          },
           withCredentials: true,
         }
       );
@@ -140,5 +141,4 @@ const authService = {
     }
   },
 };
-
 export default authService;
