@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box } from "@mui/material";
 import UserEditor from "../components/UserEditor";
-
+import ProductEditor from "../components/ProductEditor";
 const Panel = ({ selectedItem, showSb }) => {
   useEffect(() => {}, [selectedItem]);
 
@@ -10,7 +10,7 @@ const Panel = ({ selectedItem, showSb }) => {
       case "userManagement":
         return <UserEditor showSb={showSb} />;
       case "productManagement":
-        return <div>Product Management</div>;
+        return <ProductEditor showSb={showSb} />;
       case "analytics":
         return <div>Analytics</div>;
       case "dashboard":

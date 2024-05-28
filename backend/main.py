@@ -80,6 +80,7 @@ class Product(db.Model):
 class StockPart(db.Model):
     __tablename__ = "stockparts"
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, unique=True, nullable=True)
     description = db.Column(db.Text, nullable=True)
     qty = db.Column(db.Integer, nullable=False)
 
@@ -220,6 +221,35 @@ def get_user():
     ]
     return jsonify(user_data)
 
+@app.route('/editproduct', methods=['POST'])
+#@jwt_required()
+def edit_product():
+    data = request.json
+    print(data)
+    name = data['name']
+    description = data['description']
+    price = data['price']
+    img_url = data['img_url']
+    stock_items = data['stockItems']
+
+    new_product = Product(name=name, description=description, price=price, img_url=img_url)
+    db.session.add(new_product)
+    db.session.commit()
+
+    for i in stock_items:
+        stock_id = i['item']
+        qty = i['quantity']
+        stock_part = StockPart.query.get(stock_id)
+        if stock_part:
+            assoc = product_stock_association.insert().values(
+                product_id = new_product.id,
+                stockpart_id=stock_id,
+                quantity=qty,
+            )
+            db.session.execute(assoc)
+    db.session.commit()
+    return jsonify({"message": "Product Change Succesful"}), 201
+
 
 @app.route('/useredit', methods=['POST'])
 @jwt_required()
@@ -275,6 +305,11 @@ def edit_user():
             return jsonify({"message": "User not found"}), 404
     return jsonify({"message": "Unauthorized"}), 401
 
+@app.route('/stock_items', methods=['GET'])
+def get_stock_items():
+    stock_items = StockPart.query.all()
+    stock_items_list = [{"id": item.id, "name": item.name} for item in stock_items]
+    return jsonify(stock_items_list)
 
 @app.route('/api/order')
 def get_orders():

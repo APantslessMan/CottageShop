@@ -14,6 +14,8 @@ import axios from "axios";
 import UserTools from "../utils/UserTools";
 import authService from "../../../components/api/authService";
 
+//TODO: move from using axios to the authservice component
+
 const UserEditor = ({ showSb }) => {
   //   const theme = useTheme();
   const [users, setUsers] = useState([]);
