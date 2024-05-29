@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from flask import Flask, abort, jsonify, render_template, redirect, url_for, flash, request
+
+from flask import Flask, abort, jsonify, render_template, redirect, url_for, flash, request, send_from_directory
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
@@ -8,9 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text, ForeignKey
 from functools import wraps
+from werkzeug.utils import secure_filename  # Correct import
+from werkzeug.datastructures import FileStorage
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, jsonify, make_response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     create_refresh_token,
@@ -21,7 +24,7 @@ from flask_jwt_extended import (
 import json
 import sys
 import logging
-
+import uuid
 
 # import smtplib
 import os
@@ -39,12 +42,17 @@ app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
 app.config['JWT_CSRF_IN_COOKIES'] = False
+UPLOAD_FOLDER = './static/assets/img/product'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
-
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 ###############################################################
 #                   DataBase Schema                           #
 ###############################################################
@@ -119,8 +127,26 @@ with app.app_context():
 
 
 ###############################################################
+#                         Util Functions                      #
+###############################################################
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+###############################################################
 #                         API Routes                          #
 ###############################################################
+# @app.after_request
+# def add_headers(response):
+#     response.headers.add('Content-Type', 'application/json')
+#     response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+#     response.headers.add('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#     response.headers.add('Access-Control-Expose-Headers', 'Content-Type,Content-Length,Authorization,X-Pagination')
+#     return response
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -195,14 +221,41 @@ def protected():
     return jsonify(logged_in_as=refresh_user), 200
 
 
-@app.route('/api/products')
+@app.route('/products', methods=['POST', 'GET'])
+@cross_origin(supports_credentials=True)
+@jwt_required()
 def get_products():
-    products = Products.query.all()
+    # TODO: add error checking and return
+    raw_data = request.get_data()
+    print(raw_data)
+    data_string = raw_data.decode('utf-8')
+    if data_string:
+        data_dict = json.loads(data_string)
+        user_id = get_jwt_identity()
+        if user_id['role'] == 'admin':
+            session = db.session
+            operation_product = session.get(Product, data_dict['id'])
+            if operation_product:
+                if data_dict['op'] == 'del':
+                    session.delete(operation_product)
+                    session.commit()
+                    print("deleting user")
+                    return jsonify({"message": "User Deleted"}), 200
+
+
+    products = Product.query.all()
     products_data = [
-        {"id": product.id, "name": product.name, "price": product.price}
+        {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "img_url": product.img_url
+
+        }
         for product in products
     ]
-    return jsonify(products_data)
+    return jsonify(products_data), 200
 
 
 @app.route('/api/user')
@@ -221,34 +274,65 @@ def get_user():
     ]
     return jsonify(user_data)
 
+
 @app.route('/editproduct', methods=['POST'])
-#@jwt_required()
+@jwt_required()
 def edit_product():
-    data = request.json
-    print(data)
-    name = data['name']
-    description = data['description']
-    price = data['price']
-    img_url = data['img_url']
-    stock_items = data['stockItems']
+    try:
+        data = request.form
+        name = data.get('name')
+        description = data.get('description')
+        price = data.get('price')
+        img_url = data.get('img_url')
+        stock_items = data.get('stockItems')
+        stock_items = json.loads(stock_items)
 
-    new_product = Product(name=name, description=description, price=price, img_url=img_url)
-    db.session.add(new_product)
-    db.session.commit()
+        if 'image' in request.files:
 
-    for i in stock_items:
-        stock_id = i['item']
-        qty = i['quantity']
-        stock_part = StockPart.query.get(stock_id)
-        if stock_part:
-            assoc = product_stock_association.insert().values(
-                product_id = new_product.id,
-                stockpart_id=stock_id,
-                quantity=qty,
-            )
-            db.session.execute(assoc)
-    db.session.commit()
-    return jsonify({"message": "Product Change Succesful"}), 201
+            file = request.files['image']
+
+            if file and allowed_file(file.filename):
+                unique_id = str(uuid.uuid4())
+                original_filename = secure_filename(file.filename)
+                file_extension = os.path.splitext(original_filename)[1]
+                filename = f"{name}_{unique_id}{file_extension}"
+
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                print(file_path)
+                img_url = file_path
+
+        if name and description and price:
+            new_product = Product(name=name, description=description, price=price, img_url=img_url)
+            db.session.add(new_product)
+            db.session.commit()
+
+            for item in stock_items:
+                print(item)
+                stock_id = item['item']
+                qty = item['quantity']
+                stock_part = StockPart.query.get(stock_id)
+                if stock_part:
+                    assoc = product_stock_association.insert().values(
+                        product_id=new_product.id,
+                        stockpart_id=stock_id,
+                        quantity=qty,
+                    )
+                    db.session.execute(assoc)
+
+            db.session.commit()
+            return jsonify({"message": "Product Change Successful"}), 201
+        else:
+            return jsonify({"error": "Invalid product data"}), 400
+
+    except Exception as e:
+        db.session.rollback()  # Rollback transaction in case of error
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/useredit', methods=['POST'])
@@ -359,14 +443,6 @@ def check_authentication():
     return jsonify({'message': 'Authentication successful', 'username': user_id['username']}), 200
 
 
-
-# @app.route('/admin', methods=['GET'])
-# @jwt_required()
-# def admin():
-#     current_user = get_jwt_identity()
-#     if current_user['role'] != 'admin':
-#         return jsonify({"message": "Admins only!"}), 403
-#     return jsonify({"message": "Welcome, admin!"}), 200
 
 @app.route('/admin')
 @jwt_required()

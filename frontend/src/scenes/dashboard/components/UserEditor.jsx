@@ -8,20 +8,16 @@ import {
   TableHead,
   TableRow,
   Typography,
-  useTheme,
 } from "@mui/material";
 import axios from "axios";
 import UserTools from "../utils/UserTools";
 import authService from "../../../components/api/authService";
-
 //TODO: move from using axios to the authservice component
-
 const UserEditor = ({ showSb }) => {
-  //   const theme = useTheme();
   const [users, setUsers] = useState([]);
+  const token = authService.refreshToken();
   const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
-    // Fetch user data from API
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/user`, {
@@ -109,7 +105,7 @@ const UserEditor = ({ showSb }) => {
         alignItems: "center",
         minHeight: "80vh",
       }}
-      elevation={3}
+      elevation={7}
     >
       <TableContainer
         style={{
@@ -117,6 +113,7 @@ const UserEditor = ({ showSb }) => {
           border: "2px solid white",
           borderRadius: "15px",
           overflow: "hidden",
+          margin: "40px",
         }}
       >
         <Typography

@@ -34,20 +34,22 @@ const authService = {
   },
 
   refreshToken: async () => {
-    const refreshToken = Cookies.get("refresh_token_cookie");
-    if (!refreshToken) {
-      throw new Error("No refresh token available");
-    }
-
-    const response = await axios.post(
-      `${apiUrl}/refresh`,
-      {},
-      {
-        withCredentials: true,
+    try {
+      const response = await axios.post(
+        `${apiUrl}/refresh`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        return { isAuthenticated: true, userName: response.data.username };
+      } else {
+        return { isAuthenticated: false, userName: "" };
       }
-    );
-    Cookies.set("access_token_cookie", response.data.access_token);
-    return { isAuthenticated: true, userName: response.data.username };
+    } catch (error) {
+      console.error("Error checking authentication:", error);
+    }
   },
 
   register: async (username, email, password) => {
@@ -123,6 +125,7 @@ const authService = {
   },
 
   editUser: async (op, userid) => {
+    authService.refreshToken();
     try {
       const response = await axios.post(
         `${apiUrl}/useredit`,

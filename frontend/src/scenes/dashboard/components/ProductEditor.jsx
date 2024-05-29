@@ -14,8 +14,8 @@ import {
 } from "@mui/material";
 import authService from "../../../components/api/authService";
 import AddProductTab from "./AddProduct";
-
-const ProductEditor = () => {
+import ShowProduct from "./ShowProduct";
+const ProductEditor = ({ showSb }) => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -38,7 +38,7 @@ const ProductEditor = () => {
       </Tabs>
       <div>
         {selectedTab === 0 && <AddProductTab />}
-        {selectedTab === 1 && <EditProductTab />}
+        {selectedTab === 1 && <ShowProduct showSb={showSb} />}
         {selectedTab === 2 && <AddStockTab />}
         {selectedTab === 3 && <EditStockTab />}
       </div>

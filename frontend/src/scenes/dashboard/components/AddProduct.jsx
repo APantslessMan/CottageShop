@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -8,6 +8,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import axios from "axios";
+import apiService from "../../../components/api/apiService";
 
 const AddProductForm = () => {
   const [productData, setProductData] = useState({
@@ -17,16 +18,16 @@ const AddProductForm = () => {
     img_url: "",
     stockItems: [{ item: "", quantity: "" }],
   });
-
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [stockOptions, setStockOptions] = useState([]);
 
   useEffect(() => {
-    // Fetch stock items from the API
+    //TODO: switch to api service component
     const fetchStockItems = async () => {
       try {
         const response = await axios.get("http://localhost:5000/stock_items");
         setStockOptions(response.data);
-        console.log("Stock items:", response.data);
       } catch (error) {
         console.error("Error fetching stock items:", error);
       }
@@ -56,16 +57,30 @@ const AddProductForm = () => {
   };
 
   const handleImageChange = (event) => {
-    const url = event.target.value;
-    setProductData({ ...productData, img_url: url });
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
-      const data = axios.post("http://localhost:5000/editproduct", productData);
-      console.log("Submitting:", productData);
+      const formData = new FormData();
+      formData.append("name", productData.name);
+      formData.append("description", productData.description);
+      formData.append("price", productData.price);
+      formData.append("img_url", productData.img_url); // Add this only if you want to keep the URL option
+      formData.append("image", imageFile); // Add the image file
+      formData.append("stockItems", JSON.stringify(productData.stockItems));
+      //TODO: switch to api service component
+      await apiService.editProduct("add", null, formData);
     } catch (error) {
-      console.error("Error submitting product:", error);
+      console.error("Error adding product:", error);
     }
   };
 
@@ -106,8 +121,11 @@ const AddProductForm = () => {
             label="Image URL"
             name="img_url"
             value={productData.img_url}
-            onChange={handleImageChange}
+            onChange={(e) =>
+              setProductData({ ...productData, img_url: e.target.value })
+            }
           />
+          <input type="file" accept="image/*" onChange={handleImageChange} />
         </Box>
         <Box flex={1} textAlign="center">
           <Box
@@ -120,9 +138,9 @@ const AddProductForm = () => {
             width="100%"
             height="250px"
           >
-            {productData.img_url ? (
+            {imagePreview ? (
               <img
-                src={productData.img_url}
+                src={imagePreview}
                 alt="Product"
                 style={{ maxWidth: "100%", maxHeight: "100%" }}
               />

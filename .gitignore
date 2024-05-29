@@ -21,3 +21,6 @@
 # Coverage reports
 /coverage
 /backend/.idea
+
+/backend/static
+/frontend/public/static
