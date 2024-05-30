@@ -34,7 +34,6 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
       console.log("ScrollTop:", window.scrollY);
       // Determine if the user has scrolled past the top position
       setIsScrolled(scrollTop > 0);
-      c;
     };
 
     // Add scroll event listener when component mounts
