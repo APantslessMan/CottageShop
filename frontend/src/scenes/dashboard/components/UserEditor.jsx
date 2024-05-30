@@ -104,6 +104,7 @@ const UserEditor = ({ showSb }) => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "80vh",
+        marginTop: "72px",
       }}
       elevation={7}
     >

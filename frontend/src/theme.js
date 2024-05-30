@@ -6,38 +6,46 @@ export const themeSettings = (mode) => {
     palette: {
       ...(mode === "dark"
         ? {
+            // Dark mode colors
             primary: {
-              main: "#727998",
+              main: "#B2AC88",
             },
             secondary: {
-              main: "#7A3B69",
+              main: "#2F4F4F",
+            },
+            navbar: {
+              main: "#FFFFF0",
             },
             background: {
-              default: "#2d3142",
-              paper: "#1b1d28",
+              default: "#36454F",
+              paper: "#2F4F4F",
             },
             text: {
-              primary: "#ffffff",
-              secondary: "#cccccc",
-              menuSelected: "#888",
+              primary: "#FFFFF0",
+              secondary: "#D2B48C",
+              menuSelected: "#D2B48C",
               disabled: "grey",
             },
           }
         : {
+            // Light Mode colors
             primary: {
-              main: "#563440",
+              main: "#2F4F4F",
             },
             secondary: {
-              main: "#7A3B69",
+              main: "#B2AC88",
+            },
+            navbar: {
+              main: "#FFFFF0",
             },
             background: {
-              default: "#fcfcfc",
-              paper: "#CFCFCD",
+              default: "#FFFFF0",
+              paper: "#708090",
             },
             text: {
-              primary: "#000000",
-              secondary: "#333333",
-              menuSelected: "#888",
+              primary: "#333333",
+              secondary: "#8B4513",
+              menuSelected: "#8B4513",
               disabled: "grey",
             },
           }),

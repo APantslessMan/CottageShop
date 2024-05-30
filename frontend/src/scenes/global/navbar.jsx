@@ -1,5 +1,5 @@
 import { Box, IconButton, useTheme } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -16,7 +16,8 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import BreakfastDiningIcon from "@mui/icons-material/BreakfastDining";
 import { useNavigate } from "react-router-dom";
-
+import useScrollTrigger from "@mui/material/useScrollTrigger";
+import "./navbar.css";
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
 
@@ -25,6 +26,25 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      console.log("ScrollTop:", window.scrollY);
+      // Determine if the user has scrolled past the top position
+      setIsScrolled(scrollTop > 0);
+      c;
+    };
+
+    // Add scroll event listener when component mounts
+    window.addEventListener("scroll", handleScroll);
+
+    // Remove scroll event listener when component unmounts
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isScrolled]);
 
   const handleOpenNavMenu = (event) => {
     setNavAnchor(event.currentTarget);
@@ -88,7 +108,17 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
       ];
 
   return (
-    <AppBar position="static">
+    <AppBar
+      color="transparent"
+      elevation={0}
+      sx={{
+        background: isScrolled ? "rgba(0, 0, 0, .2)" : "rgba(0, 0, 0, 1)", // Adjust background color based on theme mode and scroll position
+        backdropFilter: "blur(10px)", // Blurred effect
+        boxShadow: "none",
+        transition: "background-color 1s ease",
+        zIndex: 1000, // Ensure it's above other elements
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <BreakfastDiningIcon
@@ -98,14 +128,15 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
+              fontFamily: "Source Sans Pro",
+              fontSize: "1.5rem",
+              fontWeight: 800,
+              letterSpacing: ".2rem",
+              color: theme.palette.navbar.main,
               textDecoration: "none",
             }}
           >
@@ -126,6 +157,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               slotProps={{
                 paper: {
                   sx: {
+                    //TODO: refactor to theme
                     background: mode === "dark" ? "#333" : "#fff",
                   },
                 },
@@ -161,7 +193,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -169,24 +201,41 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               fontFamily: "monospace",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "text",
               textDecoration: "none",
             }}
           >
             CottageShop
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          {/* TODO: change title to variable pulled from DB */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: {
+                xs: "none",
+                md: "flex",
+                textAlign: "right",
+              },
+            }}
+          >
+            <Box sx={{ flexGrow: 1 }}></Box>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  color: "text.secondary",
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                  display: "block",
+                }}
               >
                 {page}
               </Button>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 1 }}></Box>
+
           <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
             <IconButton onClick={toggleColorMode} color="inherit">
               {mode === "dark" ? (
@@ -200,8 +249,8 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
                 <Avatar
                   key={userName}
                   sx={{
-                    bgcolor: theme.palette.background.default,
-                    color: theme.palette.text.primary,
+                    bgcolor: theme.palette.primary.main,
+                    color: theme.palette.text.secondary,
                     textTransform: "capitalize",
                     fontSize: 24,
                     fontWeight: "bold",

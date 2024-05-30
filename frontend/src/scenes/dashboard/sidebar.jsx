@@ -68,7 +68,10 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
   };
 
   return (
-    <Paper elevation={10} sx={{ "&&": { border: 0 } }}>
+    <Box
+      backgroundColor={theme.palette.background.default}
+      sx={{ marginTop: "73px" }}
+    >
       <Sidebar
         collapsed={isCollapsed}
         style={{ height: "100vh", border: "none !important" }}
@@ -152,7 +155,8 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
           </Box>
         </Menu>
       </Sidebar>
-    </Paper>
+    </Box>
+    // </Paper>
   );
 };
 

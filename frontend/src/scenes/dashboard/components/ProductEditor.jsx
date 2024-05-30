@@ -23,7 +23,15 @@ const ProductEditor = ({ showSb }) => {
   };
 
   return (
-    <Paper elevation={3}>
+    <Paper
+      style={{
+        padding: 2,
+
+        minHeight: "80vh",
+        marginTop: "72px",
+      }}
+      elevation={7}
+    >
       <Tabs
         value={selectedTab}
         onChange={handleTabChange}
