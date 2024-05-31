@@ -41,7 +41,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret')
-app.config['UPLOAD_FOLDER'] = './static/assets/img/product'
+# app.config['UPLOAD_FOLDER'] = './static/assets/img/product'
 
 
 
@@ -50,8 +50,8 @@ CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+# if not os.path.exists(app.config['UPLOAD_FOLDER']):
+#     os.makedirs(app.config['UPLOAD_FOLDER'])
 ###############################################################
 #                   DataBase Schema                           #
 ###############################################################
@@ -300,11 +300,11 @@ def edit_product():
                 original_filename = secure_filename(file.filename)
                 file_extension = os.path.splitext(original_filename)[1]
                 filename = f"{name}_{unique_id}{file_extension}"
-
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                print(file_path)
-                img_url = file_path
+                # Turned off for vercel
+                # file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                # file.save(file_path)
+                # print(file_path)
+                # img_url = file_path
 
         if name and description and price:
             new_product = Product(name=name, description=description, price=price, img_url=img_url)
