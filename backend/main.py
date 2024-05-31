@@ -25,28 +25,23 @@ import json
 import sys
 import logging
 import uuid
-
+from dotenv import load_dotenv
 # import smtplib
 import os
 
-app = Flask(__name__, static_url_path='',
-                  static_folder='build',
-                  template_folder='build')
-app.config['SECRET_KEY'] = "secret-key"
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///cottage.db"
+load_dotenv()
+print(os.getenv('DATABASE_URL'))
+app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super-secret-key')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_SECURE'] = False
-app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
-app.config['JWT_REFRESH_COOKIE_PATH'] = '/'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
-app.config['JWT_CSRF_IN_COOKIES'] = False
-UPLOAD_FOLDER = './static/assets/img/product'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret')
+app.config['UPLOAD_FOLDER'] = './static/assets/img/product'
 
 
 
