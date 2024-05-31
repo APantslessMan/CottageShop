@@ -1,6 +1,32 @@
 import { createContext, useState, useMemo } from "react";
 import { createTheme } from "@mui/material/styles";
 
+// indigo: {
+//     100: "#dbdfdd",
+//     200: "#b8beba",
+//     300: "#949e98",
+//     400: "#717d75",
+//     500: "#4d5d53",
+//     600: "#3e4a42",
+//     700: "#2e3832",
+//     800: "#1f2521",
+//     900: "#0f1311"
+// },
+
+//#B2AC88 is sand color
+
+// gray: {
+//     100: "#f0eee7",
+//     200: "#e0decf",
+//     300: "#d1cdb8",
+//     400: "#c1bda0",
+//     500: "#b2ac88",
+//     600: "#8e8a6d",
+//     700: "#6b6752",
+//     800: "#474536",
+//     900: "#24221b"
+// },
+
 export const themeSettings = (mode) => {
   return {
     palette: {
@@ -11,18 +37,18 @@ export const themeSettings = (mode) => {
               main: "#B2AC88",
             },
             secondary: {
-              main: "#2F4F4F",
+              main: "#FFFFF0",
             },
             navbar: {
               main: "#FFFFF0",
             },
             background: {
-              default: "#36454F",
-              paper: "#2F4F4F",
+              default: "#3e4a42",
+              paper: "#717d75",
             },
             text: {
               primary: "#FFFFF0",
-              secondary: "#D2B48C",
+              secondary: "#FFFFF0",
               menuSelected: "#D2B48C",
               disabled: "grey",
             },
@@ -30,21 +56,21 @@ export const themeSettings = (mode) => {
         : {
             // Light Mode colors
             primary: {
-              main: "#2F4F4F",
+              main: "#474536",
             },
             secondary: {
-              main: "#B2AC88",
+              main: "#FFFFF0",
             },
             navbar: {
               main: "#FFFFF0",
             },
             background: {
               default: "#FFFFF0",
-              paper: "#708090",
+              paper: "#c1bda0",
             },
             text: {
               primary: "#333333",
-              secondary: "#8B4513",
+              secondary: "#FFFFF0",
               menuSelected: "#8B4513",
               disabled: "grey",
             },

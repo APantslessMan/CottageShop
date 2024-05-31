@@ -120,9 +120,9 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <BreakfastDiningIcon
+          {/* <BreakfastDiningIcon
             sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-          />
+          /> */}
           <Typography
             variant="h6"
             noWrap
@@ -185,9 +185,9 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               ))}
             </Menu>
           </Box>
-          <BreakfastDiningIcon
+          {/* <BreakfastDiningIcon
             sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-          />
+          /> */}
           <Typography
             variant="h5"
             noWrap
@@ -197,10 +197,10 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "monospace",
+              fontFamily: "Source Sans Pro",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "text",
+              color: theme.palette.navbar.main,
               textDecoration: "none",
             }}
           >
@@ -236,7 +236,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", pr: 1 }}>
-            <IconButton onClick={toggleColorMode} color="inherit">
+            <IconButton onClick={toggleColorMode} color="primary">
               {mode === "dark" ? (
                 <DarkModeOutlinedIcon />
               ) : (

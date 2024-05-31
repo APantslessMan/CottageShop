@@ -4,7 +4,7 @@ import { styled } from "@mui/system";
 
 const HeroContainer = styled(Box)(({ theme }) => ({
   position: "relative",
-  height: "100vh",
+  height: "80vh",
   width: "100%",
   overflow: "hidden",
   backgroundSize: "cover",
@@ -21,12 +21,12 @@ const HeroContainer = styled(Box)(({ theme }) => ({
 
 const HeroContent = styled(Box)(({ theme }) => ({
   position: "absolute",
-  top: "50%",
+  top: "75%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   textAlign: "center",
-  color: "#fff",
-  padding: theme.spacing(2),
+  // color: "#fff",
+  padding: theme.spacing(4),
   backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Add a background color with transparency to improve text readability
 }));
 
@@ -42,11 +42,23 @@ const Hero = () => {
     // >
     <HeroContainer>
       <HeroContent>
-        <Typography variant="h2" component="h1">
-          Welcome to Our Site
+        <Typography
+          variant="h1"
+          component="h1"
+          fontFamily="Source Sans Pro"
+          sx={{ fontSize: "8.2vh" }}
+          color="secondary"
+        >
+          CottageShop
         </Typography>
-        <Typography variant="h5" component="p">
-          Your catchy tagline goes here
+        {/*TODO: change title to variable pulled from DB */}
+        <Typography
+          variant="h5"
+          component="p"
+          sx={{ fontSize: "3.2vh" }}
+          color="secondary"
+        >
+          Handmade Artisan Products
         </Typography>
       </HeroContent>
     </HeroContainer>
