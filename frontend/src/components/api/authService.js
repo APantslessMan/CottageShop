@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 // const apiUrl = process.env.REACT_APP_API_URL;
-const apiUrl = process.env.VERCEL_URL; // For vercel deployment
+const apiUrl = "/"; // For vercel deployment
 const authService = {
   login: async (login, password) => {
     try {
