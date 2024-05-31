@@ -29,7 +29,9 @@ import uuid
 # import smtplib
 import os
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='',
+                  static_folder='build',
+                  template_folder='build')
 app.config['SECRET_KEY'] = "secret-key"
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///cottage.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -45,6 +47,8 @@ app.config['JWT_CSRF_IN_COOKIES'] = False
 UPLOAD_FOLDER = './static/assets/img/product'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
 
 
 CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
@@ -138,6 +142,11 @@ def allowed_file(filename):
 ###############################################################
 #                         API Routes                          #
 ###############################################################
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 # @app.after_request
 # def add_headers(response):
 #     response.headers.add('Content-Type', 'application/json')

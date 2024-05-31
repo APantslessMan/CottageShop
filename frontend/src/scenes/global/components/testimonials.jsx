@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Container,
+  Divider,
 } from "@mui/material";
 
 const testimonials = [
@@ -32,6 +33,15 @@ const testimonials = [
 const Testimonials = () => {
   return (
     <Container maxWidth="md" sx={{ py: 8 }}>
+      <Divider
+        variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
+        sx={{
+          // Customize the styling using the sx prop
+          height: "2px", // Adjust the height of the line
+          backgroundColor: "primary.main", // Set the background color of the line
+          margin: "80px 0", // Add margin for spacing
+        }}
+      />
       <Typography
         variant="h4"
         align="center"
