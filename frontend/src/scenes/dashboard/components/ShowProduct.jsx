@@ -15,7 +15,9 @@ import ProductEditCell from "../utils/ProductEditCell";
 
 const ShowProduct = ({ showSb }) => {
   const [products, setProducts] = useState([{}]);
-  const apiUrl = process.env.REACT_APP_API_URL;
+
+  // const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.VERCEL_URL; // For vercel deployment
 
   useEffect(() => {
     const fetchProducts = async () => {

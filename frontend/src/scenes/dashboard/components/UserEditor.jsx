@@ -16,7 +16,9 @@ import authService from "../../../components/api/authService";
 const UserEditor = ({ showSb }) => {
   const [users, setUsers] = useState([]);
   const token = authService.refreshToken();
-  const apiUrl = process.env.REACT_APP_API_URL;
+
+  // const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.VERCEL_URL; // For vercel deployment
   useEffect(() => {
     const fetchUsers = async () => {
       try {

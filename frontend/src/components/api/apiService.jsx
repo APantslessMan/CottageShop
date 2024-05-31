@@ -2,7 +2,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import authService from "./authService";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+// const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.VERCEL_URL; // For vercel deployment
 
 const apiService = {
   editProduct: async (op, id = null, formData = null) => {
