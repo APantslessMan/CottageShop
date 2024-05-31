@@ -6,6 +6,7 @@ import Contact from "./global/components/contact";
 import Story from "./global/components/Story";
 
 import "../css/home.css";
+import Information from "./global/components/info";
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
       <Hero />
       <Story />
       <ProductCards />
+      <Information />
       <Testimonials />
       <Contact />
     </div>

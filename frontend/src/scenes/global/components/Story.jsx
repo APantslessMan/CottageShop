@@ -2,11 +2,6 @@ import React from "react";
 import { Box, Typography, Grid, Container, Divider } from "@mui/material";
 // import { makeStyles } from "@mui/core/styles";
 
-import StorageIcon from "@mui/icons-material/Storage";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
-import ShutterSpeedIcon from "@mui/icons-material/ShutterSpeed";
-import PublicIcon from "@mui/icons-material/Public";
-
 export default function Story(props) {
   const content = {
     badge: "Our Story",
