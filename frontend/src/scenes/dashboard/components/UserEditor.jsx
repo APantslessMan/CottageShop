@@ -18,7 +18,7 @@ const UserEditor = ({ showSb }) => {
   const token = authService.refreshToken();
 
   // const apiUrl = process.env.REACT_APP_API_URL;
-  const apiUrl = process.env.VERCEL_URL; // For vercel deployment
+  const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
   useEffect(() => {
     const fetchUsers = async () => {
       try {
