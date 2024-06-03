@@ -44,7 +44,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret')
-app.config['UPLOAD_FOLDER'] = './build/assets/img/'
+app.config['UPLOAD_FOLDER'] = './build/assets/img/site'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 CORS(app, origins=allowed_origins, supports_credentials=True)
@@ -91,7 +91,7 @@ class StockPart(db.Model):
     description = db.Column(db.Text, nullable=True)
     supplier = db.Column(db.Text, nullable=True)
     price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
-    qty = db.Column(db.Integer, nullable=False)
+    qty = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
 
 
 class Order(db.Model):
@@ -135,6 +135,15 @@ with app.app_context():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+def img_path(directory):
+    parts = directory.split(os.path.sep)
+    if 'build' in parts:
+        index_path = parts.index('build')
+        print(index_path)
+        parts = parts[index_path + 1:]
+    new_filepath = os.path.join(*parts)
+    return new_filepath
 
 ###############################################################
 #                         API Routes                          #
@@ -300,11 +309,10 @@ def edit_product():
                 unique_id = str(uuid.uuid4())
                 original_filename = secure_filename(file.filename)
                 file_extension = os.path.splitext(original_filename)[1]
-                filename = f"{name}_{unique_id}{file_extension}"
+                filename = f"{name.replace(' ','')}_{unique_id}{file_extension}"
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
-                print(file_path)
-                img_url = file_path
+                img_url = img_path(file_path)
 
         if name and description and price:
             new_product = Product(name=name, description=description, price=price, img_url=img_url)
