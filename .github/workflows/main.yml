@@ -33,7 +33,7 @@ jobs:
         run: mv ./frontend/build ./backend/build  # Replace with your Flask app directory
 
       - name: Build Docker image
-        run: docker build -t your-docker-image-name:latest ./backend  # Replace with your Docker image name and Flask app directory
+        run: docker build -t apantslessman/cottageshop:latest ./backend  # Replace with your Docker image name and Flask app directory
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
