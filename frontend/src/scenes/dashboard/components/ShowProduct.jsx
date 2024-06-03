@@ -22,13 +22,12 @@ const ShowProduct = ({ showSb }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        apiService.listProducts().then((response) => {
-          console.log("response", response);
-          setProducts(response);
-          //   showSb(`Products Fetched`, "success");
-        });
+        const response = await apiService.listProducts();
+        console.log("response", response);
+        setProducts(response);
+        // showSb(`Products Fetched`, "success");
       } catch (error) {
-        console.error("Error fetching product:", error);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -36,7 +35,7 @@ const ShowProduct = ({ showSb }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    console.log(`Delete user with ID: ${id}`);
+    console.log(`Delete Product with ID: ${id}`);
 
     try {
       apiService.editProduct("del", id).then((response) => {
@@ -44,21 +43,19 @@ const ShowProduct = ({ showSb }) => {
           console.log("response", response);
           setProducts(response);
           console.log(products);
-          showSb(`Products Fetched`, "success");
+          showSb(`Product Deleted`, "success");
         });
       });
-
-      showSb(`User Deleted`, "success");
     } catch (error) {
-      showSb(`User Delete Failed: ${error}`, "error");
+      showSb(`Product Delete Failed: ${error}`, "error");
     }
 
-    console.log(`Delete user with ID: ${id}`);
+    console.log(`Delete Product with ID: ${id}`);
   }; //
 
   const handleUpdate = (id) => {
-    // Implement the update user logic here
-    console.log(`Update user with ID: ${id}`);
+    // Implement the update Product logic here
+    console.log(`Update Product with ID: ${id}`);
   };
 
   return (
@@ -88,7 +85,7 @@ const ShowProduct = ({ showSb }) => {
           borderBottom="solid 2px white"
           p={2}
         >
-          User Editor
+          Product Editor
         </Typography>
         <Table>
           <TableHead>

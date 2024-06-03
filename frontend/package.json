@@ -31,8 +31,8 @@
     "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
+    "dev": "vite --mode development",
+    "build": "vite build --mode production",
     "serve": "vite preview"
   },
   "eslintConfig": {

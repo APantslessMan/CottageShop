@@ -2,9 +2,7 @@ import axios from "axios";
 // import Cookies from "js-cookie";
 import authService from "./authService";
 
-// const apiUrl = "http://localhost:5000"; // For local development
-let apiUrl = ""; // For production
-// const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
 
 const apiService = {
   editProduct: async (op, id = null, formData = null) => {
@@ -29,6 +27,7 @@ const apiService = {
           `${apiUrl}/products`,
           { op, id },
           {
+            headers: { "Content-Type": "application/json" },
             withCredentials: true,
           }
         );
@@ -55,9 +54,15 @@ const apiService = {
   },
   listProducts: async () => {
     try {
-      const response = await axios.get(`${apiUrl}/products`, {
-        withCredentials: true,
-      });
+      await authService.refreshToken();
+      const response = await axios.post(
+        `${apiUrl}/products`,
+        { op: "list" },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
       if (response.status === 200) {
         return response.data;
       } else {

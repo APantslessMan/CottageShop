@@ -17,10 +17,7 @@ import authService from "../../../components/api/authService";
 const UserEditor = ({ showSb }) => {
   const [users, setUsers] = useState([]);
   authService.refreshToken();
-  let apiUrl = ""; // For Production
-  // const apiUrl = "http://localhost:5000"; // For Development
-  // const apiUrl = process.env.REACT_APP_API_URL;
-  // const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
   useEffect(() => {
     const fetchUsers = async () => {
       try {

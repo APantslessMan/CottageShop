@@ -35,7 +35,7 @@ const ProductEditor = ({ showSb }) => {
         <Tab label="Edit Stock" />
       </Tabs>
       <div>
-        {selectedTab === 0 && <AddProductTab />}
+        {selectedTab === 0 && <AddProductTab showSb={showSb} />}
         {selectedTab === 1 && <ShowProduct showSb={showSb} />}
         {selectedTab === 2 && <AddStockTab />}
         {selectedTab === 3 && <EditStockTab />}

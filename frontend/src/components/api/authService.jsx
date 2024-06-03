@@ -1,9 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-let apiUrl = ""; // For production
-// let apiUrl = "http://localhost:5000"; // For local development
-// const apiUrl = process.env.REACT_APP_API_URL;
-// const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
+
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
+
 const authService = {
   login: async (login, password) => {
     try {

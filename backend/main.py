@@ -237,39 +237,49 @@ def protected():
 
 
 @app.route('/products', methods=['POST', 'GET'])
-@cross_origin(supports_credentials=True)
 @jwt_required()
 def get_products():
     # TODO: add error checking and return
-    raw_data = request.get_data()
-    print(raw_data)
-    data_string = raw_data.decode('utf-8')
-    if data_string:
-        data_dict = json.loads(data_string)
+    json_data = request.json
+    print(json_data)
+    if json_data:
+        op_id = json_data.get('id')
+        op = json_data.get('op')
+        print(json_data.get('op'))
+
         user_id = get_jwt_identity()
-        if user_id['role'] == 'admin':
-            session = db.session
-            operation_product = session.get(Product, data_dict['id'])
-            if operation_product:
-                if data_dict['op'] == 'del':
-                    session.delete(operation_product)
-                    session.commit()
-                    print("deleting user")
-                    return jsonify({"message": "User Deleted"}), 200
+        if op != "list":
+            if user_id['role'] == 'admin':
+                print('in as admin')
+                session = db.session
+                operation_product = session.get(Product, op_id)
+                print(operation_product)
+                if operation_product:
+                    if op == 'del':
+                        session.delete(operation_product)
+                        session.commit()
+                        print("deleting product")
+                        return jsonify({"message": "Product Deleted"}), 200
+            else:
+                print('not in admin')
+                return jsonify({"message": "User is not admin"}), 401
+        elif op == "list":
+            products = Product.query.all()
+            products_data = [
+                {
+                    "id": product.id,
+                    "name": product.name,
+                    "description": product.description,
+                    "price": product.price,
+                    "img_url": product.img_url
 
-    products = Product.query.all()
-    products_data = [
-        {
-            "id": product.id,
-            "name": product.name,
-            "description": product.description,
-            "price": product.price,
-            "img_url": product.img_url
+                }
+                for product in products
+            ]
+            return jsonify(products_data), 200
 
-        }
-        for product in products
-    ]
-    return jsonify(products_data), 200
+
+
 
 
 @app.route('/api/user')

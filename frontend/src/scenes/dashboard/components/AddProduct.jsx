@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import apiService from "../../../components/api/apiService";
-let apiurl = ""; // For Production
-// let apiurl = "http://localhost:5000"; // For Development
-const AddProductForm = () => {
+const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
+
+const AddProductForm = ({ showSb }) => {
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -27,7 +27,7 @@ const AddProductForm = () => {
     //TODO: switch to api service component
     const fetchStockItems = async () => {
       try {
-        const response = await axios.get(`${apiurl}/stock_items`);
+        const response = await axios.get(`${apiUrl}/stock_items`);
         setStockOptions(response.data);
       } catch (error) {
         console.error("Error fetching stock items:", error);
@@ -80,6 +80,14 @@ const AddProductForm = () => {
       formData.append("stockItems", JSON.stringify(productData.stockItems));
       //TODO: switch to api service component
       await apiService.editProduct("add", null, formData);
+      showSb(`Product Added`, "success");
+      //   setProductData({
+      //     name: "",
+      //     description: "",
+      //     price: "",
+      //     img_url: "",
+      //     stockItems: [{ item: "", quantity: "" }],
+      //   });
     } catch (error) {
       console.error("Error adding product:", error);
     }
