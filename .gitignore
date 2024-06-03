@@ -5,7 +5,7 @@
 .pnp.js
 
 # Environment variables
-.env
+
 .env.local
 
 # Build directories

@@ -30,10 +30,13 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-print(os.getenv('DATABASE_URL'))
+allowed_origins = os.getenv('ALLOWED_ORIGINS')
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super-secret-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+        f"postgresql+psycopg2://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}"
+        f"@{os.getenv('POSTGRES_HOST')}:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
+    )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_SECURE'] = False
@@ -44,9 +47,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret')
 # app.config['UPLOAD_FOLDER'] = './static/assets/img/product'
 
 
-
-
-CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(app, origins=allowed_origins, supports_credentials=True)
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
