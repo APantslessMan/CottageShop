@@ -22,7 +22,7 @@ const Item = ({ value, title, icon, onClick, selected, theme }) => {
 const AdminSidebar = ({ handleItemClick, selectedItem }) => {
   const theme = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [setSelected] = useState("Dashboard");
+  // const [selected, setSelected] = useState("Dashboard");
 
   const menuItems = [
     {
@@ -63,7 +63,7 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
   ];
 
   const handleItemClickInternal = (item) => {
-    setSelected(item);
+    // setSelected(item);
     handleItemClick(item);
   };
 
@@ -137,7 +137,7 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
                     icon={item.icon}
                     onClick={() => handleItemClickInternal(item.value)}
                     selected={selectedItem}
-                    setSelected={setSelected}
+                    // setSelected={setSelected}
                     theme={theme}
                     value={item.value}
                   />

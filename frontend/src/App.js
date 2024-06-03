@@ -38,7 +38,7 @@ function App() {
       const data = await authService.login(login, password, email);
       setIsLoggedIn(true);
       setUserName(data.login);
-      setRole(data.role);
+      // setRole(data.role);
       // handleCloseAuthModal();
       navigate("/");
       handleOpenSnackbar("Logged In", "success");
