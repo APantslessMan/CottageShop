@@ -1,28 +1,32 @@
 import axios from "axios";
-// import Cookies from "js-cookie";
 import authService from "./authService";
 
+// Ensure apiUrl is defined or provide a fallback
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
 
 const apiService = {
   editProduct: async (op, id = null, formData = null) => {
     try {
-      authService.refreshToken().then(console.log("Token refreshed"));
+      // Refresh token before making the request
+      await authService.refreshToken();
 
+      // Handle different operations (add, del, edit)
       if (op === "add" && formData) {
+        // Handle add product operation
         const response = await axios.post(`${apiUrl}/editproduct`, formData, {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-
+        // Log success or error message
         if (response.status === 201) {
           console.log("Product added successfully");
         } else {
           console.error("Failed to add product");
         }
       } else if (op === "del" || op === "edit") {
+        // Handle delete or edit product operation
         const response = await axios.post(
           `${apiUrl}/products`,
           { op, id },
@@ -31,20 +35,11 @@ const apiService = {
             withCredentials: true,
           }
         );
+        // Log success or error message
         if (response.status === 201) {
-          console.log("Product added successfully");
+          console.log("Product edited successfully");
         } else {
-          console.error("Failed to add product");
-        }
-      } else if (op === "list") {
-        const response = await axios.get(`${apiUrl}/products`, {
-          withCredentials: true,
-        });
-        if (response.status === 200) {
-          console.log(response.data);
-          return response.data;
-        } else {
-          console.error("Failed to Fetch products");
+          console.error("Failed to edit product");
         }
       }
     } catch (error) {
@@ -54,30 +49,31 @@ const apiService = {
   },
   listProducts: async () => {
     try {
+      // Refresh token before making the request
       await authService.refreshToken();
-      const response = await axios.post(
-        `${apiUrl}/products`,
-        { op: "list" },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+
+      // Fetch list of products
+      const response = await axios.get(`${apiUrl}/products`, {
+        withCredentials: true,
+      });
+      // Log success or error message
       if (response.status === 200) {
+        console.log(response.data);
         return response.data;
       } else {
-        throw new Error(response.data.message);
+        console.error("Failed to fetch products");
       }
     } catch (error) {
       console.error("Error fetching products:", error);
       throw error;
     }
   },
-  // addProduct:
-  // deleteProduct:
   editUser: async (action, id) => {
-    authService.refreshToken();
     try {
+      // Refresh token before making the request
+      await authService.refreshToken();
+
+      // Handle user editing operation
       const response = await axios.post(
         `${apiUrl}/editUser`,
         { action, id },
@@ -85,6 +81,7 @@ const apiService = {
           withCredentials: true,
         }
       );
+      // Log success or error message
       if (response.status === 200) {
         return response;
       } else {
@@ -96,12 +93,16 @@ const apiService = {
     }
   },
   editStock: async (id = null, formData = null) => {
-    authService.refreshToken();
     try {
+      // Refresh token before making the request
+      await authService.refreshToken();
+
+      // Handle stock editing operation
       const response = await axios.post(`${apiUrl}/editstock`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
+      // Log success or error message
       if (response.status === 201) {
         console.log("Stock added successfully");
       } else {
@@ -112,8 +113,6 @@ const apiService = {
       throw error;
     }
   },
-
-  // addUser:
-  // deleteUser:
 };
+
 export default apiService;
