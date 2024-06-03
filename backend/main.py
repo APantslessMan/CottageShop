@@ -44,24 +44,23 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret')
-# app.config['UPLOAD_FOLDER'] = './static/assets/img/product'
+app.config['UPLOAD_FOLDER'] = './build/assets/img/'
 
-
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 CORS(app, origins=allowed_origins, supports_credentials=True)
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
-# if not os.path.exists(app.config['UPLOAD_FOLDER']):
-#     os.makedirs(app.config['UPLOAD_FOLDER'])
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 ###############################################################
 #                   DataBase Schema                           #
 ###############################################################
 
 product_stock_association = db.Table('product_stock_association',
-    db.Column('product_id', db.Integer, db.ForeignKey('products.id')),
-    db.Column('stockpart_id', db.Integer, db.ForeignKey('stockparts.id')),
-    db.Column('quantity', db.Integer, nullable=False)
-)
+                                     db.Column('product_id', db.Integer, db.ForeignKey('products.id')),
+                                     db.Column('stockpart_id', db.Integer, db.ForeignKey('stockparts.id')),
+                                     db.Column('quantity', db.Integer, nullable=False))
 
 
 class User(db.Model):
@@ -188,9 +187,9 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
-    login = data['login']
+    loginid = data['login']
     password = data['password']
-    user = User.query.filter((User.email == login) | (User.username == login)).first()
+    user = User.query.filter((User.email == loginid) | (User.username == loginid)).first()
     if user and check_password_hash(user.password, password):
         access_token = create_access_token(identity={'email': user.email, 'username': user.username, 'role': user.role})
         refresh_token = create_refresh_token(
@@ -301,11 +300,10 @@ def edit_product():
                 original_filename = secure_filename(file.filename)
                 file_extension = os.path.splitext(original_filename)[1]
                 filename = f"{name}_{unique_id}{file_extension}"
-                # Turned off for vercel
-                # file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                # file.save(file_path)
-                # print(file_path)
-                # img_url = file_path
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                print(file_path)
+                img_url = file_path
 
         if name and description and price:
             new_product = Product(name=name, description=description, price=price, img_url=img_url)
