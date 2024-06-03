@@ -27,9 +27,9 @@ jobs:
     - name: Remove existing build directory in Flask app
       run: rm -rf ./backend/build  # Ensure this path matches your Flask app directory
 
-    - name: Move build to Flask directory
-      run: mv frontend/build/* backend/build/
-
+    - name: Move build to Flask app directory
+      run: mv ./frontend/build ./backend/build  # Replace with your Flask app directory
+        
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
