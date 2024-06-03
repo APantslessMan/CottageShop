@@ -25,8 +25,7 @@ const ShowProduct = ({ showSb }) => {
         apiService.listProducts().then((response) => {
           console.log("response", response);
           setProducts(response);
-          console.log(products);
-          showSb(`Products Fetched`, "success");
+          //   showSb(`Products Fetched`, "success");
         });
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -34,7 +33,7 @@ const ShowProduct = ({ showSb }) => {
     };
 
     fetchProducts();
-  }, [products, showSb]);
+  }, []);
 
   const handleDelete = async (id) => {
     console.log(`Delete user with ID: ${id}`);
