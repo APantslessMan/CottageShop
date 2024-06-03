@@ -24,6 +24,9 @@ jobs:
     - name: Build React app
       run: cd frontend && npm run build
 
+    - name: Remove existing build directory in Flask app
+      run: rm -rf ./backend/build  # Ensure this path matches your Flask app directory
+
     - name: Move build to Flask directory
       run: mv frontend/build/* backend/build/
 
