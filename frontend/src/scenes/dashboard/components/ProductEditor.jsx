@@ -3,6 +3,8 @@ import { Paper, Typography, Tabs, Tab } from "@mui/material";
 // import authService from "../../../components/api/authService";
 import AddProductTab from "./AddProduct";
 import ShowProduct from "./ShowProduct";
+import AddStockTab from "./AddStock";
+
 const ProductEditor = ({ showSb }) => {
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -42,23 +44,14 @@ const ProductEditor = ({ showSb }) => {
   );
 };
 
-// const EditProductTab = () => {
+// const AddStockTab = () => {
 //   return (
 //     <div>
-//       <Typography variant="h5">Edit Product</Typography>
-//       {/* Add your form for editing an existing product */}
+//       <Typography variant="h5">Add Stock</Typography>
+//       {/* Add your form for adding stock */}
 //     </div>
 //   );
 // };
-
-const AddStockTab = () => {
-  return (
-    <div>
-      <Typography variant="h5">Add Stock</Typography>
-      {/* Add your form for adding stock */}
-    </div>
-  );
-};
 
 const EditStockTab = () => {
   return (

@@ -2,7 +2,8 @@ import axios from "axios";
 // import Cookies from "js-cookie";
 import authService from "./authService";
 
-// const apiUrl = process.env.REACT_APP_API_URL;
+// const apiUrl = "http://localhost:5000"; // For local development
+let apiUrl = ""; // For production
 // const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
 
 const apiService = {
@@ -11,7 +12,7 @@ const apiService = {
       authService.refreshToken().then(console.log("Token refreshed"));
 
       if (op === "add" && formData) {
-        const response = await axios.post(`/editproduct`, formData, {
+        const response = await axios.post(`${apiUrl}/editproduct`, formData, {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
@@ -25,7 +26,7 @@ const apiService = {
         }
       } else if (op === "del" || op === "edit") {
         const response = await axios.post(
-          `/products`,
+          `${apiUrl}/products`,
           { op, id },
           {
             withCredentials: true,
@@ -37,7 +38,7 @@ const apiService = {
           console.error("Failed to add product");
         }
       } else if (op === "list") {
-        const response = await axios.get(`/products`, {
+        const response = await axios.get(`${apiUrl}/products`, {
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -54,7 +55,7 @@ const apiService = {
   },
   listProducts: async () => {
     try {
-      const response = await axios.get(`/products`, {
+      const response = await axios.get(`${apiUrl}/products`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -73,7 +74,7 @@ const apiService = {
     authService.refreshToken();
     try {
       const response = await axios.post(
-        `/editUser`,
+        `${apiUrl}/editUser`,
         { action, id },
         {
           withCredentials: true,
@@ -89,6 +90,24 @@ const apiService = {
       throw error;
     }
   },
+  editStock: async (id = null, formData = null) => {
+    authService.refreshToken();
+    try {
+      const response = await axios.post(`${apiUrl}/editstock`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.status === 201) {
+        console.log("Stock added successfully");
+      } else {
+        console.error("Failed to add stock");
+      }
+    } catch (error) {
+      console.error("Error during stock editing:", error);
+      throw error;
+    }
+  },
+
   // addUser:
   // deleteUser:
 };

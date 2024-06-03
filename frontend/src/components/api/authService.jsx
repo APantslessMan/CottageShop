@@ -1,13 +1,14 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-
+let apiUrl = ""; // For production
+// let apiUrl = "http://localhost:5000"; // For local development
 // const apiUrl = process.env.REACT_APP_API_URL;
 // const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
 const authService = {
   login: async (login, password) => {
     try {
       const response = await axios.post(
-        `/login`,
+        `${apiUrl}/login`,
         { login, password },
         {
           withCredentials: true,
@@ -36,7 +37,7 @@ const authService = {
   refreshToken: async () => {
     try {
       const response = await axios.post(
-        `/refresh`,
+        `${apiUrl}/refresh`,
         {},
         {
           withCredentials: true,
@@ -55,7 +56,7 @@ const authService = {
   register: async (username, email, password) => {
     try {
       const response = await axios.post(
-        `/register`,
+        `${apiUrl}/register`,
         { username, email, password },
         { withCredentials: true }
       );
@@ -74,7 +75,7 @@ const authService = {
 
   getRole: async () => {
     try {
-      const response = await axios.get(`/role`, {
+      const response = await axios.get(`${apiUrl}/role`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -90,7 +91,7 @@ const authService = {
 
   isAuthenticated: async () => {
     try {
-      const response = await axios.get(`/auth`, {
+      const response = await axios.get(`${apiUrl}/auth`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -107,7 +108,7 @@ const authService = {
   logout: async () => {
     try {
       const response = await axios.post(
-        `/logout`,
+        `${apiUrl}/logout`,
         {},
         {
           withCredentials: true,
@@ -128,7 +129,7 @@ const authService = {
     authService.refreshToken();
     try {
       const response = await axios.post(
-        `/useredit`,
+        `${apiUrl}/useredit`,
         { op, userid },
         {
           withCredentials: true,

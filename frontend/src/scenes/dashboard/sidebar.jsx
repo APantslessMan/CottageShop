@@ -137,7 +137,6 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
                     icon={item.icon}
                     onClick={() => handleItemClickInternal(item.value)}
                     selected={selectedItem}
-                    // setSelected={setSelected}
                     theme={theme}
                     value={item.value}
                   />

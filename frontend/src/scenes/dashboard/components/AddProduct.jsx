@@ -9,7 +9,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import apiService from "../../../components/api/apiService";
-
+// let apiurl = ""; // For Production
+let apiurl = "http://localhost:5000"; // For Development
 const AddProductForm = () => {
   const [productData, setProductData] = useState({
     name: "",
@@ -26,7 +27,7 @@ const AddProductForm = () => {
     //TODO: switch to api service component
     const fetchStockItems = async () => {
       try {
-        const response = await axios.get("/stock_items");
+        const response = await axios.get(`${apiurl}/stock_items`);
         setStockOptions(response.data);
       } catch (error) {
         console.error("Error fetching stock items:", error);

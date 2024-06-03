@@ -7,7 +7,7 @@ from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, ForeignKey
+from sqlalchemy import Integer, String, Text, ForeignKey, Numeric, Boolean
 from functools import wraps
 from werkzeug.utils import secure_filename  # Correct import
 from werkzeug.datastructures import FileStorage
@@ -79,7 +79,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
     img_url = db.Column(db.String(250), nullable=True)
     stockparts = db.relationship('StockPart', secondary=product_stock_association, backref='products')
 
@@ -87,8 +87,10 @@ class Product(db.Model):
 class StockPart(db.Model):
     __tablename__ = "stockparts"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, unique=True, nullable=True)
+    name = db.Column(db.Text, unique=True, nullable=False)
     description = db.Column(db.Text, nullable=True)
+    supplier = db.Column(db.Text, nullable=True)
+    price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
     qty = db.Column(db.Integer, nullable=False)
 
 
@@ -246,7 +248,6 @@ def get_products():
                     print("deleting user")
                     return jsonify({"message": "User Deleted"}), 200
 
-
     products = Product.query.all()
     products_data = [
         {
@@ -397,6 +398,33 @@ def get_stock_items():
     stock_items = StockPart.query.all()
     stock_items_list = [{"id": item.id, "name": item.name} for item in stock_items]
     return jsonify(stock_items_list)
+
+
+@app.route('/editstock', methods=['POST'])
+@jwt_required()
+def edit_stock():
+    try:
+        data = request.form
+        op = request.get_data()
+        print(op)
+        name = data.get('name')
+        description = data.get('description')
+        supplier = data.get('supplier')
+        qty = data.get('qty')
+        price = data.get('price')
+        print(name, description, supplier, qty, price)
+        if name and price and qty:
+            new_stock = StockPart(name=name, description=description, price=price, supplier=supplier, qty=qty)
+            db.session.add(new_stock)
+            db.session.commit()
+            return jsonify({"message": "Stock Change Successful"}), 201
+        else:
+            return jsonify({"error": "Invalid product data"}), 400
+
+    except Exception as e:
+        db.session.rollback()  # Rollback transaction in case of error
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/order')
 def get_orders():
