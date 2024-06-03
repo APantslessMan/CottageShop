@@ -15,7 +15,7 @@ import authService from "./components/api/authService";
 function App() {
   const [theme, colorMode, mode] = useMode();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [setRole] = useState(localStorage.getItem("role") || "user");
+  // const [ role, setRole] = useState(localStorage.getItem("role") || "user");
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const [showSnackbar, setShowSnackbar] = useState(false);
