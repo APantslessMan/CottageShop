@@ -78,7 +78,7 @@ function App() {
     };
 
     checkAuth();
-  }, []);
+  }, [setNavKey]);
 
   return (
     <ColorModeContext.Provider value={{ ...colorMode, mode }}>
