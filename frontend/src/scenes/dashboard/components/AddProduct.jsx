@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import apiService from "../../../components/api/apiService";
-// let apiurl = ""; // For Production
-let apiurl = "http://localhost:5000"; // For Development
+let apiurl = ""; // For Production
+// let apiurl = "http://localhost:5000"; // For Development
 const AddProductForm = () => {
   const [productData, setProductData] = useState({
     name: "",
