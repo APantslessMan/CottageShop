@@ -11,17 +11,17 @@ import SecureRoutes from "./components/utils/secureroutes";
 import Dashboard from "./scenes/dashboard/index";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import authService from "./components/api/authService";
-import UserEditor from "./scenes/dashboard/components/UserEditor";
+
 function App() {
   const [theme, colorMode, mode] = useMode();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState(localStorage.getItem("role") || "user");
+  const [setRole] = useState(localStorage.getItem("role") || "user");
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
-  const [navKey, setNavKey] = useState(0);
+  const [setNavKey] = useState(0);
 
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);

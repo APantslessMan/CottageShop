@@ -15,14 +15,14 @@ import authService from "../../../components/api/authService";
 //TODO: move from using axios to the authservice component
 const UserEditor = ({ showSb }) => {
   const [users, setUsers] = useState([]);
-  const token = authService.refreshToken();
+  authService.refreshToken();
 
   // const apiUrl = process.env.REACT_APP_API_URL;
-  const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
+  // const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/user`, {
+        const response = await axios.get("/api/user", {
           withCredentials: true,
         });
         setUsers(response.data);
@@ -37,7 +37,7 @@ const UserEditor = ({ showSb }) => {
   const handleDelete = async (id) => {
     try {
       await authService.editUser("del", id);
-      const response = await axios.get(`${apiUrl}/api/user`, {
+      const response = await axios.get(`/api/user`, {
         withCredentials: true,
       });
       setUsers(response.data);
@@ -58,7 +58,7 @@ const UserEditor = ({ showSb }) => {
   const handleResetPassword = async (id) => {
     try {
       await authService.editUser("res", id);
-      const response = await axios.get(`${apiUrl}/api/user`, {
+      const response = await axios.get(`/api/user`, {
         withCredentials: true,
       });
 
@@ -73,7 +73,7 @@ const UserEditor = ({ showSb }) => {
   const handleUpgradeRole = async (id) => {
     try {
       await authService.editUser("role_up", id);
-      const response = await axios.get(`${apiUrl}/api/user`, {
+      const response = await axios.get(`/api/user`, {
         withCredentials: true,
       });
 
@@ -87,7 +87,7 @@ const UserEditor = ({ showSb }) => {
   const handleDowngradeRole = async (id) => {
     try {
       await authService.editUser("role_down", id);
-      const response = await axios.get(`${apiUrl}/api/user`, {
+      const response = await axios.get(`/api/user`, {
         withCredentials: true,
       });
 

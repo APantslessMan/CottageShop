@@ -1,18 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  useTheme,
-  Tabs,
-  Tab,
-} from "@mui/material";
-import authService from "../../../components/api/authService";
+import React, { useState } from "react";
+import { Paper, Typography, Tabs, Tab } from "@mui/material";
+// import authService from "../../../components/api/authService";
 import AddProductTab from "./AddProduct";
 import ShowProduct from "./ShowProduct";
 const ProductEditor = ({ showSb }) => {
@@ -54,14 +42,14 @@ const ProductEditor = ({ showSb }) => {
   );
 };
 
-const EditProductTab = () => {
-  return (
-    <div>
-      <Typography variant="h5">Edit Product</Typography>
-      {/* Add your form for editing an existing product */}
-    </div>
-  );
-};
+// const EditProductTab = () => {
+//   return (
+//     <div>
+//       <Typography variant="h5">Edit Product</Typography>
+//       {/* Add your form for editing an existing product */}
+//     </div>
+//   );
+// };
 
 const AddStockTab = () => {
   return (

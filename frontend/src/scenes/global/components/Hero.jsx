@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
 const HeroContainer = styled(Box)(({ theme }) => ({

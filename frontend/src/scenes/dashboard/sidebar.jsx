@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Sidebar, Menu } from "react-pro-sidebar";
-import { Box, IconButton, Typography, useTheme, Paper } from "@mui/material";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
@@ -22,7 +22,7 @@ const Item = ({ value, title, icon, onClick, selected, theme }) => {
 const AdminSidebar = ({ handleItemClick, selectedItem }) => {
   const theme = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState("Dashboard");
+  const [setSelected] = useState("Dashboard");
 
   const menuItems = [
     {

@@ -9,7 +9,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import axios from "axios";
+// import axios from "axios";
 import apiService from "../../../components/api/apiService";
 import ProductEditCell from "../utils/ProductEditCell";
 
@@ -17,7 +17,7 @@ const ShowProduct = ({ showSb }) => {
   const [products, setProducts] = useState([{}]);
 
   // const apiUrl = process.env.REACT_APP_API_URL;
-  const apiUrl = process.env.VERCEL_URL; // For vercel deployment
+  //   const apiUrl = process.env.VERCEL_URL; // For vercel deployment
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -34,7 +34,7 @@ const ShowProduct = ({ showSb }) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [products, showSb]);
 
   const handleDelete = async (id) => {
     console.log(`Delete user with ID: ${id}`);

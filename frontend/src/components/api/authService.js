@@ -2,12 +2,12 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 // const apiUrl = process.env.REACT_APP_API_URL;
-const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
+// const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
 const authService = {
   login: async (login, password) => {
     try {
       const response = await axios.post(
-        `${apiUrl}/login`,
+        `/login`,
         { login, password },
         {
           withCredentials: true,
@@ -36,7 +36,7 @@ const authService = {
   refreshToken: async () => {
     try {
       const response = await axios.post(
-        `${apiUrl}/refresh`,
+        `/refresh`,
         {},
         {
           withCredentials: true,
@@ -55,7 +55,7 @@ const authService = {
   register: async (username, email, password) => {
     try {
       const response = await axios.post(
-        `${apiUrl}/register`,
+        `/register`,
         { username, email, password },
         { withCredentials: true }
       );
@@ -74,7 +74,7 @@ const authService = {
 
   getRole: async () => {
     try {
-      const response = await axios.get(`${apiUrl}/role`, {
+      const response = await axios.get(`/role`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -90,7 +90,7 @@ const authService = {
 
   isAuthenticated: async () => {
     try {
-      const response = await axios.get(`${apiUrl}/auth`, {
+      const response = await axios.get(`/auth`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -107,7 +107,7 @@ const authService = {
   logout: async () => {
     try {
       const response = await axios.post(
-        `${apiUrl}/logout`,
+        `/logout`,
         {},
         {
           withCredentials: true,
@@ -128,7 +128,7 @@ const authService = {
     authService.refreshToken();
     try {
       const response = await axios.post(
-        `${apiUrl}/useredit`,
+        `/useredit`,
         { op, userid },
         {
           withCredentials: true,

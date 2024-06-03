@@ -1,9 +1,9 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 import authService from "./authService";
 
 // const apiUrl = process.env.REACT_APP_API_URL;
-const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
+// const apiUrl = "https://cottage-shop.vercel.app"; // For vercel deployment
 
 const apiService = {
   editProduct: async (op, id = null, formData = null) => {
@@ -11,7 +11,7 @@ const apiService = {
       authService.refreshToken().then(console.log("Token refreshed"));
 
       if (op === "add" && formData) {
-        const response = await axios.post(`${apiUrl}/editproduct`, formData, {
+        const response = await axios.post(`/editproduct`, formData, {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
@@ -25,7 +25,7 @@ const apiService = {
         }
       } else if (op === "del" || op === "edit") {
         const response = await axios.post(
-          `${apiUrl}/products`,
+          `/products`,
           { op, id },
           {
             withCredentials: true,
@@ -37,7 +37,7 @@ const apiService = {
           console.error("Failed to add product");
         }
       } else if (op === "list") {
-        const response = await axios.get(`${apiUrl}/products`, {
+        const response = await axios.get(`/products`, {
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -54,7 +54,7 @@ const apiService = {
   },
   listProducts: async () => {
     try {
-      const response = await axios.get(`${apiUrl}/products`, {
+      const response = await axios.get(`/products`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -73,7 +73,7 @@ const apiService = {
     authService.refreshToken();
     try {
       const response = await axios.post(
-        `${apiUrl}/editUser`,
+        `/editUser`,
         { action, id },
         {
           withCredentials: true,

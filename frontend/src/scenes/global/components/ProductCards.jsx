@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Divider, Box, Typography, Container } from "@mui/material";
+import { Grid, Divider, Box, Container } from "@mui/material";
 import ProductCard from "./ProductCard";
 
 const product = {

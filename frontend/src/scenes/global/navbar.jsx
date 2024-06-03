@@ -14,9 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import BreakfastDiningIcon from "@mui/icons-material/BreakfastDining";
 import { useNavigate } from "react-router-dom";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
 import "./navbar.css";
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
