@@ -26,7 +26,6 @@ const Home = () => {
       });
 
       setFormattedData(newFormattedData);
-      console.log("formattedData", formattedData);
       setLoading(false);
     };
 
@@ -40,10 +39,10 @@ const Home = () => {
   return (
     <div>
       {formattedData.hero ? <Hero {...formattedData.hero} /> : null}
-
+      {console.log("consoleformattedData", formattedData.products)}
       {formattedData.story ? <Story {...formattedData.story} /> : null}
-      {formattedData.productCards ? (
-        <ProductCards {...formattedData.productCards} />
+      {formattedData.products ? (
+        <ProductCards {...formattedData.products} />
       ) : null}
       {formattedData.information ? (
         <Information {...formattedData.information} />

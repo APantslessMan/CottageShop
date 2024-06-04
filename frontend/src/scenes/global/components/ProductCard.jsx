@@ -8,9 +8,9 @@ import {
   Box,
 } from "@mui/material";
 
-const ProductCard = ({ product }) => {
+const ProductCard = (props) => {
   // const classes = useStyles();
-
+  console.log("ProductCard:", props);
   return (
     <Card
       sx={{
@@ -22,19 +22,19 @@ const ProductCard = ({ product }) => {
     >
       <CardMedia
         sx={{ height: 200 }}
-        image={product.image}
-        title={product.name}
+        image={props.product.img_url}
+        title={props.product.name}
       />
       <CardContent sx={{ textAlign: "left", padding: 3 }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
-          {product.name}
+          {props.name}
         </Typography>
         <Typography
           variant="body2"
           color="textSecondary"
           sx={{ lineHeight: 1.8 }}
         >
-          {product.description}
+          {props.product.description}
         </Typography>
         <Box
           mt={2}
@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
           alignItems="center"
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            ${product.price}
+            ${props.product.price}
           </Typography>
           <Button
             variant="contained"

@@ -21,7 +21,9 @@ export default function Story(props) {
       <Container maxWidth="lg">
         <Box py={8}>
           <Box sx={{ marginTop: "100px" }}>
-            {" "}
+            <Typography variant="h1" component="h2">
+              {content["header"]}
+            </Typography>{" "}
             <Divider
               variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
               sx={{
@@ -33,13 +35,9 @@ export default function Story(props) {
             />
           </Box>
           <Grid container spacing={6}>
-            <Grid item xs={12} lg={4}>
-              <Typography variant="h1" component="h2">
-                {content["header"]}
-              </Typography>
-            </Grid>
+            <Grid item xs={12} lg={4}></Grid>
             <Grid item xs={12} lg={8}>
-              <Paper elevation={3} sx={{ padding: 2 }}>
+              <Paper elevation={10} sx={{ padding: 2 }}>
                 <Grid container spacing={6}>
                   <Grid item xs={12} sm={12}>
                     <Box mb={2} display="flex" alignItems="center">

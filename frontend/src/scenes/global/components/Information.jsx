@@ -51,15 +51,20 @@ const Information = (props) => {
   console.log("Information:", modinfo);
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Divider
-        variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
-        sx={{
-          // Customize the styling using the sx prop
-          height: "2px", // Adjust the height of the line
-          backgroundColor: "primary.main", // Set the background color of the line
-          margin: "40px 0", // Add margin for spacing
-        }}
-      />
+      <Box sx={{ marginTop: "150px" }}>
+        <Typography variant="h1" component="h1" gutterBottom>
+          Why Sourdough?
+        </Typography>
+        <Divider
+          variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
+          sx={{
+            // Customize the styling using the sx prop
+            height: "2px", // Adjust the height of the line
+            backgroundColor: "primary.main", // Set the background color of the line
+            margin: "40px 0", // Add margin for spacing
+          }}
+        />
+      </Box>
       {modinfo.map((info, index) => (
         <Box
           key={index}
