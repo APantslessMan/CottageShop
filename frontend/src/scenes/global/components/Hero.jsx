@@ -30,7 +30,7 @@ const HeroContent = styled(Box)(({ theme }) => ({
   backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Add a background color with transparency to improve text readability
 }));
 
-const Hero = () => {
+const Hero = (props) => {
   return (
     // <Paper
     //   elevation={10}
@@ -49,7 +49,7 @@ const Hero = () => {
           sx={{ fontSize: "8.2vh" }}
           color="secondary"
         >
-          CottageShop
+          {props.title}
         </Typography>
         {/*TODO: change title to variable pulled from DB */}
         <Typography
@@ -58,7 +58,7 @@ const Hero = () => {
           sx={{ fontSize: "3.2vh" }}
           color="secondary"
         >
-          Handmade Artisan Products
+          {props.sub}
         </Typography>
       </HeroContent>
     </HeroContainer>

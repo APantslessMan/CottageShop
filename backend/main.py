@@ -7,7 +7,7 @@ from flask_gravatar import Gravatar
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, ForeignKey, Numeric, Boolean
+from sqlalchemy import Integer, String, Text, ForeignKey, Numeric, Boolean, JSON
 from functools import wraps
 from werkzeug.utils import secure_filename  # Correct import
 from werkzeug.datastructures import FileStorage
@@ -110,8 +110,9 @@ class Site(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
-    toggle = db.Column(db.String(250), nullable=False)
+    toggle = db.Column(db.Boolean)
     prefs = db.Column(db.String(250), nullable=True)
+    params = db.Column(db.JSON)
 
 
 class Plugin(db.Model):
@@ -474,8 +475,22 @@ def get_order(order_id):
     return jsonify({"error": "Order not found"}), 404
 
 
-
-
+# Request basic site data, data is stored in Site DB, with name being <PAGE>_<Component> and data being
+# stored in json column as { <item>: <data> }
+@app.route('/api/json', methods=['POST'])
+def get_json():
+    data = request.json
+    typed = data.get('type')
+    if typed:
+        rows = Site.query.filter(Site.name.like(f'{typed}_%')).all()
+        row_dict = {}
+        for row in rows:
+            print(row.id)
+            if row.toggle:
+                row_dict[row.name] = row.params
+                print(row)
+        return jsonify(row_dict), 200
+    return data, 200
 
 @app.route('/role', methods=['GET'])
 @jwt_required(locations=['cookies'])

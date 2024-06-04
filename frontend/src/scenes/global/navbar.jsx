@@ -29,7 +29,6 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      console.log("ScrollTop:", window.scrollY);
       // Determine if the user has scrolled past the top position
       setIsScrolled(scrollTop > 0);
     };
