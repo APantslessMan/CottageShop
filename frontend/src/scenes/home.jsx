@@ -7,7 +7,7 @@ import Contact from "./global/components/Contact";
 import ApiDataFetch from "../components/api/ApiDataFetch"; // Adjust the import as per your file structure
 import Hero from "./global/components/Hero";
 import Story from "./global/components/Story";
-
+//fixed the import path
 const Home = () => {
   const [formattedData, setFormattedData] = useState({});
   const [loading, setLoading] = useState(true);
