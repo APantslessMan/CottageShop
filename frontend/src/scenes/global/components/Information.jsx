@@ -89,6 +89,10 @@ const Information = (props) => {
               height: "auto",
               objectFit: "cover",
               minHeight: "294px",
+              marginBottom: isSmallScreen ? "-20px" : "0", // Overlapping effect for small screens
+              marginRight: isSmallScreen || index % 2 !== 0 ? "0" : "-20px", // Overlapping effect for larger screens
+              marginLeft: isSmallScreen || index % 2 === 0 ? "0" : "-20px", // Overlapping effect for larger screens
+              zIndex: 1,
             }}
             elevation={10}
           />
@@ -106,6 +110,7 @@ const Information = (props) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
+              zIndex: 0, // Ensure text Paper is below the image
             }}
             elevation={10}
           >
