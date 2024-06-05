@@ -1,4 +1,4 @@
-import { Box, IconButton, useTheme } from "@mui/material";
+import { Box, Icon, IconButton, useTheme, Badge } from "@mui/material";
 import { useContext, useState, useEffect } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -16,15 +16,31 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import "./navbar.css";
+import { ShoppingCartOutlined } from "@mui/icons-material";
+import { useCart } from "../../utils/CartWrapper";
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
+// const cartItemCount = 3;
+const CartButton = () => {
+  const { cartItemCount } = useCart();
 
+  return (
+    <Tooltip title="View Cart" placement="left">
+      <IconButton color="primary" size="large">
+        <Badge badgeContent={cartItemCount} color="error">
+          <ShoppingCartOutlined style={{ fontSize: 36, color: "ivory" }} />
+        </Badge>
+      </IconButton>
+    </Tooltip>
+  );
+};
 const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   const theme = useTheme();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  // const [cartItemCount, setCartItemCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -256,6 +272,9 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
                 </Avatar>
               </IconButton>
             </Tooltip>
+
+            <CartButton />
+
             <Menu
               slotProps={{
                 paper: {

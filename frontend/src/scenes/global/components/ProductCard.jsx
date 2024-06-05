@@ -7,10 +7,17 @@ import {
   Button,
   Box,
 } from "@mui/material";
+import { useCart } from "../../../utils/CartWrapper";
 
 const ProductCard = (props) => {
+  const { cartItemCount, incCartItem } = useCart();
   // const classes = useStyles();
   console.log("ProductCard:", props);
+
+  const handleAddToCart = () => {
+    incCartItem();
+  };
+
   return (
     <Card
       sx={{
@@ -27,7 +34,7 @@ const ProductCard = (props) => {
       />
       <CardContent sx={{ textAlign: "left", padding: 3 }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
-          {props.name}
+          {props.product.name} {/* Fixed props.name to props.product.name */}
         </Typography>
         <Typography
           variant="body2"
@@ -47,6 +54,7 @@ const ProductCard = (props) => {
           </Typography>
           <Button
             variant="contained"
+            onClick={handleAddToCart}
             sx={{
               backgroundColor: "primary.main",
               color: "white",

@@ -62,6 +62,22 @@ product_stock_association = db.Table('product_stock_association',
                                      db.Column('stockpart_id', db.Integer, db.ForeignKey('stockparts.id')),
                                      db.Column('quantity', db.Integer, nullable=False))
 
+cart_association = db.Table(
+    "cart_association",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+    db.Column("product_id", db.Integer, db.ForeignKey("products.id"), primary_key=True),
+    db.Column("qty", db.Integer, nullable=False)
+)
+
+
+class CartItem(db.Model):
+    __tablename__ = "cart_items"
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), primary_key=True)
+    quantity = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship("User", backref="cart_items")
+    product = db.relationship("Product", backref="cart_items")
 
 class User(db.Model):
     __tablename__ = "users"
@@ -72,6 +88,7 @@ class User(db.Model):
     purchases = db.Column(db.String(250), nullable=True)
     role = db.Column(db.String(80), nullable=False, default='user')
     orders = db.relationship("Order", back_populates="user")
+    cart = db.relationship("Product", secondary="cart_items", back_populates="users")
 
 
 class Product(db.Model):
@@ -82,6 +99,7 @@ class Product(db.Model):
     price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
     img_url = db.Column(db.String(250), nullable=True)
     stockparts = db.relationship('StockPart', secondary=product_stock_association, backref='products')
+    users = db.relationship("User", secondary="cart_items", back_populates="cart",overlaps="cart_items,user")
 
 
 class StockPart(db.Model):
@@ -141,11 +159,21 @@ def img_path(directory):
     parts = directory.split(os.path.sep)
     if 'build' in parts:
         index_path = parts.index('build')
-        print(index_path)
         parts = parts[index_path + 1:]
     new_filepath = os.path.join(*parts)
     return new_filepath
 
+
+
+def add_to_cart(user_id, product_id, quantity):
+    cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
+    if cart_item:
+        cart_item.quantity += quantity
+    else:
+        cart_item = CartItem(user_id=user_id, product_id=product_id, quantity=quantity)
+        db.session.add(cart_item)
+
+    db.session.commit()
 ###############################################################
 #                         API Routes                          #
 ###############################################################
@@ -280,7 +308,15 @@ def get_products():
             return jsonify(products_data), 200
 
 
+@app.route('/cart', methods=['POST'])
+def cart():
+    user_id = request.json['user_id']
+    product_id = request.json['product_id']
+    qty = request.json.get('quantity', 1)  # Default quantity is 1 if not provided
+    print(user_id, product_id, qty)
+    add_to_cart(user_id, product_id, qty)
 
+    return 'Item added to cart successfully', 200
 
 
 @app.route('/api/user')
