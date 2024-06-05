@@ -62,12 +62,12 @@ product_stock_association = db.Table('product_stock_association',
                                      db.Column('stockpart_id', db.Integer, db.ForeignKey('stockparts.id')),
                                      db.Column('quantity', db.Integer, nullable=False))
 
-cart_association = db.Table(
-    "cart_association",
-    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("product_id", db.Integer, db.ForeignKey("products.id"), primary_key=True),
-    db.Column("qty", db.Integer, nullable=False)
-)
+# cart_association = db.Table(
+#     "cart_association",
+#     db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+#     db.Column("product_id", db.Integer, db.ForeignKey("products.id"), primary_key=True),
+#     db.Column("qty", db.Integer, nullable=False)
+# )
 
 
 class CartItem(db.Model):
@@ -88,7 +88,7 @@ class User(db.Model):
     purchases = db.Column(db.String(250), nullable=True)
     role = db.Column(db.String(80), nullable=False, default='user')
     orders = db.relationship("Order", back_populates="user")
-    cart = db.relationship("Product", secondary="cart_items", back_populates="users")
+    cart = db.relationship("Product", secondary="cart_items", back_populates="users", overlaps="user,cart_items,product")
 
 
 class Product(db.Model):
@@ -99,7 +99,7 @@ class Product(db.Model):
     price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
     img_url = db.Column(db.String(250), nullable=True)
     stockparts = db.relationship('StockPart', secondary=product_stock_association, backref='products')
-    users = db.relationship("User", secondary="cart_items", back_populates="cart",overlaps="cart_items,user")
+    users = db.relationship("User", secondary="cart_items", back_populates="cart", overlaps="cart_items,user,product")
 
 
 class StockPart(db.Model):
