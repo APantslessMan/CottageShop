@@ -14,9 +14,9 @@ services:
   web:
     image: apantslessman/cottageshop:latest
     ports:
-      - "8080:8000"  # Maps port 8000 on the host to port 8000 in the container
+      - "8080:8000" 
     volumes:
-      - csimg:/app/build/assets
+      - csimg:/app/build/assets/site/img
     environment:
       POSTGRES_USER: Cshop
       POSTGRES_PASSWORD: cspass
