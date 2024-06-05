@@ -2,14 +2,6 @@ import React from "react";
 import { Grid, Divider, Box, Container, Typography } from "@mui/material";
 import ProductCard from "./ProductCard";
 
-const product = {
-  name: "Sourdough Bread",
-  image: "https://source.unsplash.com/featured/?bread",
-  description:
-    "A delightful sourdough bread with a crispy crust and soft interior.",
-  price: 8.99,
-};
-
 const ProductCards = (props) => {
   return (
     <section>
@@ -33,9 +25,10 @@ const ProductCards = (props) => {
             {Object.keys(props).map((product) => (
               <Grid item xs={12} lg={4}>
                 <ProductCard product={props[product]} />
+
                 {console.log("ProductCards:", props[product])}
               </Grid>
-            ))}
+            ))}{" "}
           </Grid>
         </Box>
       </Container>

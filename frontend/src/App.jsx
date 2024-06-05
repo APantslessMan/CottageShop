@@ -82,51 +82,51 @@ function App() {
     <ColorModeContext.Provider value={{ ...colorMode, mode }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
-          <main className="content">
-            <Navbar
-              isLoggedIn={isLoggedIn}
-              onLogout={handleLogout}
-              userName={userName}
+        {/* <div className="app"> */}
+        <main className="content">
+          <Navbar
+            isLoggedIn={isLoggedIn}
+            onLogout={handleLogout}
+            userName={userName}
+          />
+          <Routes>
+            <Route element={<SecureRoutes />}>
+              <Route
+                path="/admin/*"
+                element={<Dashboard showSb={handleOpenSnackbar} />}
+              />
+            </Route>
+            <Route
+              path="/login"
+              element={<Wrapper component={Login} onLogin={handleLogin} />}
             />
-            <Routes>
-              <Route element={<SecureRoutes />}>
-                <Route
-                  path="/admin/*"
-                  element={<Dashboard showSb={handleOpenSnackbar} />}
-                />
-              </Route>
-              <Route
-                path="/login"
-                element={<Wrapper component={Login} onLogin={handleLogin} />}
-              />
-              <Route
-                path="/register"
-                element={
-                  <Register onLogin={handleLogin} showSb={handleOpenSnackbar} />
-                }
-              />
-              <Route path="/" element={<Home />} />
-            </Routes>
+            <Route
+              path="/register"
+              element={
+                <Register onLogin={handleLogin} showSb={handleOpenSnackbar} />
+              }
+            />
+            <Route path="/" element={<Home />} />
+          </Routes>
 
-            <Snackbar
-              open={showSnackbar}
-              severity="error"
-              autoHideDuration={6000}
+          <Snackbar
+            open={showSnackbar}
+            severity="error"
+            autoHideDuration={6000}
+            onClose={handleshowSnackBar}
+            message={sbError}
+          >
+            <Alert
               onClose={handleshowSnackBar}
-              message={sbError}
+              severity={sbType}
+              variant="filled"
+              sx={{ width: "100%" }}
             >
-              <Alert
-                onClose={handleshowSnackBar}
-                severity={sbType}
-                variant="filled"
-                sx={{ width: "100%" }}
-              >
-                {sbError}
-              </Alert>
-            </Snackbar>
-          </main>
-        </div>
+              {sbError}
+            </Alert>
+          </Snackbar>
+        </main>
+        {/* </div> */}
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

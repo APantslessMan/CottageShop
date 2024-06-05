@@ -32,13 +32,13 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
       value: "dashboard",
       display: "true",
     },
-    {
-      type: "title",
-      title: "Users",
-      icon: <ContactsOutlinedIcon />,
-      value: "userManagement",
-      display: "true",
-    },
+    // {
+    //   type: "title",
+    //   title: "Users",
+    //   icon: <ContactsOutlinedIcon />,
+    //   value: "userManagement",
+    //   display: "false",
+    // },
 
     {
       type: "item",
@@ -47,6 +47,12 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
       value: "userManagement",
       display: "true",
     },
+    // {
+    //   type: "title",
+    //   title: "Products",
+    //   value: "siteSettings",
+    //   display: "false",
+    // },
     {
       type: "item",
       title: "Product Management",
@@ -59,6 +65,19 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
       title: "Analytics",
       icon: <BarChartOutlinedIcon />,
       value: "analytics",
+    },
+    // {
+    //   type: "title",
+    //   title: "Site",
+    //   value: "siteSettings",
+    //   display: "false",
+    // },
+    {
+      type: "item",
+      title: "Home Settings",
+      icon: <BarChartOutlinedIcon />,
+      value: "homeSettings",
+      display: "true",
     },
   ];
 

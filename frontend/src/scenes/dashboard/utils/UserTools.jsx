@@ -14,7 +14,7 @@ const UserTable = ({
     <UserEditCell
       userrole={userrole}
       onDelete={() => handleDelete(userid)}
-      onUpdate={() => handleUpdate(userid)}
+      onUpdate={() => handleUpdate("upd", userid, column, newValue)}
       onResetPassword={() => handleResetPassword(userid)}
       onUpgradeRole={() => handleUpgradeRole(userid)}
       onDowngradeRole={() => handleDowngradeRole(userid)}

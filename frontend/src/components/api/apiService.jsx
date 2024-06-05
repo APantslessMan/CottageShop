@@ -75,12 +75,17 @@ const apiService = {
   },
   // addProduct:
   // deleteProduct:
-  editUser: async (action, id) => {
+  editUser: async (action, id, column = null, item = null) => {
     authService.refreshToken();
     try {
       const response = await axios.post(
         `${apiUrl}/editUser`,
-        { action, id },
+        {
+          action,
+          id,
+          ...(column != null && { column }),
+          ...(item != null && { item }),
+        },
         {
           withCredentials: true,
         }

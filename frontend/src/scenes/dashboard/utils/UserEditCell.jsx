@@ -49,7 +49,7 @@ const UserEditCell = ({
   };
 
   return (
-    <TableCell>
+    <section>
       <Tooltip title="Delete User">
         <IconButton onClick={() => handleClickOpen(userid)} aria-label="delete">
           <DeleteIcon style={{ color: theme.palette.text.primary }} />
@@ -108,7 +108,7 @@ const UserEditCell = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </TableCell>
+    </section>
   );
 };
 

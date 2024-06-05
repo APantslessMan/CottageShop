@@ -1,31 +1,17 @@
 import React, { useState, useEffect } from "react";
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
-// import axios from "axios";
+import { Paper, Typography, Button } from "@mui/material";
 import apiService from "../../../components/api/apiService";
 import ProductEditCell from "../utils/ProductEditCell";
+import { DataGrid } from "@mui/x-data-grid";
 
 const ShowProduct = ({ showSb }) => {
-  const [products, setProducts] = useState([{}]);
-
-  // const apiUrl = process.env.REACT_APP_API_URL;
-  //   const apiUrl = process.env.VERCEL_URL; // For vercel deployment
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await apiService.listProducts();
-        console.log("response", response);
         setProducts(response);
-        // showSb(`Products Fetched`, "success");
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -35,28 +21,54 @@ const ShowProduct = ({ showSb }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    console.log(`Delete Product with ID: ${id}`);
-
     try {
-      apiService.editProduct("del", id).then((response) => {
-        apiService.listProducts().then((response) => {
-          console.log("response", response);
-          setProducts(response);
-          console.log(products);
-          showSb(`Product Deleted`, "success");
-        });
-      });
+      await apiService.editProduct("del", id);
+      const updatedProducts = await apiService.listProducts();
+      setProducts(updatedProducts);
+      showSb(`Product Deleted`, "success");
     } catch (error) {
       showSb(`Product Delete Failed: ${error}`, "error");
     }
-
-    console.log(`Delete Product with ID: ${id}`);
-  }; //
+  };
 
   const handleUpdate = (id) => {
-    // Implement the update Product logic here
     console.log(`Update Product with ID: ${id}`);
   };
+
+  const columns = [
+    { field: "id", headerName: "ID", width: 60 },
+    { field: "name", headerName: "Name", width: 100 },
+    { field: "description", headerName: "Description", width: 200 },
+    { field: "price", headerName: "Price", width: 70 },
+    {
+      field: "img_url",
+      headerName: "Image",
+      width: 100,
+      renderCell: (params) =>
+        params.value ? (
+          <img
+            src={params.value}
+            alt="Product"
+            style={{ maxWidth: "100%", height: "auto" }}
+          />
+        ) : (
+          "N/A"
+        ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      sortable: false,
+      width: 200,
+      renderCell: (params) => (
+        <ProductEditCell
+          productId={params.row.id}
+          onDelete={() => handleDelete(params.row.id)}
+          onUpdate={() => handleUpdate(params.row.id)}
+        />
+      ),
+    },
+  ];
 
   return (
     <Paper
@@ -69,60 +81,17 @@ const ShowProduct = ({ showSb }) => {
       }}
       elevation={7}
     >
-      <TableContainer
-        style={{
-          width: "80%",
-          border: "2px solid white",
-          borderRadius: "15px",
-          overflow: "hidden",
-          margin: "40px",
-        }}
-      >
-        <Typography
-          variant="h5"
-          gutterBottom
-          align="center"
-          borderBottom="solid 2px white"
-          p={2}
-        >
+      <div style={{ width: "100%", height: 400 }}>
+        <Typography variant="h5" gutterBottom align="left" p={2}>
           Product Editor
         </Typography>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell style={{ fontWeight: "bold" }}>ID</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Description</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Price</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Image</TableCell>
-              <TableCell style={{ fontWeight: "bold" }}>Edit</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.description || "N/A"}</TableCell>
-
-                <TableCell>{product.price}</TableCell>
-                <TableCell>
-                  {product.img_url ? (
-                    <img src={product.img_url} alt="Product 1" width="50" />
-                  ) : (
-                    "N/A"
-                  )}
-                </TableCell>
-                <ProductEditCell
-                  productId={product.id}
-                  onDelete={() => handleDelete(product.id)}
-                  onUpdate={() => handleUpdate(product.id)}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <DataGrid
+          rows={products}
+          columns={columns}
+          pageSize={5}
+          disableSelectionOnClick
+        />
+      </div>
     </Paper>
   );
 };

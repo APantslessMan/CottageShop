@@ -401,6 +401,9 @@ def edit_user():
                     session.commit()
                     print("change role for user")
                     return jsonify({"message": "User downgraded"}), 200
+                elif operation == 'upd':
+                    print(operation_user)
+                    return jsonify({"message": "User Updated"}), 200
                 else:
                     return jsonify({"message": "User is already bottom role"}), 400
             else:

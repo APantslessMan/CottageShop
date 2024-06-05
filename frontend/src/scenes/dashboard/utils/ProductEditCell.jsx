@@ -38,7 +38,7 @@ const ProductEditCell = ({ productId, onDelete, onUpdate }) => {
   };
 
   return (
-    <TableCell>
+    <section>
       <Tooltip title="Delete Product">
         <IconButton
           onClick={() => handleClickOpen(productId)}
@@ -73,7 +73,7 @@ const ProductEditCell = ({ productId, onDelete, onUpdate }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </TableCell>
+    </section>
   );
 };
 
