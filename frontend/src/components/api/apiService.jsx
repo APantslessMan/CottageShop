@@ -155,5 +155,20 @@ const apiService = {
       throw error;
     }
   },
+  getcartitems: async (items) => {
+    try {
+      authService.refreshToken();
+      console.log(items);
+      const response = await axios.post(`${apiUrl}/cartitems`, { items });
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch {
+      console.error("Error getting cart items:", error);
+      throw error;
+    }
+  },
 };
 export default apiService;

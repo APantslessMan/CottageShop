@@ -340,7 +340,30 @@ def cart():
         print(user.id, product_id, qty)
         add_to_cart(user.id, product_id, qty)
 
-        return 'Item added to cart successfully', 200
+        return 'Item added to cart successfully', 201
+
+
+@app.route('/cartitems', methods=['POST'])
+def load_cart_items():
+    data = request.json
+    if data:
+        items_list = []
+        print(data)
+        for ind, item in enumerate(data['items']):
+            cart_items = Product.query.filter_by(id=item['product']).first()
+            item_dict = {
+                    "id": cart_items.id,
+                    "name": cart_items.name,
+                    "description": cart_items.description,
+                    "price": cart_items.price,
+                    "img_url": cart_items.img_url,
+                    "quantity": data['items'][ind]['quantity'],
+
+                }
+            items_list.append(item_dict)
+
+        print(items_list)
+    return jsonify(items_list), 200
 
 
 @app.route('/api/user')

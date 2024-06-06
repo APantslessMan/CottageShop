@@ -18,15 +18,16 @@ import { useNavigate } from "react-router-dom";
 import "../../css/navbar.css";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 import { useCart } from "../../components/utils/CartWrapper";
-// Placeholder for menu item
+import CartModal from "./cartModal";
+
 const pages = ["Breads", "About", "Blog"];
-// const cartItemCount = 3;
-const CartButton = () => {
+
+const CartButton = ({ onClick }) => {
   const { cartItemCount } = useCart();
 
   return (
     <Tooltip title="View Cart" placement="left">
-      <IconButton color="primary" size="large">
+      <IconButton color="primary" size="large" onClick={onClick}>
         <Badge badgeContent={cartItemCount} color="error">
           <ShoppingCartOutlined style={{ fontSize: 36, color: "ivory" }} />
         </Badge>
@@ -34,25 +35,31 @@ const CartButton = () => {
     </Tooltip>
   );
 };
+
 const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   const theme = useTheme();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  // const [cartItemCount, setCartItemCount] = useState(0);
+  const [openCartModal, setOpenCartModal] = useState(false);
+
+  const handleOpenCartModal = () => {
+    setOpenCartModal(true);
+  };
+
+  const handleCloseCartModal = () => {
+    setOpenCartModal(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      // Determine if the user has scrolled past the top position
       setIsScrolled(scrollTop > 0);
     };
 
-    // Add scroll event listener when component mounts
     window.addEventListener("scroll", handleScroll);
 
-    // Remove scroll event listener when component unmounts
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -61,6 +68,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   const handleOpenNavMenu = (event) => {
     setNavAnchor(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event) => {
     setUserAnchor(event.currentTarget);
   };
@@ -72,15 +80,17 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   const handleCloseUserMenu = () => {
     setUserAnchor(null);
   };
+
   const handleUserMenuClick = (actions) => {
     actions.forEach((action) => {
       if (action === onLogout) {
-        setTimeout(action, 500); // delay in milliseconds
+        setTimeout(action, 500);
       } else {
         action();
       }
     });
   };
+
   const navigate = useNavigate();
 
   const userMenuItems = isLoggedIn
@@ -124,18 +134,15 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
       color="transparent"
       elevation={0}
       sx={{
-        background: isScrolled ? "rgba(0, 0, 0, .2)" : "rgba(0, 0, 0, 1)", // Adjust background color based on theme mode and scroll position
-        backdropFilter: "blur(10px)", // Blurred effect
+        background: isScrolled ? "rgba(0, 0, 0, .2)" : "rgba(0, 0, 0, 1)",
+        backdropFilter: "blur(10px)",
         boxShadow: "none",
         transition: "background-color 1s ease",
-        zIndex: 1000, // Ensure it's above other elements
+        zIndex: 1000,
       }}
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          {/* <BreakfastDiningIcon
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-          /> */}
           <Typography
             variant="h6"
             noWrap
@@ -169,7 +176,6 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               slotProps={{
                 paper: {
                   sx: {
-                    //TODO: refactor to theme
                     background: mode === "dark" ? "#333" : "#fff",
                   },
                 },
@@ -198,9 +204,6 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               ))}
             </Menu>
           </Box>
-          {/* <BreakfastDiningIcon
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-          /> */}
           <Typography
             variant="h5"
             noWrap
@@ -219,7 +222,6 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
           >
             CottageShop
           </Typography>
-          {/* TODO: change title to variable pulled from DB */}
           <Box
             sx={{
               flexGrow: 1,
@@ -273,7 +275,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               </IconButton>
             </Tooltip>
 
-            <CartButton />
+            <CartButton onClick={handleOpenCartModal} />
 
             <Menu
               slotProps={{
@@ -310,6 +312,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               ))}
             </Menu>
           </Box>
+          <CartModal open={openCartModal} onClose={handleCloseCartModal} />
         </Toolbar>
       </Container>
     </AppBar>
