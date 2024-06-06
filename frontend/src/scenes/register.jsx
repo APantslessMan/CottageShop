@@ -7,7 +7,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import "./Register.css";
+import "../css/Register.css";
 import authService from "../components/api/authService";
 
 const Register = ({ onLogin, showSb }) => {

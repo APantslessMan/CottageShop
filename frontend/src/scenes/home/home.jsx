@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-import ProductCards from "./global/components/ProductCards";
-import Information from "./global/components/Information";
-import Testimonials from "./global/components/Testimonials";
-import Contact from "./global/components/Contact";
-import ApiDataFetch from "../components/api/ApiDataFetch"; // Adjust the import as per your file structure
-import Hero from "./global/components/Hero";
-import Story from "./global/components/Story";
+import ProductCards from "./components/ProductCards";
+import Information from "./components/Information";
+import Testimonials from "./components/Testimonials";
+import Contact from "./components/Contact";
+import ApiDataFetch from "../../components/api/ApiDataFetch"; // Adjust the import as per your file structure
+import Hero from "./components/Hero";
+import Story from "./components/Story";
 //fixed the import path
 const Home = () => {
   const [formattedData, setFormattedData] = useState({});

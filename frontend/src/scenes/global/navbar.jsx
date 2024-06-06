@@ -15,9 +15,9 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
-import "./navbar.css";
+import "../../css/navbar.css";
 import { ShoppingCartOutlined } from "@mui/icons-material";
-import { useCart } from "../../utils/CartWrapper";
+import { useCart } from "../../components/utils/CartWrapper";
 // Placeholder for menu item
 const pages = ["Breads", "About", "Blog"];
 // const cartItemCount = 3;

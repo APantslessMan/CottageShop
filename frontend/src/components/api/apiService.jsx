@@ -3,7 +3,7 @@ import axios from "axios";
 import authService from "./authService";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
-
+// TODO: Refactor to deduplicate code by use dynamic endpoints
 const apiService = {
   editProduct: async (op, id = null, formData = null) => {
     try {
@@ -73,8 +73,6 @@ const apiService = {
       throw error;
     }
   },
-  // addProduct:
-  // deleteProduct:
   editUser: async (action, id, column = null, item = null) => {
     authService.refreshToken();
     try {
@@ -117,8 +115,45 @@ const apiService = {
       throw error;
     }
   },
-
-  // addUser:
-  // deleteUser:
+  getcart: async (user) => {
+    try {
+      authService.refreshToken();
+      const response = await axios.post(
+        `${apiUrl}/getcart`,
+        { user },
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch {
+      console.error("Error getting cart:", error);
+      throw error;
+    }
+  },
+  addcart: async (user, product, quantity) => {
+    try {
+      authService.refreshToken();
+      const response = await axios.post(
+        `${apiUrl}/cart`,
+        { user, product, quantity },
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 201) {
+        console.log("Product added to cart successfully");
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch {
+      console.error("Error adding to cart:", error);
+      throw error;
+    }
+  },
 };
 export default apiService;

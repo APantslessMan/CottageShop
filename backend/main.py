@@ -164,7 +164,6 @@ def img_path(directory):
     return new_filepath
 
 
-
 def add_to_cart(user_id, product_id, quantity):
     cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
     if cart_item:
@@ -309,12 +308,18 @@ def get_products():
 
 
 @app.route('/cart', methods=['POST'])
+@jwt_required()
 def cart():
-    user_id = request.json['user_id']
+    username = get_jwt_identity()
+    uname = username['username']
+    user = User.query.filter_by(username=uname).first()
+    if not user:
+        return "User not found", 404
+    print(user.id)
     product_id = request.json['product_id']
     qty = request.json.get('quantity', 1)  # Default quantity is 1 if not provided
-    print(user_id, product_id, qty)
-    add_to_cart(user_id, product_id, qty)
+    print(user.id, product_id, qty)
+    add_to_cart(user.id, product_id, qty)
 
     return 'Item added to cart successfully', 200
 
@@ -539,11 +544,11 @@ def get_role():
 
 
 @app.route('/auth', methods=['GET'])
-@jwt_required(locations=['cookies'])  # Requires authentication
+@jwt_required()  # Requires authentication
 def check_authentication():
     user_id = get_jwt_identity()
     print(user_id)
-    return jsonify({'message': 'Authentication successful', 'username': user_id['username']}), 200
+    return jsonify({'message': 'Authentication successful', 'username': user_id['username'], 'role': user_id['role']}), 200
 
 
 

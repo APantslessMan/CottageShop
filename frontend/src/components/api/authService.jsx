@@ -94,7 +94,11 @@ const authService = {
         withCredentials: true,
       });
       if (response.status === 200) {
-        return { isAuthenticated: true, userName: response.data.username };
+        return {
+          isAuthenticated: true,
+          userName: response.data.username,
+          role: response.data.role,
+        };
       } else {
         return { isAuthenticated: false, userName: "" };
       }
