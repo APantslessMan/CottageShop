@@ -1,12 +1,20 @@
 import React, { createContext, useContext, useState } from "react";
+import { useAuth } from "./AuthContext";
+import apiService from "../api/apiService";
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
+  const auth = useAuth();
   const [cartItems, setCartItems] = useState([]); // [{ product: {}, quantity: 1 }]
-
+  const loadCart = (cartItems) => {
+    setCartItems(cartItems);
+  };
+  const clearCart = () => {
+    setCartItems([]); // Clear cart items
+  };
   const incCartItem = (product) => {
     setCartItems((prevItems) => {
       const itemIndex = prevItems.findIndex((item) => item.product === product);
@@ -18,9 +26,10 @@ export const CartProvider = ({ children }) => {
         "prevItems",
         prevItems
       );
+
       // TODO: Check for user logged in and save cart to DB on change. save to localstorage
-      if (isLoggedin) {
-        // save to DB
+      if (auth.isLoggedIn) {
+        apiService.addcart(product, 1);
       }
       if (itemIndex > -1) {
         const updatedItems = [...prevItems];
@@ -62,6 +71,8 @@ export const CartProvider = ({ children }) => {
         cartItemCount,
         incCartItem,
         decCartItem,
+        loadCart,
+        clearCart,
       }}
     >
       {children}

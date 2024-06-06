@@ -18,5 +18,10 @@ class TestImgPath(unittest.TestCase):
         expected_output = f'.{os.sep}assets{os.sep}img{os.sep}whatever.jpg'
         self.assertEqual(os.path.normpath(img_path(input_directory)), os.path.normpath(expected_output))
 
+class TestCartget(unittest.TestCase):
+    def test_cart_get(self):
+        user_id = 1
+        expected_cart = {}
+        self.assertEqual()
 if __name__ == '__main__':
     unittest.main()

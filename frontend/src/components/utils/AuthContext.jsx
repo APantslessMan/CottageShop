@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import authService from "../api/authService";
 import { useNavigate } from "react-router-dom";
-
+import { useCart } from "./CartWrapper";
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
       setIsLoggedIn(false);
+      clearCartOnLogout(); // Clear cart items on logout
       setUserName("");
       setRole("");
       navigate("/"); // Navigate to home page after logout

@@ -10,10 +10,14 @@ import SecureRoutes from "./components/utils/secureroutes";
 import Dashboard from "./scenes/dashboard/index";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAuth } from "./components/utils/AuthContext"; // Import useAuth hook
+import apiService from "./components/api/apiService";
+import { useCart } from "./components/utils/CartWrapper";
 
 function App() {
   const [theme, colorMode, mode] = useMode();
   const auth = useAuth();
+  const cart = useCart();
+  // const { setCartItems } = cart;
   const { isLoggedIn, handleLogin, handleLogout, role, userName } = auth;
   const navigate = useNavigate();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -25,6 +29,24 @@ function App() {
     setSbType(type);
     setShowSnackbar(true);
   };
+
+  useEffect(() => {
+    const loadCart = async () => {
+      if (isLoggedIn) {
+        try {
+          const cartItems = await apiService.getcart();
+          console.log("cartItems", cartItems);
+          cart.loadCart(cartItems);
+        } catch (error) {
+          console.error("Error loading cart:", error);
+        }
+      }
+      if (!isLoggedIn) {
+        cart.clearCart();
+      }
+    };
+    loadCart();
+  }, [isLoggedIn]);
 
   const handleshowSnackBar = () => {
     setShowSnackbar(false);

@@ -164,6 +164,20 @@ def img_path(directory):
     return new_filepath
 
 
+def get_from_cart(user_id):
+    cart_items = CartItem.query.filter_by(user_id=user_id).all()
+    items_list = []
+    for item in cart_items:
+        item_dict = {
+            'product': item.product_id,
+            'quantity': item.quantity,
+        }
+        items_list.append(item_dict)
+
+    print(items_list)
+    return items_list
+
+
 def add_to_cart(user_id, product_id, quantity):
     cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
     if cart_item:
@@ -316,12 +330,17 @@ def cart():
     if not user:
         return "User not found", 404
     print(user.id)
-    product_id = request.json['product_id']
-    qty = request.json.get('quantity', 1)  # Default quantity is 1 if not provided
-    print(user.id, product_id, qty)
-    add_to_cart(user.id, product_id, qty)
+    if not request.json:
+        cart_items = get_from_cart(user.id)
+        print(cart_items)
+        return jsonify(cart_items), 201
+    elif request.json:
+        product_id = request.json['product']
+        qty = request.json.get('quantity', 1)  # Default quantity is 1 if not provided
+        print(user.id, product_id, qty)
+        add_to_cart(user.id, product_id, qty)
 
-    return 'Item added to cart successfully', 200
+        return 'Item added to cart successfully', 200
 
 
 @app.route('/api/user')

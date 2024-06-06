@@ -26,7 +26,7 @@ const ProductCards = (props) => {
               <Grid item xs={12} lg={4}>
                 <ProductCard product={props[product]} />
 
-                {console.log("ProductCards:", props[product])}
+                {/* {console.log("ProductCards:", props[product])} */}
               </Grid>
             ))}{" "}
           </Grid>

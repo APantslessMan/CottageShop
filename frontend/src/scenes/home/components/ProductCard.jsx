@@ -13,7 +13,7 @@ const ProductCard = (props) => {
   const { product } = props;
   const { cartItemCount, incCartItem } = useCart();
   // const classes = useStyles();
-  console.log("ProductCard:", props);
+  // console.log("ProductCard:", props);
 
   const handleAddToCart = () => {
     incCartItem(product.id);

@@ -119,13 +119,13 @@ const apiService = {
     try {
       authService.refreshToken();
       const response = await axios.post(
-        `${apiUrl}/getcart`,
-        { user },
+        `${apiUrl}/cart`,
+        {},
         {
           withCredentials: true,
         }
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         return response.data;
       } else {
         throw new Error(response.data.message);
@@ -135,12 +135,12 @@ const apiService = {
       throw error;
     }
   },
-  addcart: async (user, product, quantity) => {
+  addcart: async (product, quantity) => {
     try {
       authService.refreshToken();
       const response = await axios.post(
         `${apiUrl}/cart`,
-        { user, product, quantity },
+        { product, quantity },
         {
           withCredentials: true,
         }
