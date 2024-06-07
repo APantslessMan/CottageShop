@@ -17,6 +17,7 @@ export const CartProvider = ({ children }) => {
   };
   const incCartItem = (product) => {
     setCartItems((prevItems) => {
+      const product = parseInt(product.id);
       const itemIndex = prevItems.findIndex((item) => item.product === product);
       console.log(
         "product",

@@ -13,7 +13,7 @@ const ProductCard = (props) => {
   const { product } = props;
   const { cartItemCount, incCartItem } = useCart();
   const handleAddToCart = () => {
-    incCartItem(product.id);
+    incCartItem(parseInt(product.id));
   };
 
   return (
