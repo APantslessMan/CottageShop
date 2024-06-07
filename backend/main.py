@@ -87,7 +87,7 @@ class CartItem(db.Model):
 
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
@@ -99,7 +99,7 @@ class User(db.Model):
 
 class Product(db.Model):
     __tablename__ = "products"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False)
     description = db.Column(db.Text, nullable=True)
     price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
@@ -110,7 +110,7 @@ class Product(db.Model):
 
 class StockPart(db.Model):
     __tablename__ = "stockparts"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.Text, unique=True, nullable=False)
     description = db.Column(db.Text, nullable=True)
     supplier = db.Column(db.Text, nullable=True)
@@ -120,7 +120,7 @@ class StockPart(db.Model):
 
 class Order(db.Model):
     __tablename__ = "orders"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     items = db.Column(db.String(250), nullable=True)
     status = db.Column(db.String(80), nullable=False)
     ordered_by = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -132,7 +132,7 @@ class Order(db.Model):
 class Site(db.Model):
     __tablename__ = 'sites'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False)
     toggle = db.Column(db.Boolean)
     prefs = db.Column(db.String(250), nullable=True)
@@ -142,7 +142,7 @@ class Site(db.Model):
 class Plugin(db.Model):
     __tablename__ = 'plugins'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(250), nullable=False)
     toggle = db.Column(db.String(250), nullable=False)
     prefs = db.Column(db.String(250), nullable=True)
@@ -214,8 +214,8 @@ def index():
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
-    email = data['email']
-    username = data['username']
+    email = data['email'].lower()
+    username = data['username'].lower()
     password = data['password']
     role = data.get('role', 'user')  # Default role is 'user'
 
@@ -246,7 +246,7 @@ def register():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
-    loginid = data['login']
+    loginid = data['login'].lower()
     password = data['password']
     user = User.query.filter((User.email == loginid) | (User.username == loginid)).first()
     if user and check_password_hash(user.password, password):
