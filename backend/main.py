@@ -31,6 +31,7 @@ import os
 
 load_dotenv()
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
+
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -39,7 +40,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = False
+app.config['JWT_COOKIE_SECURE'] = True
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
@@ -236,9 +237,9 @@ def register():
     # Create response
     response = jsonify({"message": "User registered successfully", "access_token": access_token})
     response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(minutes=15))
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
     response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(days=30))
+                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
 
     return response, 201
 
@@ -256,9 +257,9 @@ def login():
 
         response = make_response(jsonify(message="Logged in", role=user.role), 200)
         response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(minutes=15))
+                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=secure_cookies, samesite='Lax')
         response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(days=30))
+                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=secure_cookies, samesite='Lax')
         return response
     else:
         print("Password check failed")
