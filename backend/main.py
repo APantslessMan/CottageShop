@@ -257,9 +257,9 @@ def login():
 
         response = make_response(jsonify(message="Logged in", role=user.role), 200)
         response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=secure_cookies, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
         response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=secure_cookies, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
         return response
     else:
         print("Password check failed")
