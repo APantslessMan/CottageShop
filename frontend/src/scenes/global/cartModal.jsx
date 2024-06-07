@@ -13,9 +13,9 @@ const CartModal = ({ open, onClose }) => {
       // Fetch cart items from the database when the modal opens
       fetchCartItems();
     }
-  }, [open]);
+  }, [open, incCartItem, decCartItem]);
 
-  const fetchCartItems = async () => {
+ const fetchCartItems = async () => {
     try {
       const items = await apiService.getcartitems(cartItems); // Adjust this based on your API
       console.log("Cart items:", items);
@@ -56,6 +56,7 @@ const CartModal = ({ open, onClose }) => {
             <Button
               onClick={() => {
                 decCartItem(item.id);
+                
               }}
             >
               -
