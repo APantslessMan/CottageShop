@@ -30,7 +30,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-allowed_origins = os.getenv('ALLOWED_ORIGINS')
+allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'super-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -48,6 +48,12 @@ app.config['UPLOAD_FOLDER'] = './build/assets/img/site'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 CORS(app, origins=allowed_origins, supports_credentials=True)
+# cors = CORS(app, resources={
+#     r"/*": {
+#         "origins": allowed_origins,
+#         "supports_credentials": True
+#     }
+# })
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
@@ -266,7 +272,7 @@ def refresh():
     print(identity)
     access_token = create_access_token(identity=identity)
     response = make_response(jsonify(access_token=access_token), 200)
-    response.set_cookie("access_token_cookie", value=access_token, httponly=True, expires=datetime.now(timezone.utc) + timedelta(minutes=15))
+    response.set_cookie("access_token_cookie", value=access_token, httponly=True, expires=datetime.now(timezone.utc) + timedelta(minutes=15), samesite='Lax' )
     print(response)
     return response
 
@@ -498,6 +504,7 @@ def edit_user():
             return jsonify({"message": "User not found"}), 404
     return jsonify({"message": "Unauthorized"}), 401
 
+
 @app.route('/stock_items', methods=['GET'])
 def get_stock_items():
     stock_items = StockPart.query.all()
@@ -571,13 +578,15 @@ def get_json():
         rows = Site.query.filter(Site.name.like(f'{typed}_%')).all()
         row_dict = {}
         for row in rows:
-            print(row.id)
+            # print(row.id)
             if row.toggle:
                 row_dict[row.name] = row.params
-                print(row)
+                # print(row)
         return jsonify(row_dict), 200
     return data, 200
 
+
+# Deprecated
 @app.route('/role', methods=['GET'])
 @jwt_required(locations=['cookies'])
 def get_role():
@@ -590,8 +599,8 @@ def get_role():
 def check_authentication():
     user_id = get_jwt_identity()
     print(user_id)
-    return jsonify({'message': 'Authentication successful', 'username': user_id['username'], 'role': user_id['role']}), 200
-
+    return jsonify({'message': 'Authentication successful', 'username': user_id['username'],
+                    'role': user_id['role']}), 200
 
 
 @app.route('/admin')
@@ -613,4 +622,4 @@ def logout():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    app.run(debug=True)
+    app.run(host='10.10.18.11', port='5000', debug=True)

@@ -25,12 +25,11 @@ export default function Story(props) {
               {content["header"]}
             </Typography>{" "}
             <Divider
-              variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
+              variant="middle"
               sx={{
-                // Customize the styling using the sx prop
-                height: "2px", // Adjust the height of the line
-                backgroundColor: "primary.main", // Set the background color of the line
-                margin: "16px 0", // Add margin for spacing
+                height: "2px",
+                backgroundColor: "primary.main",
+                margin: "16px 0",
               }}
             />
           </Box>

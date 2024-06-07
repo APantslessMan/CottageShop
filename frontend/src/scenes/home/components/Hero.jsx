@@ -27,19 +27,11 @@ const HeroContent = styled(Box)(({ theme }) => ({
   textAlign: "center",
   // color: "#fff",
   padding: theme.spacing(4),
-  backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Add a background color with transparency to improve text readability
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
 }));
 
 const Hero = (props) => {
   return (
-    // <Paper
-    //   elevation={10}
-    //   sx={{
-    //     // border: "solid 1px",
-    //     margin: "40px 40px 40px 40px",
-    //     padding: "10px",
-    //   }}
-    // >
     <HeroContainer>
       <HeroContent>
         <Typography
@@ -62,34 +54,6 @@ const Hero = (props) => {
         </Typography>
       </HeroContent>
     </HeroContainer>
-    // <Box
-    //   sx={{
-    //     display: "flex",
-    //     alignItems: "center",
-    //   }}
-    // >
-    //   <Box sx={{ flexGrow: 1, textAlign: "center" }}>
-    //     <Typography variant="h1">
-    //       Welcome to <br />
-    //       CottageShop
-    //     </Typography>
-    //   </Box>
-    //   <Box
-    //     sx={{
-    //       width: "50vw", // 40% of the viewport width
-    //       // height: "40vw", // Same as width to maintain aspect ratio
-    //     }}
-    //   >
-    //     <img
-    //       src="./assets/img/hero.jpg"
-    //       alt="Hero"
-    //       style={{ width: "100%", display: "block" }}
-    //       padding="20px"
-    //       className="hero-image"
-    //     />
-    //   </Box>
-    // </Box>
-    // // </Paper>
   );
 };
 

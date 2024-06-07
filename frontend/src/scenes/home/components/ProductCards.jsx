@@ -2,7 +2,11 @@ import React from "react";
 import { Grid, Divider, Box, Container, Typography } from "@mui/material";
 import ProductCard from "./ProductCard";
 
-const ProductCards = (props) => {
+const ProductCards = (products) => {
+  if (!products) {
+    return <div>No products available</div>;
+  }
+
   return (
     <section>
       <Container maxWidth="lg">
@@ -12,23 +16,22 @@ const ProductCards = (props) => {
               Hot Items
             </Typography>{" "}
             <Divider
-              variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
+              variant="middle"
               sx={{
-                // Customize the styling using the sx prop
-                height: "2px", // Adjust the height of the line
-                backgroundColor: "primary.main", // Set the background color of the line
-                margin: "20px 0px", // Add margin for spacing
+                height: "2px",
+                backgroundColor: "primary.main",
+                margin: "20px 0px",
               }}
             />
           </Box>
           <Grid container spacing={6}>
-            {Object.keys(props).map((product) => (
-              <Grid item xs={12} lg={4}>
-                <ProductCard product={props[product]} />
+            {Object.keys(products).map((key) => (
+              <Grid item xs={12} lg={4} key={key}>
+                <ProductCard product={products[key]} />
 
                 {/* {console.log("ProductCards:", props[product])} */}
               </Grid>
-            ))}{" "}
+            ))}
           </Grid>
         </Box>
       </Container>

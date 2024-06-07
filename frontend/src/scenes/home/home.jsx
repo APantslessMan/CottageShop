@@ -39,7 +39,7 @@ const Home = () => {
   return (
     <div>
       {formattedData.hero ? <Hero {...formattedData.hero} /> : null}
-      {console.log("consoleformattedData", formattedData.products)}
+      {/* {console.log("consoleformattedData", formattedData.products)} */}
       {formattedData.story ? <Story {...formattedData.story} /> : null}
       {formattedData.products ? (
         <ProductCards {...formattedData.products} />

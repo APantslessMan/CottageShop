@@ -9,32 +9,10 @@ import {
   Paper,
 } from "@mui/material";
 
-// const information = [
-//   {
-//     header: "Our Bakery",
-//     description:
-//       "We are a small sourdough home bakery dedicated to bringing you the finest handmade breads. Our passion for quality ingredients and traditional techniques is evident in every loaf we bake.",
-//     image: "https://source.unsplash.com/random/800x600?bread&1",
-//   },
-//   {
-//     header: "Our Process",
-//     description:
-//       "Our process begins with the best organic ingredients. We take our time with fermentation, ensuring each loaf has the perfect flavor and texture.",
-//     image: "https://source.unsplash.com/random/800x600?bread&2",
-//   },
-//   {
-//     header: "Our Mission",
-//     description:
-//       "Our mission is to provide our community with delicious, healthy bread. We believe in sustainability and support local farmers and producers.",
-//     image: "https://source.unsplash.com/random/800x600?bread&3",
-//   },
-// ];
-
 const Information = (props) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  // const information = props;
-  // console.log ("Information:", information);
+
   const modinfo = Object.keys(props)
     .map((key) => {
       if (props[key].header) {
@@ -44,11 +22,9 @@ const Information = (props) => {
           image: props[key].image,
         };
       }
-      return null; // Return null for objects that don't have a header
+      return null;
     })
-    .filter(Boolean); // Filter out null values
-
-  console.log("Information:", modinfo);
+    .filter(Boolean);
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
       <Box sx={{ marginTop: "150px" }}>
@@ -56,12 +32,11 @@ const Information = (props) => {
           Why Sourdough?
         </Typography>
         <Divider
-          variant="middle" // Adjust the variant to change the appearance of the line (middle, fullWidth, inset)
+          variant="middle"
           sx={{
-            // Customize the styling using the sx prop
-            height: "2px", // Adjust the height of the line
-            backgroundColor: "primary.main", // Set the background color of the line
-            margin: "40px 0", // Add margin for spacing
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "40px 0",
           }}
         />
       </Box>
@@ -110,7 +85,7 @@ const Information = (props) => {
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              zIndex: 0, // Ensure text Paper is below the image
+              zIndex: 0,
             }}
             elevation={10}
           >

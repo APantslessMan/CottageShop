@@ -93,7 +93,7 @@ const UserEditor = ({ showSb }) => {
   const handleUpdate = async (action, id, column, newField) => {
     try {
       // Perform the update operation
-      console.log("handleUpdate1", action, id, column, newField);
+
       await authService.editUser(action, id, column, newField);
       console.log("handleUpdate", action, id, column, newField);
       // If the update is successful, fetch the updated user data

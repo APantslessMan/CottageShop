@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import authService from "../api/authService";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "./CartWrapper";
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -10,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
   const [userName, setUserName] = useState("");
-  const navigate = useNavigate(); // Import useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -32,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       const data = await authService.login(login, password, email);
       setIsLoggedIn(true);
       setUserName(data.login);
-      navigate("/"); // Navigate to home page after login
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error.message);
     }
@@ -42,10 +41,10 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
       setIsLoggedIn(false);
-      clearCartOnLogout(); // Clear cart items on logout
+      clearCartOnLogout();
       setUserName("");
       setRole("");
-      navigate("/"); // Navigate to home page after logout
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error.message);
     }

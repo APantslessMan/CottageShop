@@ -19,11 +19,10 @@ const Testimonials = (props) => {
           feedback: props[name],
         };
       }
-      return null; // Return null for items that don't have a valid props[name]
+      return null;
     })
-    .filter(Boolean); // Filter out null values
+    .filter(Boolean);
 
-  console.log("Testimonials:", props);
   return (
     <Container maxWidth="md" sx={{ py: 8 }}>
       <Box sx={{ marginTop: "100px" }}>
