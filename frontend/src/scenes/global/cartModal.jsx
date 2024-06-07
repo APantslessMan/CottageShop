@@ -62,7 +62,12 @@ const CartModal = ({ open, onClose }) => {
               -
             </Button>
             <Typography>{item.quantity}</Typography>
-            <Button>+</Button>
+            <Button
+                onClick={() => {
+                incCartItem(item.id);
+                
+              }}
+              >+</Button>
           </Box>
         ))}
         <Button variant="contained" color="primary" fullWidth>
