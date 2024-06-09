@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Typography, Box, Badge } from "@mui/material";
+import { Modal, Button, Typography, Box, Badge, Grid } from "@mui/material";
 import apiService from "../../components/api/apiService"; // Import API service for fetching cart items
 import { useCart } from "../../components/utils/CartWrapper";
 import { ShoppingCartOutlined } from "@mui/icons-material";
@@ -37,7 +37,7 @@ const CartModal = ({ open, onClose }) => {
       <Box
         sx={{
           position: "absolute",
-          width: 400,
+          width: 450,
           bgcolor: "background.paper",
           border: "2px solid #000",
           boxShadow: 24,
@@ -52,38 +52,55 @@ const CartModal = ({ open, onClose }) => {
         </Typography>
 
         {cartList.map((item) => (
-          <Box key={item.id} display="flex" alignItems="center" mb={1}>
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            key={item.id}
+            sx={{ marginTop: "10px" }}
+          >
             {console.log("Item in jsx:", item)}
-            <img
-              src={item.img_url}
-              alt={item.name}
-              style={{ marginRight: "8px", width: "50px" }}
-            />
-            <Box sx={{ textAlign: "center", display: "flex" }}>
+            <Grid item xs={3}>
+              <img
+                src={item.img_url}
+                alt={item.name}
+                style={{ width: "50px" }}
+              />
+            </Grid>
+            <Grid item xs={3}>
               <Typography variant="body1">{item.name}</Typography>
-
-              <Button
-                onClick={() => {
-                  decCartItem(item.id);
-                }}
-              >
-                -
-              </Button>
-              <Typography>{item.quantity}</Typography>
-              <Button
-                onClick={() => {
-                  incCartItem(item.id);
-                }}
-              >
-                +
-              </Button>
-              <Box display="flex" alignItems="right">
-                <Typography sx={{ textAlign: "right" }}>
-                  ${item.price}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+            </Grid>
+            <Grid item xs={4}>
+              <Grid container alignItems="center" spacing={0}>
+                <Grid item>
+                  <Button
+                    onClick={() => {
+                      decCartItem(item.id);
+                    }}
+                    sx={{ marginRight: "-10px" }}
+                  >
+                    <Typography variant="h3">-</Typography>
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Typography variant="h5">{item.quantity}</Typography>
+                </Grid>
+                <Grid item>
+                  <Button
+                    onClick={() => {
+                      incCartItem(item.id);
+                    }}
+                    sx={{ marginLeft: "-10px" }}
+                  >
+                    <Typography variant="h3">+</Typography>
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography sx={{ textAlign: "right" }}>${item.price}</Typography>
+            </Grid>
+          </Grid>
         ))}
         <Typography variant="h4" component="h2" textAlign="right" margin="20px">
           Total: ${calculateTotalPrice().toFixed(2)}
