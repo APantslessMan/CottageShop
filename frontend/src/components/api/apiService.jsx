@@ -135,12 +135,12 @@ const apiService = {
       throw error;
     }
   },
-  addcart: async (product, quantity) => {
+  addcart: async (op, product, quantity) => {
     try {
       authService.refreshToken();
       const response = await axios.post(
         `${apiUrl}/cart`,
-        { product, quantity },
+        { op, product, quantity },
         {
           withCredentials: true,
         }
@@ -155,6 +155,27 @@ const apiService = {
       throw error;
     }
   },
+  delcart: async (op, product) => {
+    try {
+      authService.refreshToken();
+      const response = await axios.post(
+        `${apiUrl}/cart`,
+        { op, product },
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 201) {
+        console.log("Product removed from cart successfully");
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch {
+      console.error("Error removing from cart:", error);
+      throw error;
+    }
+  },
+  // Get Cart For cart modal,no JWT required for this route
   getcartitems: async (items) => {
     try {
       authService.refreshToken();

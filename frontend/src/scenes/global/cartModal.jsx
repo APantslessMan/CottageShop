@@ -15,7 +15,7 @@ const CartModal = ({ open, onClose }) => {
     }
   }, [open, incCartItem, decCartItem]);
 
- const fetchCartItems = async () => {
+  const fetchCartItems = async () => {
     try {
       const items = await apiService.getcartitems(cartItems); // Adjust this based on your API
       console.log("Cart items:", items);
@@ -23,6 +23,13 @@ const CartModal = ({ open, onClose }) => {
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
+  };
+  const calculateTotalPrice = () => {
+    return cartList.reduce((total, item) => {
+      const price = parseFloat(item.price); // Ensure price is treated as a number
+      console.log("Price:", price, "Quantity:", item.quantity, item);
+      return total + price * item.quantity;
+    }, 0);
   };
 
   return (
@@ -40,7 +47,7 @@ const CartModal = ({ open, onClose }) => {
           transform: "translate(-50%, -50%)",
         }}
       >
-        <Typography variant="h6" component="h2">
+        <Typography variant="h3" component="h2" sx={{ marginBottom: "50px" }}>
           Your Cart
         </Typography>
 
@@ -52,24 +59,35 @@ const CartModal = ({ open, onClose }) => {
               alt={item.name}
               style={{ marginRight: "8px", width: "50px" }}
             />
-            <Typography variant="body1">{item.description}</Typography>
-            <Button
-              onClick={() => {
-                decCartItem(item.id);
-                
-              }}
-            >
-              -
-            </Button>
-            <Typography>{item.quantity}</Typography>
-            <Button
+            <Box sx={{ textAlign: "center", display: "flex" }}>
+              <Typography variant="body1">{item.name}</Typography>
+
+              <Button
                 onClick={() => {
-                incCartItem(item.id);
-                
-              }}
-              >+</Button>
+                  decCartItem(item.id);
+                }}
+              >
+                -
+              </Button>
+              <Typography>{item.quantity}</Typography>
+              <Button
+                onClick={() => {
+                  incCartItem(item.id);
+                }}
+              >
+                +
+              </Button>
+              <Box display="flex" alignItems="right">
+                <Typography sx={{ textAlign: "right" }}>
+                  ${item.price}
+                </Typography>
+              </Box>
+            </Box>
           </Box>
         ))}
+        <Typography variant="h4" component="h2" textAlign="right" margin="20px">
+          Total: ${calculateTotalPrice().toFixed(2)}
+        </Typography>
         <Button variant="contained" color="primary" fullWidth>
           Checkout
         </Button>

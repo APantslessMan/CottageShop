@@ -30,7 +30,7 @@ export const CartProvider = ({ children }) => {
 
       // TODO: Check for user logged in and save cart to DB on change. save to localstorage
       if (auth.isLoggedIn) {
-        apiService.addcart(product, 1);
+        apiService.addcart("add", product, 1);
       }
       if (itemIndex > -1) {
         const updatedItems = [...prevItems];
@@ -45,6 +45,9 @@ export const CartProvider = ({ children }) => {
   const decCartItem = (product) => {
     setCartItems((prevItems) => {
       const itemIndex = prevItems.findIndex((item) => item.product === product);
+      if (auth.isLoggedIn) {
+        apiService.delcart("del", product);
+      }
       if (itemIndex > -1) {
         const updatedItems = [...prevItems];
         if (updatedItems[itemIndex].quantity > 1) {

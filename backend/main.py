@@ -40,7 +40,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = True
+app.config['JWT_COOKIE_SECURE'] = False
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
@@ -157,11 +157,11 @@ with app.app_context():
 #                         Util Functions                      #
 ###############################################################
 
-
+# Splits File extension Set
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
+# Returns OS specific filepaths
 def img_path(directory):
     parts = directory.split(os.path.sep)
     if 'build' in parts:
@@ -194,6 +194,24 @@ def add_to_cart(user_id, product_id, quantity):
         db.session.add(cart_item)
 
     db.session.commit()
+
+def del_from_cart(user_id, product_id, quantity):
+    cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
+    if cart_item:
+        if cart_item.quantity <= quantity:
+            cart_item.quantity -= quantity
+            db.session.delete(cart_item)
+            db.session.commit()
+            return True
+        elif cart_item.quantity > quantity:
+            cart_item.quantity -= quantity
+            print("item deleted from cart")
+            db.session.commit()
+            return True
+        else:
+            return False
+
+
 ###############################################################
 #                         API Routes                          #
 ###############################################################
@@ -237,9 +255,9 @@ def register():
     # Create response
     response = jsonify({"message": "User registered successfully", "access_token": access_token})
     response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
     response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=False, samesite='Lax')
 
     return response, 201
 
@@ -257,9 +275,9 @@ def login():
 
         response = make_response(jsonify(message="Logged in", role=user.role), 200)
         response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
         response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=False, samesite='Lax')
         return response
     else:
         print("Password check failed")
@@ -273,7 +291,8 @@ def refresh():
     print(identity)
     access_token = create_access_token(identity=identity)
     response = make_response(jsonify(access_token=access_token), 200)
-    response.set_cookie("access_token_cookie", value=access_token, httponly=True, expires=datetime.now(timezone.utc) + timedelta(minutes=15), samesite='Lax' )
+    response.set_cookie("access_token_cookie", value=access_token, httponly=True,
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
     print(response)
     return response
 
@@ -342,12 +361,21 @@ def cart():
         print(cart_items)
         return jsonify(cart_items), 201
     elif request.json:
-        product_id = request.json['product']
-        qty = request.json.get('quantity', 1)  # Default quantity is 1 if not provided
-        print(user.id, product_id, qty)
-        add_to_cart(user.id, product_id, qty)
+        if request.json['op'] == "add":
+            product_id = request.json['product']
+            qty = request.json.get('quantity', 1)  # Default quantity is 1 if not provided
+            print(user.id, product_id, qty)
+            add_to_cart(user.id, product_id, qty)
 
-        return 'Item added to cart successfully', 201
+            return 'Item added to cart successfully', 201
+        elif request.json['op'] == 'del':
+            product_id = request.json['product']
+            qty = request.json.get('quantity', 1)
+            print(user.id, product_id, qty)
+            del_from_cart(user.id, product_id, qty)
+            return 'Item deleted from cart successfully', 201
+        else:
+            return jsonify({"message": "Invalid request"}), 401
 
 
 @app.route('/cartitems', methods=['POST'])
