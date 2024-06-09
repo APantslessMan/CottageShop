@@ -255,9 +255,9 @@ def register():
     # Create response
     response = jsonify({"message": "User registered successfully", "access_token": access_token})
     response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
     response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=False, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
 
     return response, 201
 
@@ -275,9 +275,9 @@ def login():
 
         response = make_response(jsonify(message="Logged in", role=user.role), 200)
         response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
         response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=False, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
         return response
     else:
         print("Password check failed")
@@ -292,7 +292,7 @@ def refresh():
     access_token = create_access_token(identity=identity)
     response = make_response(jsonify(access_token=access_token), 200)
     response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
     print(response)
     return response
 
