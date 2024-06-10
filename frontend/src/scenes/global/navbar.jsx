@@ -222,7 +222,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               textDecoration: "none",
             }}
           >
-            CottageShop
+            {siteData.home_hero?.title || "Loading..."}
           </Typography>
           <Box
             sx={{
