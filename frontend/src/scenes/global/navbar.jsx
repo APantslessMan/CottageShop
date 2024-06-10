@@ -19,6 +19,7 @@ import "../../css/navbar.css";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 import { useCart } from "../../components/utils/CartWrapper";
 import CartModal from "./cartModal";
+import { DataContext } from "../../components/utils/DataContext";
 
 const pages = ["Breads", "About", "Blog"];
 
@@ -43,6 +44,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
   const [userAnchor, setUserAnchor] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openCartModal, setOpenCartModal] = useState(false);
+  const { siteData } = useContext(DataContext);
 
   const handleOpenCartModal = () => {
     setOpenCartModal(true);
@@ -159,7 +161,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
               textDecoration: "none",
             }}
           >
-            CottageShop
+            {siteData.home_hero?.title || "Loading..."}
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
