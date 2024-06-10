@@ -44,15 +44,6 @@ const ProductEditor = ({ showSb }) => {
   );
 };
 
-// const AddStockTab = () => {
-//   return (
-//     <div>
-//       <Typography variant="h5">Add Stock</Typography>
-//       {/* Add your form for adding stock */}
-//     </div>
-//   );
-// };
-
 const EditStockTab = () => {
   return (
     <div>

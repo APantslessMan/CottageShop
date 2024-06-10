@@ -52,6 +52,24 @@ const apiService = {
       throw error;
     }
   },
+  editsite: async (formData) => {
+    try {
+      authService.refreshToken();
+      const response = await axios.post(`${apiUrl}/api/json/edit`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.status === 201) {
+        console.log("Site settings updated successfully");
+      } else {
+        console.error("Failed to update site settings");
+      }
+    } catch (error) {
+      console.error("Error during site settings editing:", error);
+      throw error;
+    }
+  },
+
   listProducts: async () => {
     try {
       await authService.refreshToken();

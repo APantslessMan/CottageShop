@@ -2,14 +2,14 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
-const HeroContainer = styled(Box)(({ theme }) => ({
+const HeroContainer = styled(Box)(({ theme, img }) => ({
   position: "relative",
   height: "80vh",
   width: "100%",
   overflow: "hidden",
   backgroundSize: "cover",
   backgroundPosition: "center center",
-  backgroundImage: "url(./assets/img/hero.jpg)",
+  backgroundImage: `url(${img})`,
 
   [theme.breakpoints.down("md")]: {
     height: "75vh",
@@ -32,7 +32,7 @@ const HeroContent = styled(Box)(({ theme }) => ({
 
 const Hero = (props) => {
   return (
-    <HeroContainer>
+    <HeroContainer img={props.img}>
       <HeroContent>
         <Typography
           variant="h1"

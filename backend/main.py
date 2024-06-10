@@ -40,12 +40,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_SECURE'] = True
+app.config['JWT_COOKIE_SECURE'] = False
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=15)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret')
-app.config['UPLOAD_FOLDER'] = './build/assets/img/site'
+app.config['UPLOAD_FOLDER'] = './build/assets/img/site/'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 CORS(app, origins=allowed_origins, supports_credentials=True)
@@ -161,6 +161,7 @@ with app.app_context():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 # Returns OS specific filepaths
 def img_path(directory):
     parts = directory.split(os.path.sep)
@@ -169,6 +170,19 @@ def img_path(directory):
         parts = parts[index_path + 1:]
     new_filepath = os.path.join(*parts)
     return new_filepath
+
+
+# Saves image file to UPLOAD_FOLDER, renames to "name_UUID_string.extension" and returns the filepath
+def file_parse(name, file):
+    unique_id = str(uuid.uuid4())
+    original_filename = secure_filename(file.filename)
+    file_extension = os.path.splitext(original_filename)[1]
+    filename = f"{name.replace(' ','')}_{unique_id}{file_extension}"
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+    img_url = img_path(file_path)
+    print(img_url, file_path, filename)
+    return img_url
 
 
 def get_from_cart(user_id):
@@ -194,6 +208,7 @@ def add_to_cart(user_id, product_id, quantity):
         db.session.add(cart_item)
 
     db.session.commit()
+
 
 def del_from_cart(user_id, product_id, quantity):
     cart_item = CartItem.query.filter_by(user_id=user_id, product_id=product_id).first()
@@ -255,9 +270,9 @@ def register():
     # Create response
     response = jsonify({"message": "User registered successfully", "access_token": access_token})
     response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
     response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(days=30), secure=False, samesite='Lax')
 
     return response, 201
 
@@ -275,9 +290,9 @@ def login():
 
         response = make_response(jsonify(message="Logged in", role=user.role), 200)
         response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
         response.set_cookie("refresh_token_cookie", value=refresh_token, httponly=True,
-                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=True, samesite='Lax')
+                            expires=datetime.now(timezone.utc) + timedelta(days=30), secure=False, samesite='Lax')
         return response
     else:
         print("Password check failed")
@@ -292,7 +307,7 @@ def refresh():
     access_token = create_access_token(identity=identity)
     response = make_response(jsonify(access_token=access_token), 200)
     response.set_cookie("access_token_cookie", value=access_token, httponly=True,
-                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=True, samesite='Lax')
+                        expires=datetime.now(timezone.utc) + timedelta(minutes=15), secure=False, samesite='Lax')
     print(response)
     return response
 
@@ -435,13 +450,14 @@ def edit_product():
             file = request.files['image']
 
             if file and allowed_file(file.filename):
-                unique_id = str(uuid.uuid4())
-                original_filename = secure_filename(file.filename)
-                file_extension = os.path.splitext(original_filename)[1]
-                filename = f"{name.replace(' ','')}_{unique_id}{file_extension}"
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                img_url = img_path(file_path)
+                img_url = file_parse(name, file)
+                # unique_id = str(uuid.uuid4())
+                # original_filename = secure_filename(file.filename)
+                # file_extension = os.path.splitext(original_filename)[1]
+                # filename = f"{name.replace(' ','')}_{unique_id}{file_extension}"
+                # file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                # file.save(file_path)
+                # img_url = img_path(file_path)
 
         if name and description and price:
             new_product = Product(name=name, description=description, price=price, img_url=img_url)
@@ -613,6 +629,40 @@ def get_json():
                 # print(row)
         return jsonify(row_dict), 200
     return data, 200
+
+
+@app.route('/api/json/edit', methods=['POST'])
+@jwt_required()
+def edit_site():
+    try:
+        data = request.form
+        op = data.get('op')
+        print(op)
+        params_json = {}
+        for i in data:
+            if i != 'op':
+                params_json.update({i: data[i]})
+                print(params_json)
+
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and allowed_file(file.filename):
+                img_url = file_parse(op, file)
+                params_json.update({'img': img_url})
+            print(params_json)
+        # find the row for op, and replace in db
+        section = Site.query.filter_by(name=op).first()
+        print(section)
+        section.params = params_json
+        section.uuid = uuid.uuid4()
+        db.session.commit()
+        return jsonify({"message": "Save Successful"}), 201
+        # else:
+        #     return jsonify({"error": "Invalid site data"}), 400
+
+    except Exception as e:
+        db.session.rollback()  # Rollback transaction in case of error
+        return jsonify({"error": str(e)}), 500
 
 
 # Deprecated
