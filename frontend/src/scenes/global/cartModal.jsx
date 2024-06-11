@@ -3,17 +3,23 @@ import { Modal, Button, Typography, Box, Badge, Grid } from "@mui/material";
 import apiService from "../../components/api/apiService"; // Import API service for fetching cart items
 import { useCart } from "../../components/utils/CartWrapper";
 import { ShoppingCartOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const CartModal = ({ open, onClose }) => {
   const [cartList, setCartList] = useState([]); // Add this line
   const { cartItemCount, cartItems, decCartItem, incCartItem } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (open) {
-      // Fetch cart items from the database when the modal opens
       fetchCartItems();
     }
   }, [open, incCartItem, decCartItem]);
+
+  const onCheckout = () => {
+    onClose();
+    navigate("/checkout");
+  };
 
   const fetchCartItems = async () => {
     try {
@@ -105,7 +111,12 @@ const CartModal = ({ open, onClose }) => {
         <Typography variant="h4" component="h2" textAlign="right" margin="20px">
           Total: ${calculateTotalPrice().toFixed(2)}
         </Typography>
-        <Button variant="contained" color="primary" fullWidth>
+        <Button
+          variant="contained"
+          onClick={onCheckout}
+          color="primary"
+          fullWidth
+        >
           Checkout
         </Button>
       </Box>

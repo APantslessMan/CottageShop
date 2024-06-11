@@ -3,6 +3,7 @@ import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider, Snackbar, Alert } from "@mui/material";
 import Navbar from "./scenes/global/navbar";
 import Login from "./scenes/login";
+import Checkout from "./scenes/checkout/Checkout";
 import Register from "./scenes/register";
 import Wrapper from "./components/utils/wrapper";
 import Home from "./scenes/home/home";
@@ -79,6 +80,7 @@ function App() {
                 <Register onLogin={handleLogin} showSb={handleOpenSnackbar} />
               }
             />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/" element={<Home />} />
           </Routes>
 

@@ -27,7 +27,7 @@ import os
 
 load_dotenv()
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
-COOKIE_SECURITY = True
+COOKIE_SECURITY = False
 COOKIE_TYPES = ["access_token_cookie", "refresh_token_cookie", "public_token_cookie"]
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
@@ -219,7 +219,7 @@ def set_cookies(email, username, role):
     response = make_response(jsonify(message="Logged in", role=role), 200)
     for i in COOKIE_TYPES:
         if "public" in i:
-            response.set_cookie(i, value=session_token, expires=datetime.now(timezone.utc) + timedelta(minutes=15),
+            response.set_cookie(i, value=session_token, expires=datetime.now(timezone.utc) + timedelta(days=30),
                                 httponly=False, secure=COOKIE_SECURITY, samesite='Lax')
         elif "access" in i:
             response.set_cookie(i, value=access_token, expires=datetime.now(timezone.utc) + timedelta(minutes=15),
