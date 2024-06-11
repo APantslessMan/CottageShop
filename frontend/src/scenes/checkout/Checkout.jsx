@@ -9,6 +9,7 @@ import {
   Button,
   Grid,
   TextField,
+  Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../components/utils/CartWrapper";
@@ -22,6 +23,7 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    email: "",
     firstName: "",
     lastName: "",
     phoneNumber: "",
@@ -108,9 +110,15 @@ const Checkout = () => {
           p: 2,
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          Checkout
-        </Typography>
+        <Typography variant="h3">Checkout</Typography>
+        <Divider
+          variant="middle"
+          sx={{
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "10px 0",
+          }}
+        />
         <Grid container spacing={2}>
           {cartList.map((item) => (
             <Grid item xs={12} key={item.id}>
@@ -156,12 +164,30 @@ const Checkout = () => {
             </Grid>
           ))}
         </Grid>
-        <Box sx={{ mt: 4, textAlign: "right" }}>
+        <Box sx={{ marginBottom: "40px", mt: 4, textAlign: "right" }}>
           <Typography variant="h5">Total: ${calculateTotal()}</Typography>
         </Box>
+        <Typography variant="h3">Customer Details</Typography>
+        <Divider
+          variant="middle"
+          sx={{
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "10px 0",
+          }}
+        />
         <Box sx={{ marginTop: "10px" }}>
           <Box>
-            <Box display="flex">
+            <Box>
+              <TextField
+                label="Email"
+                variant="outlined"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                sx={{ paddingRight: "13px", paddingBottom: "10px" }}
+              />
+              <br />
               <TextField
                 label="First Name"
                 variant="outlined"
@@ -225,7 +251,16 @@ const Checkout = () => {
             onChange={handleDateChange}
           />
         </Box>
-        <Box sx={{ mt: 4, textAlign: "right" }}>
+        <Divider
+          variant="middle"
+          sx={{
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "30px 0",
+            marginBottom: "-5px",
+          }}
+        />
+        <Box sx={{ textAlign: "right" }}>
           <Button
             variant="contained"
             color="primary"
