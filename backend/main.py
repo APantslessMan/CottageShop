@@ -110,6 +110,8 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     items = db.Column(db.String(250), nullable=True)
     status = db.Column(db.String(80), nullable=False)
+    payment_type = db.Column(db.String(80), nullable=False)
+    date_requested = db.Column(db.String(80), nullable=False)
     ordered_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = relationship("User", back_populates="orders")
 
