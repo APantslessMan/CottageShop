@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import authService from "../api/authService";
+import apiService from "../api/apiService";
 import { useNavigate } from "react-router-dom";
 const AuthContext = createContext();
 
@@ -30,6 +31,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authService.login(login, password, email);
       setIsLoggedIn(true);
+      // Add local cart items to logged in cart
+      if (localStorage.getItem("cartItems")) {
+        const cartItems = JSON.parse(localStorage.getItem("cartItems"));
+        cartItems.forEach((item) => {
+          apiService.addcart("add", item.product, item.quantity);
+        });
+        localStorage.removeItem("cartItems");
+      }
       setUserName(data.login);
       navigate("/");
     } catch (error) {

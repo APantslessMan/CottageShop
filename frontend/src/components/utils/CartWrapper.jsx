@@ -8,28 +8,21 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const auth = useAuth();
+  const { isLoggedIn } = auth;
   const [cartItems, setCartItems] = useState([]); // [{ product: {}, quantity: 1 }]
+
   const loadCart = (cartItems) => {
     setCartItems(cartItems);
   };
   const clearCart = () => {
-    setCartItems([]); // Clear cart items
+    setCartItems([]);
   };
   const incCartItem = (product) => {
     setCartItems((prevItems) => {
-      //const product = parseInt(product.id);
       const itemIndex = prevItems.findIndex((item) => item.product === product);
-      console.log(
-        "product",
-        product,
-        "itemIndex",
-        itemIndex,
-        "prevItems",
-        prevItems
-      );
 
       // TODO: Check for user logged in and save cart to DB on change. save to localstorage
-      if (auth.isLoggedIn) {
+      if (isLoggedIn) {
         apiService.addcart("add", product, 1);
       }
       if (itemIndex > -1) {
@@ -40,12 +33,15 @@ export const CartProvider = ({ children }) => {
         return [...prevItems, { product, quantity: 1 }];
       }
     });
+    if (!isLoggedIn) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }
   };
 
   const decCartItem = (product) => {
     setCartItems((prevItems) => {
       const itemIndex = prevItems.findIndex((item) => item.product === product);
-      if (auth.isLoggedIn) {
+      if (isLoggedIn) {
         apiService.delcart("del", product);
       }
       if (itemIndex > -1) {
@@ -61,6 +57,9 @@ export const CartProvider = ({ children }) => {
         return prevItems;
       }
     });
+    if (!isLoggedIn) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }
   };
 
   const cartItemCount = cartItems.reduce(
@@ -77,6 +76,7 @@ export const CartProvider = ({ children }) => {
         decCartItem,
         loadCart,
         clearCart,
+        setCartItems,
       }}
     >
       {children}

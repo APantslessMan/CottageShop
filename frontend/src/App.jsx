@@ -18,7 +18,7 @@ function App() {
   const [theme, colorMode, mode] = useMode();
   const auth = useAuth();
   const cart = useCart();
-  // const { setCartItems } = cart;
+  const { setCartItems } = cart;
   const { isLoggedIn, handleLogin, handleLogout, role, userName } = auth;
   const navigate = useNavigate();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -41,9 +41,9 @@ function App() {
         } catch (error) {
           console.error("Error loading cart:", error);
         }
-      }
-      if (!isLoggedIn) {
-        cart.clearCart();
+      } else {
+        const savedCart = localStorage.getItem("cartItems");
+        setCartItems(savedCart ? JSON.parse(savedCart) : []);
       }
     };
     loadCart();
