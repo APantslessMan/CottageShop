@@ -262,7 +262,7 @@ def manifest():
 
 @app.route('/image/<path:path>')
 def send_icon(path):
-    return send_from_directory('./build/assets/img/site', path)
+    return send_from_directory('./build/assets/img', path)
 
 
 @app.route('/register', methods=['POST'])
