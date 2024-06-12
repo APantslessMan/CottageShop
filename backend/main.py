@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from flask import Flask, abort, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify, make_response, render_template, send_from_directory
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -8,14 +8,12 @@ from sqlalchemy.orm import relationship
 from werkzeug.utils import secure_filename
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, request, jsonify, make_response
+
 from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     create_refresh_token,
-    get_jwt_identity, set_access_cookies,
-    set_refresh_cookies, unset_jwt_cookies,
-    get_csrf_token
+    get_jwt_identity
 )
 import json
 import sys
@@ -277,7 +275,7 @@ def login():
 
 
 @app.route('/refresh', methods=['POST'])
-@jwt_required()
+@jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
     response = set_cookies(identity['email'], identity['username'], identity['role'])
@@ -588,7 +586,6 @@ def edit_site():
         section.uuid = uuid.uuid4()
         db.session.commit()
         return jsonify({"message": "Save Successful"}), 201
-
 
     except Exception as e:
         db.session.rollback()  # Rollback transaction in case of error
