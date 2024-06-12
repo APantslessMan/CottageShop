@@ -4,9 +4,11 @@ import apiService from "../../components/api/apiService"; // Import API service 
 import { useCart } from "../../components/utils/CartWrapper";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../components/utils/AuthContext";
 
-const CartModal = ({ open, onClose, isLoggedIn }) => {
-  const [cartList, setCartList] = useState([]); // Add this line
+const CartModal = ({ open, onClose }) => {
+  const { isLoggedIn } = useAuth();
+  const [cartList, setCartList] = useState([]);
   const { cartItemCount, cartItems, decCartItem, incCartItem } = useCart();
   const navigate = useNavigate();
 
