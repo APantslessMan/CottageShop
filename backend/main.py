@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Flask, request, jsonify, make_response, render_template, send_from_directory
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, load_only
 
 from werkzeug.utils import secure_filename
 
@@ -235,9 +235,34 @@ def set_cookies(email, username, role):
 ###############################################################
 
 
-@app.route("/")
+# @app.route("/")
+# def index():
+#     return render_template("index.html")
+
+@app.route('/')
 def index():
-    return render_template("index.html")
+    # Sample data from database
+    data = Site.query.filter_by(name='seo_meta').first()
+    print(data.params)
+    og_data = data.params
+    return render_template('index.html', **og_data)
+
+
+@app.route('/manifest.json')
+def manifest():
+    data = Site.query.filter_by(name='seo_meta').first()
+
+    manifest_data = data.params
+    if len(manifest_data['title']) > 12:
+        manifest_data['short_title'] = manifest_data['title'][:12]
+    else:
+        manifest_data['short_title'] = manifest_data['title']
+
+    return render_template('manifest.json', **manifest_data)
+
+@app.route('/image/<path:path>')
+def send_icon(path):
+    return send_from_directory('./build/assets/img/site', path)
 
 
 @app.route('/register', methods=['POST'])
