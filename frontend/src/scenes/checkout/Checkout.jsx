@@ -10,6 +10,7 @@ import {
   Grid,
   TextField,
   Divider,
+  Tooltip,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../components/utils/CartWrapper";
@@ -33,12 +34,23 @@ const Checkout = () => {
     total: 0,
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === "phoneNumber") {
+      formattedValue = formatPhoneNumber(value);
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: formattedValue,
     }));
+
+    // Validate input
+    validateField(name, formattedValue);
   };
 
   const handleDateChange = (newDate) => {
@@ -46,6 +58,17 @@ const Checkout = () => {
       ...prevData,
       requestedDate: newDate,
     }));
+    if (!newDate) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        requestedDate: "Please select a requested date.",
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        requestedDate: "",
+      }));
+    }
   };
 
   const handleContactMethodChange = (event, newMethod) => {
@@ -55,6 +78,46 @@ const Checkout = () => {
         contactMethod: newMethod,
       }));
     }
+  };
+
+  const formatPhoneNumber = (value) => {
+    const cleaned = value.replace(/\D/g, ""); // Remove all non-digit characters
+    const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+
+    if (match) {
+      const part1 = match[1];
+      const part2 = match[2] ? `-${match[2]}` : "";
+      const part3 = match[3] ? `-${match[3]}` : "";
+      return `${part1}${part2}${part3}`;
+    }
+
+    return value;
+  };
+
+  const validateField = (name, value) => {
+    let error = "";
+    switch (name) {
+      case "email":
+        error = !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? "Invalid email address."
+          : "";
+        break;
+      case "firstName":
+      case "lastName":
+        error = value.trim() === "" ? "This field is required." : "";
+        break;
+      case "phoneNumber":
+        error = !/^\d{3}-\d{3}-\d{4}$/.test(value)
+          ? "Phone number must be in the format 123-123-4567."
+          : "";
+        break;
+      default:
+        break;
+    }
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
 
   const calculateTotal = () => {
@@ -69,6 +132,17 @@ const Checkout = () => {
   }, [incCartItem, decCartItem]);
 
   const handleCheckout = () => {
+    const { email, firstName, lastName, phoneNumber, requestedDate } = formData;
+    if (!email || !firstName || !lastName || !phoneNumber || !requestedDate) {
+      setErrors({
+        email: !email ? "Email is required." : "",
+        firstName: !firstName ? "First name is required." : "",
+        lastName: !lastName ? "Last name is required." : "",
+        phoneNumber: !phoneNumber ? "Phone number is required." : "",
+        requestedDate: !requestedDate ? "Requested date is required." : "",
+      });
+      return;
+    }
     // Update the total in formData
     const updatedFormData = {
       ...formData,
@@ -179,40 +253,64 @@ const Checkout = () => {
         <Box sx={{ marginTop: "10px" }}>
           <Box>
             <Box>
-              <TextField
-                label="Email"
-                variant="outlined"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                sx={{ paddingRight: "13px", paddingBottom: "10px" }}
-              />
+              <Tooltip title={errors.email || ""} open={!!errors.email} arrow>
+                <TextField
+                  label="Email"
+                  variant="outlined"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  sx={{ paddingRight: "13px", paddingBottom: "10px" }}
+                  error={!!errors.email}
+                />
+              </Tooltip>
               <br />
-              <TextField
-                label="First Name"
-                variant="outlined"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                sx={{ paddingRight: "13px", paddingBottom: "10px" }}
-              />
-              <TextField
-                label="Last Name"
-                variant="outlined"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                sx={{ paddingRight: "13px", paddingBottom: "10px" }}
-              />
+              <Tooltip
+                title={errors.firstName || ""}
+                open={!!errors.firstName}
+                arrow
+              >
+                <TextField
+                  label="First Name"
+                  variant="outlined"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  sx={{ paddingRight: "13px", paddingBottom: "10px" }}
+                  error={!!errors.firstName}
+                />
+              </Tooltip>
+              <Tooltip
+                title={errors.lastName || ""}
+                open={!!errors.lastName}
+                arrow
+              >
+                <TextField
+                  label="Last Name"
+                  variant="outlined"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  sx={{ paddingRight: "13px", paddingBottom: "10px" }}
+                  error={!!errors.lastName}
+                />
+              </Tooltip>
             </Box>
-            <TextField
-              label="Phone Number"
-              variant="outlined"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleInputChange}
-              sx={{ paddingRight: "13px", paddingBottom: "10px" }}
-            />
+            <Tooltip
+              title={errors.phoneNumber || ""}
+              open={!!errors.phoneNumber}
+              arrow
+            >
+              <TextField
+                label="Phone Number"
+                variant="outlined"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
+                sx={{ paddingRight: "13px", paddingBottom: "10px" }}
+                error={!!errors.phoneNumber}
+              />
+            </Tooltip>
 
             <ToggleButtonGroup
               value={formData.contactMethod}
@@ -246,10 +344,23 @@ const Checkout = () => {
           </Box>
 
           <Typography variant="h6">Requested Date</Typography>
-          <DatePicker
-            value={formData.requestedDate}
-            onChange={handleDateChange}
-          />
+          <Tooltip
+            title={errors.requestedDate || ""}
+            open={!!errors.requestedDate}
+            arrow
+          >
+            <DatePicker
+              value={formData.requestedDate}
+              onChange={handleDateChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={!!errors.requestedDate}
+                  helperText={errors.requestedDate}
+                />
+              )}
+            />
+          </Tooltip>
         </Box>
         <Divider
           variant="middle"
