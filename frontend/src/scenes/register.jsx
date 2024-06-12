@@ -6,6 +6,7 @@ import {
   Button,
   Typography,
   useTheme,
+  Grid,
 } from "@mui/material";
 import "../css/Register.css";
 import authService from "../components/api/authService";
@@ -36,6 +37,8 @@ const Register = ({ onLogin, showSb }) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
+    const f_name = form.f_name.value;
+    const l_name = form.l_name.value;
     const username = form.username.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
@@ -44,7 +47,7 @@ const Register = ({ onLogin, showSb }) => {
       return;
     }
 
-    await authService.register(username, email, password);
+    await authService.register(username, email, password, f_name, l_name);
     showSb(`Registration Successful`, "success");
     // onLogin(email, password);
   };
@@ -91,6 +94,32 @@ const Register = ({ onLogin, showSb }) => {
                 id="username"
                 className="input-field"
               />
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="f_name"
+                    label="First Name"
+                    id="f_name"
+                    className="input-field"
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="l_name"
+                    label="Last Name"
+                    id="l_name"
+                    className="input-field"
+                  />
+                </Grid>
+              </Grid>
               <TextField
                 variant="outlined"
                 margin="normal"

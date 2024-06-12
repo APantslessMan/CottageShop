@@ -62,11 +62,7 @@ function App() {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <CssBaseline />
           <main className="content">
-            <Navbar
-              isLoggedIn={isLoggedIn}
-              onLogout={handleLogout}
-              userName={userName}
-            />
+            <Navbar />
             <Routes>
               <Route element={<SecureRoutes />}>
                 <Route

@@ -1,4 +1,5 @@
 import apiService from "../../components/api/apiService";
+
 import React, { useState, useEffect } from "react";
 import {
   ToggleButtonGroup,
@@ -14,8 +15,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../components/utils/CartWrapper";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useAuth } from "../../components/utils/AuthContext";
+import dayjs from "dayjs";
 
 const Checkout = () => {
   const { cartItemCount, cartItems, decCartItem, incCartItem } = useCart();
@@ -23,7 +26,7 @@ const Checkout = () => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     email: "",
     firstName: "",
     lastName: "",
@@ -32,7 +35,11 @@ const Checkout = () => {
     requestedDate: null,
     cartItems: [],
     total: 0,
-  });
+  };
+
+  const [formData, setFormData] = useState(
+    JSON.parse(sessionStorage.getItem("checkoutFormData")) || initialFormData
+  );
 
   const [errors, setErrors] = useState({});
 
@@ -44,24 +51,31 @@ const Checkout = () => {
       formattedValue = formatPhoneNumber(value);
     }
 
-    setFormData((prevData) => ({
-      ...prevData,
+    const newFormData = {
+      ...formData,
       [name]: formattedValue,
-    }));
+    };
+
+    setFormData(newFormData);
+    sessionStorage.setItem("checkoutFormData", JSON.stringify(newFormData));
 
     // Validate input
     validateField(name, formattedValue);
   };
 
   const handleDateChange = (newDate) => {
-    setFormData((prevData) => ({
-      ...prevData,
+    const newFormData = {
+      ...formData,
       requestedDate: newDate,
-    }));
-    if (!newDate) {
+    };
+
+    setFormData(newFormData);
+    sessionStorage.setItem("checkoutFormData", JSON.stringify(newFormData));
+
+    if (!newDate || !dayjs(newDate).isValid()) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        requestedDate: "Please select a requested date.",
+        requestedDate: "Please select a valid date.",
       }));
     } else {
       setErrors((prevErrors) => ({
@@ -73,10 +87,13 @@ const Checkout = () => {
 
   const handleContactMethodChange = (event, newMethod) => {
     if (newMethod !== null) {
-      setFormData((prevData) => ({
-        ...prevData,
+      const newFormData = {
+        ...formData,
         contactMethod: newMethod,
-      }));
+      };
+
+      setFormData(newFormData);
+      sessionStorage.setItem("checkoutFormData", JSON.stringify(newFormData));
     }
   };
 
@@ -133,13 +150,23 @@ const Checkout = () => {
 
   const handleCheckout = () => {
     const { email, firstName, lastName, phoneNumber, requestedDate } = formData;
-    if (!email || !firstName || !lastName || !phoneNumber || !requestedDate) {
+    if (
+      !email ||
+      !firstName ||
+      !lastName ||
+      !phoneNumber ||
+      !requestedDate ||
+      !dayjs(requestedDate).isValid()
+    ) {
       setErrors({
         email: !email ? "Email is required." : "",
         firstName: !firstName ? "First name is required." : "",
         lastName: !lastName ? "Last name is required." : "",
         phoneNumber: !phoneNumber ? "Phone number is required." : "",
-        requestedDate: !requestedDate ? "Requested date is required." : "",
+        requestedDate:
+          !requestedDate || !dayjs(requestedDate).isValid()
+            ? "Requested date is required and must be valid."
+            : "",
       });
       return;
     }
@@ -157,10 +184,12 @@ const Checkout = () => {
     try {
       const items = await apiService.getcartitems(cartItems);
       setCartList(items);
-      setFormData((prevData) => ({
-        ...prevData,
+      const newFormData = {
+        ...formData,
         cartItems: items,
-      }));
+      };
+      setFormData(newFormData);
+      sessionStorage.setItem("checkoutFormData", JSON.stringify(newFormData));
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -349,17 +378,13 @@ const Checkout = () => {
             open={!!errors.requestedDate}
             arrow
           >
-            <DatePicker
-              value={formData.requestedDate}
-              onChange={handleDateChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  error={!!errors.requestedDate}
-                  helperText={errors.requestedDate}
-                />
-              )}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={dayjs(formData.requestedDate)}
+                onChange={handleDateChange}
+                slotProps={{ textField: { variant: "outlined" } }}
+              />
+            </LocalizationProvider>
           </Tooltip>
         </Box>
         <Divider

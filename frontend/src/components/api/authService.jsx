@@ -58,11 +58,11 @@ const authService = {
     }
   },
 
-  register: async (username, email, password) => {
+  register: async (username, email, password, f_name, l_name) => {
     try {
       const response = await axios.post(
         `${apiUrl}/register`,
-        { username, email, password },
+        { username, email, password, f_name, l_name },
         { withCredentials: true }
       );
       if (response.status === 201) {
@@ -75,22 +75,6 @@ const authService = {
     } catch (error) {
       console.error("Error during registration:", error);
       return error; // Return error object
-    }
-  },
-
-  getRole: async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/role`, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        return response.data.role;
-      } else {
-        throw new Error("Failed to get role");
-      }
-    } catch (error) {
-      console.error("Error fetching role:", error);
-      throw error;
     }
   },
 

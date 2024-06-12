@@ -1,16 +1,35 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { Paper, Box, Typography, Button, Grid } from "@mui/material";
+import dayjs from "dayjs";
 
 const OrderDetails = () => {
   const location = useLocation();
   const formData = location.state || {};
 
-  const handleSubmit = () => {
-    // Handle the submission logic here, like sending data to the server
-    console.log("Order submitted:", formData);
-  };
+  // Destructure formdata and format date
+  const {
+    email,
+    firstName,
+    lastName,
+    phoneNumber,
+    contactMethod,
+    requestedDate,
+    cartItems,
+    total,
+  } = formData;
+  const formattedDate = requestedDate
+    ? dayjs(requestedDate).format("YYYY-MM-DD")
+    : "N/A";
 
+  const handleSubmit = () => {
+    console.log("Order submitted:", formData);
+    const submissionData = {
+      ...formData,
+      requestedDate: formattedDate, // Ensure the date is correctly formatted
+    };
+    console.log("Order submitted:", submissionData);
+  };
   return (
     <Box
       sx={{
@@ -34,18 +53,16 @@ const OrderDetails = () => {
         </Typography>
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Personal Information</Typography>
-          <Typography>First Name: {formData.firstName}</Typography>
-          <Typography>Last Name: {formData.lastName}</Typography>
-          <Typography>Phone Number: {formData.phoneNumber}</Typography>
-          <Typography>Contact Method: {formData.contactMethod}</Typography>
-          <Typography>
-            Requested Date: {formData.requestedDate?.toString()}
-          </Typography>
+          <Typography>First Name: {firstName}</Typography>
+          <Typography>Last Name: {lastName}</Typography>
+          <Typography>Phone Number: {phoneNumber}</Typography>
+          <Typography>Contact Method: {contactMethod}</Typography>
+          <Typography>Requested Date: {requestedDate?.toString()}</Typography>
         </Box>
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Cart Items</Typography>
           <Grid container spacing={2}>
-            {formData.cartItems.map((item) => (
+            {cartItems.map((item) => (
               <Grid item xs={12} key={item.id}>
                 <Paper sx={{ display: "flex", p: 2 }}>
                   <Box sx={{ flexShrink: 0 }}>
@@ -67,7 +84,7 @@ const OrderDetails = () => {
           </Grid>
         </Box>
         <Box sx={{ textAlign: "right" }}>
-          <Typography variant="h5">Total: ${formData.total}</Typography>
+          <Typography variant="h5">Total: ${total}</Typography>
         </Box>
         <Box sx={{ mt: 4, textAlign: "right" }}>
           <Button

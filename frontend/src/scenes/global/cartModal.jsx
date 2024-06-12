@@ -5,7 +5,7 @@ import { useCart } from "../../components/utils/CartWrapper";
 import { ShoppingCartOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const CartModal = ({ open, onClose }) => {
+const CartModal = ({ open, onClose, isLoggedIn }) => {
   const [cartList, setCartList] = useState([]); // Add this line
   const { cartItemCount, cartItems, decCartItem, incCartItem } = useCart();
   const navigate = useNavigate();
@@ -18,7 +18,11 @@ const CartModal = ({ open, onClose }) => {
 
   const onCheckout = () => {
     onClose();
-    navigate("/checkout");
+    if (!isLoggedIn) {
+      navigate("/login");
+    } else {
+      navigate("/checkout");
+    }
   };
 
   const fetchCartItems = async () => {

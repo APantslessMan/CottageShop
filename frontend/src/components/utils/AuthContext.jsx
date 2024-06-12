@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import authService from "../api/authService";
 import apiService from "../api/apiService";
 import { useNavigate } from "react-router-dom";
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -40,7 +41,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("cartItems");
       }
       setUserName(data.login);
+
       navigate("/");
+      window.location.reload();
     } catch (error) {
       console.error("Login failed:", error.message);
     }
@@ -50,7 +53,6 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
       setIsLoggedIn(false);
-      clearCartOnLogout();
       setUserName("");
       setRole("");
       navigate("/");

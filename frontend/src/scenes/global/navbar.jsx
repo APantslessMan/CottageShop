@@ -1,5 +1,5 @@
 import { Box, Icon, IconButton, useTheme, Badge } from "@mui/material";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, setState } from "react";
 import { ColorModeContext } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -20,6 +20,7 @@ import { ShoppingCartOutlined } from "@mui/icons-material";
 import { useCart } from "../../components/utils/CartWrapper";
 import CartModal from "./cartModal";
 import { DataContext } from "../../components/utils/DataContext";
+import { useAuth } from "../../components/utils/AuthContext";
 
 const pages = ["Breads", "About", "Blog"];
 
@@ -37,15 +38,16 @@ const CartButton = ({ onClick }) => {
   );
 };
 
-const NavBar = ({ isLoggedIn, onLogout, userName }) => {
+const NavBar = () => {
   const theme = useTheme();
+  const { clearCart } = useCart();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openCartModal, setOpenCartModal] = useState(false);
   const { siteData } = useContext(DataContext);
-
+  const { isLoggedIn, handleLogout, role, userName } = useAuth();
   const handleOpenCartModal = () => {
     setOpenCartModal(true);
   };
@@ -67,6 +69,12 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
     };
   }, [isScrolled]);
 
+  // useEffect(() => {
+  //   // Simulate a delay to ensure all state updates are processed
+  //   const timer = setTimeout(() => setIsLoaded(true), 500);
+  //   return () => clearTimeout(timer);
+  // }, [isLoggedIn, role, userName]);
+
   const handleOpenNavMenu = (event) => {
     setNavAnchor(event.currentTarget);
   };
@@ -85,7 +93,7 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
 
   const handleUserMenuClick = (actions) => {
     actions.forEach((action) => {
-      if (action === onLogout) {
+      if (action === handleLogout) {
         setTimeout(action, 500);
       } else {
         action();
@@ -106,21 +114,25 @@ const NavBar = ({ isLoggedIn, onLogout, userName }) => {
             },
           ],
         },
-        {
-          label: "Admin",
-          action: [
-            () => {
-              handleCloseUserMenu();
-              navigate("/admin");
-            },
-          ],
-        },
+        ...(role === "admin"
+          ? [
+              {
+                label: "Admin",
+                action: [
+                  () => {
+                    handleCloseUserMenu();
+                    navigate("/admin");
+                  },
+                ],
+              },
+            ]
+          : []),
         {
           label: "Logout",
           action: [
             () => {
               handleCloseUserMenu();
-              onLogout();
+              handleLogout().then(() => clearCart());
               navigate("/");
             },
           ],

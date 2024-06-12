@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Flask, request, jsonify, make_response, render_template, send_from_directory
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship, load_only
+from sqlalchemy.orm import relationship
 
 from werkzeug.utils import secure_filename
 
@@ -16,7 +16,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 import json
-import sys
+# import sys
 import logging
 import uuid
 from dotenv import load_dotenv
@@ -25,7 +25,7 @@ import os
 
 load_dotenv()
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
-COOKIE_SECURITY = True
+COOKIE_SECURITY = False
 COOKIE_TYPES = ["access_token_cookie", "refresh_token_cookie", "public_token_cookie"]
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
@@ -60,7 +60,6 @@ product_stock_association = db.Table('product_stock_association',
                                      db.Column('quantity', db.Integer, nullable=False))
 
 
-
 class CartItem(db.Model):
     __tablename__ = "cart_items"
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
@@ -70,16 +69,20 @@ class CartItem(db.Model):
     user = db.relationship("User", backref="cart_items")
     product = db.relationship("Product", backref="cart_items")
 
+
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
+    f_name = db.Column(db.String(250), unique=True, nullable=False)
+    l_name = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
     purchases = db.Column(db.String(250), nullable=True)
     role = db.Column(db.String(80), nullable=False, default='user')
     orders = db.relationship("Order", back_populates="user")
-    cart = db.relationship("Product", secondary="cart_items", back_populates="users", overlaps="user,cart_items,product")
+    cart = db.relationship("Product", secondary="cart_items", back_populates="users",
+                           overlaps="user,cart_items,product")
 
 
 class Product(db.Model):
@@ -209,14 +212,14 @@ def del_from_cart(user_id, product_id, quantity):
             return False
 
 
-def set_cookies(email, username, role):
+def set_cookies(email, username, role, f_name, l_name):
     access_token = create_access_token(
-        identity={'email': email, 'username': username, 'role': role})
+        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
     refresh_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role})
+        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
     session_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role})
-    response = make_response(jsonify(message="Logged in", role=role), 200)
+        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
+    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=l_name, l_name=l_name), 200)
     for i in COOKIE_TYPES:
         if "public" in i:
             response.set_cookie(i, value=session_token, expires=datetime.now(timezone.utc) + timedelta(days=30),
@@ -234,10 +237,6 @@ def set_cookies(email, username, role):
 #                         API Routes                          #
 ###############################################################
 
-
-# @app.route("/")
-# def index():
-#     return render_template("index.html")
 
 @app.route('/')
 def index():
@@ -260,6 +259,7 @@ def manifest():
 
     return render_template('manifest.json', **manifest_data)
 
+
 @app.route('/image/<path:path>')
 def send_icon(path):
     return send_from_directory('./build/assets/img', path)
@@ -268,21 +268,24 @@ def send_icon(path):
 @app.route('/register', methods=['POST'])
 def register():
     data = request.json
+    print(data)
     email = data['email'].lower()
     username = data['username'].lower()
     password = data['password']
+    f_name = data['f_name']
+    l_name = data['l_name']
     role = data.get('role', 'user')  # Default role is 'user'
-
+    print(data)
     if User.query.filter_by(email=email).first():
         return jsonify({"message": "Email already exists"}), 409
     if User.query.filter_by(username=username).first():
         return jsonify({"message": "Username already exists"}), 409
 
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-    new_user = User(username=username, email=email, password=hashed_password, role=role)
+    new_user = User(username=username, email=email, password=hashed_password, role=role, f_name=f_name, l_name=l_name)
     db.session.add(new_user)
     db.session.commit()
-    response = set_cookies(email, username, role)
+    response = set_cookies(email, username, role, f_name, l_name)
     return response, 201
 
 
@@ -293,7 +296,7 @@ def login():
     password = data['password']
     user = User.query.filter((User.email == loginid) | (User.username == loginid)).first()
     if user and check_password_hash(user.password, password):
-        response = set_cookies(user.email, user.username, user.role)
+        response = set_cookies(user.email, user.username, user.role, user.f_name, user.l_name)
         return response
     else:
         return jsonify({"message": "Invalid credentials"}), 401
@@ -303,10 +306,12 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
-    response = set_cookies(identity['email'], identity['username'], identity['role'])
+    response = set_cookies(identity['email'], identity['username'],
+                           identity['role'], identity['f_name'], identity['l_name'])
     return response
 
 
+# deprecated
 @app.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
@@ -394,71 +399,78 @@ def load_cart_items():
 
                 }
             items_list.append(item_dict)
-    return jsonify(items_list), 200
+        return jsonify(items_list), 200
 
 
 @app.route('/api/user')
 @jwt_required(locations=['cookies'])
 def get_user():
-    users = User.query.all()
-    user_data = [
-        {
-            "id": user.id,
-            "name": user.username,
-            "email": user.email,
-            "purchases": user.purchases,
-            "role": user.role
-        }
-        for user in users
-    ]
-    return jsonify(user_data)
+    identity = get_jwt_identity()
+    if identity['role'] == 'admin':
+        users = User.query.all()
+        user_data = [
+            {
+                "id": user.id,
+                "name": user.username,
+                "email": user.email,
+                "purchases": user.purchases,
+                "role": user.role
+            }
+            for user in users
+        ]
+        return jsonify(user_data)
+    else:
+        return jsonify({"message": "User is not admin"}), 401
 
 
 @app.route('/editproduct', methods=['POST'])
 @jwt_required()
 def edit_product():
-    try:
-        data = request.form
-        name = data.get('name')
-        description = data.get('description')
-        price = data.get('price')
-        img_url = data.get('img_url')
-        stock_items = data.get('stockItems')
-        stock_items = json.loads(stock_items)
+    identity = get_jwt_identity()
+    if identity['role'] == 'admin':
+        try:
+            data = request.form
+            name = data.get('name')
+            description = data.get('description')
+            price = data.get('price')
+            img_url = data.get('img_url')
+            stock_items = data.get('stockItems')
+            stock_items = json.loads(stock_items)
 
-        if 'image' in request.files:
+            if 'image' in request.files:
 
-            file = request.files['image']
+                file = request.files['image']
 
-            if file and allowed_file(file.filename):
-                img_url = file_parse(name, file)
+                if file and allowed_file(file.filename):
+                    img_url = file_parse(name, file)
 
+            if name and description and price:
+                new_product = Product(name=name, description=description, price=price, img_url=img_url)
+                db.session.add(new_product)
+                db.session.commit()
 
-        if name and description and price:
-            new_product = Product(name=name, description=description, price=price, img_url=img_url)
-            db.session.add(new_product)
-            db.session.commit()
+                for item in stock_items:
+                    stock_id = item['item']
+                    qty = item['quantity']
+                    stock_part = StockPart.query.get(stock_id)
+                    if stock_part:
+                        assoc = product_stock_association.insert().values(
+                            product_id=new_product.id,
+                            stockpart_id=stock_id,
+                            quantity=qty,
+                        )
+                        db.session.execute(assoc)
 
-            for item in stock_items:
-                stock_id = item['item']
-                qty = item['quantity']
-                stock_part = StockPart.query.get(stock_id)
-                if stock_part:
-                    assoc = product_stock_association.insert().values(
-                        product_id=new_product.id,
-                        stockpart_id=stock_id,
-                        quantity=qty,
-                    )
-                    db.session.execute(assoc)
+                db.session.commit()
+                return jsonify({"message": "Product Change Successful"}), 201
+            else:
+                return jsonify({"error": "Invalid product data"}), 400
 
-            db.session.commit()
-            return jsonify({"message": "Product Change Successful"}), 201
-        else:
-            return jsonify({"error": "Invalid product data"}), 400
-
-    except Exception as e:
-        db.session.rollback()  # Rollback transaction in case of error
-        return jsonify({"error": str(e)}), 500
+        except Exception as e:
+            db.session.rollback()  # Rollback transaction in case of error
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "User is not admin"}), 401
 
 
 @app.route('/uploads/<filename>')
@@ -507,7 +519,6 @@ def edit_user():
                     return jsonify({"message": "User is already bottom role"}), 400
             else:
                 return jsonify({"message": "Invalid request"}), 400
-            return jsonify({"message": "Invalid operation"}), 400
         else:
 
             return jsonify({"message": "User not found"}), 404
@@ -524,30 +535,42 @@ def get_stock_items():
 @app.route('/editstock', methods=['POST'])
 @jwt_required()
 def edit_stock():
-    try:
-        data = request.form
-        op = request.get_data()
-        name = data.get('name')
-        description = data.get('description')
-        supplier = data.get('supplier')
-        qty = data.get('qty')
-        price = data.get('price')
-        if name and price and qty:
-            new_stock = StockPart(name=name, description=description, price=price, supplier=supplier, qty=qty)
-            db.session.add(new_stock)
-            db.session.commit()
-            return jsonify({"message": "Stock Change Successful"}), 201
-        else:
-            return jsonify({"error": "Invalid product data"}), 400
+    identity = get_jwt_identity()
+    if identity['role'] == 'admin':
+        try:
+            data = request.form
+            # op = request.get_data()
+            name = data.get('name')
+            description = data.get('description')
+            supplier = data.get('supplier')
+            qty = data.get('qty')
+            price = data.get('price')
+            if name and price and qty:
+                new_stock = StockPart(name=name, description=description, price=price, supplier=supplier, qty=qty)
+                db.session.add(new_stock)
+                db.session.commit()
+                return jsonify({"message": "Stock Change Successful"}), 201
+            else:
+                return jsonify({"error": "Invalid product data"}), 400
 
-    except Exception as e:
-        db.session.rollback()  # Rollback transaction in case of error
-        return jsonify({"error": str(e)}), 500
+        except Exception as e:
+            db.session.rollback()  # Rollback transaction in case of error
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Unauthorized"}), 401
+
+
+@app.route('/order_submit', methods=['POST'])
+@jwt_required()
+def submit_order():
+    data = request.get_data()
+    new_order = Order()
 
 
 @app.route('/api/order')
+@jwt_required()
 def get_orders():
-    orders = Orders.query.all()
+    orders = Order.query.all()
     order_data = [
         {
             "id": order.id,
@@ -561,8 +584,9 @@ def get_orders():
 
 
 @app.route('/api/order/<int:order_id>')
+@jwt_required()
 def get_order(order_id):
-    order = Orders.query.get(order_id)
+    order = Order.query.get(order_id)
     if order:
         return jsonify(
             {
@@ -594,35 +618,32 @@ def get_json():
 @app.route('/api/json/edit', methods=['POST'])
 @jwt_required()
 def edit_site():
-    try:
-        data = request.form
-        op = data.get('op')
-        params_json = {}
-        for i in data:
-            if i != 'op':
-                params_json.update({i: data[i]})
-        if 'image' in request.files:
-            file = request.files['image']
-            if file and allowed_file(file.filename):
-                img_url = file_parse(op, file)
-                params_json.update({'img': img_url})
-        section = Site.query.filter_by(name=op).first()
-        section.params = params_json
-        section.uuid = uuid.uuid4()
-        db.session.commit()
-        return jsonify({"message": "Save Successful"}), 201
-
-    except Exception as e:
-        db.session.rollback()  # Rollback transaction in case of error
-        return jsonify({"error": str(e)}), 500
-
-
-# Deprecated
-@app.route('/role', methods=['GET'])
-@jwt_required(locations=['cookies'])
-def get_role():
     identity = get_jwt_identity()
-    return jsonify({'role': identity['role']}), 200
+    if identity['role'] == 'admin':
+        try:
+
+            data = request.form
+            op = data.get('op')
+            params_json = {}
+            for i in data:
+                if i != 'op':
+                    params_json.update({i: data[i]})
+            if 'image' in request.files:
+                file = request.files['image']
+                if file and allowed_file(file.filename):
+                    img_url = file_parse(op, file)
+                    params_json.update({'img': img_url})
+            section = Site.query.filter_by(name=op).first()
+            section.params = params_json
+            section.uuid = uuid.uuid4()
+            db.session.commit()
+            return jsonify({"message": "Save Successful"}), 201
+
+        except Exception as e:
+            db.session.rollback()  # Rollback transaction in case of error
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Unauthorized"}), 401
 
 
 @app.route('/auth', methods=['GET'])
@@ -636,8 +657,8 @@ def check_authentication():
 @app.route('/admin')
 @jwt_required()
 def admin():
-    claims = get_jwt_identity()
-    if claims['role'] != 'admin':
+    identity = get_jwt_identity()
+    if identity['role'] != 'admin':
         return jsonify(message='Access denied'), 403
     return jsonify({"message": "Welcome, admin!"}), 200
 
@@ -653,4 +674,4 @@ def logout():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    app.run(host='10.10.18.11', port='5000', debug=True)
+    app.run(host='10.10.18.11', port=5000, debug=True)
