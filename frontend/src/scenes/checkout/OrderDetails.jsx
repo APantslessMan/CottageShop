@@ -18,9 +18,11 @@ const OrderDetails = () => {
     cartItems,
     total,
   } = formData;
+
   const formattedDate = requestedDate
-    ? dayjs(requestedDate).format("YYYY-MM-DD")
+    ? dayjs(requestedDate).format("MM-DD")
     : "N/A";
+  console.log("Requested Date:", dayjs(requestedDate).format("MM-DD"));
 
   const handleSubmit = () => {
     console.log("Order submitted:", formData);
@@ -57,7 +59,7 @@ const OrderDetails = () => {
           <Typography>Last Name: {lastName}</Typography>
           <Typography>Phone Number: {phoneNumber}</Typography>
           <Typography>Contact Method: {contactMethod}</Typography>
-          <Typography>Requested Date: {requestedDate?.toString()}</Typography>
+          <Typography>Requested Date: {formattedDate?.toString()}</Typography>
         </Box>
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Cart Items</Typography>
