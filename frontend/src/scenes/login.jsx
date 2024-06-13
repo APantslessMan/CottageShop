@@ -49,7 +49,7 @@ const Login = ({ onLogin }) => {
           <Box
             className="register-image"
             style={{
-              backgroundImage: "url(./build/assets/img/site/login.jpg)",
+              backgroundImage: "url(assets/img/site/login.jpg)",
             }}
           />
           <Paper className="register-form" elevation={5}>
