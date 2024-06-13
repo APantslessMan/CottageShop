@@ -241,7 +241,7 @@ def set_cookies(email, username, role, f_name, l_name):
 @app.route('/<path>')
 @app.route('/<path:path>')
 def index(path):
-    if path.startswith('api'):
+    if path.startswith('api') or path.startswith('images') or path.startswith('manifest.json'):
         pass
     else:
         return redirect('/')
