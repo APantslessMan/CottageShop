@@ -1,4 +1,4 @@
-// SiteDataContext.js
+//  Code to wrap entire app, for loading data from an API and storing it in a context provider
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import ApiDataFetch from "../api/ApiDataFetch"; // Import your data fetching function
 
@@ -15,7 +15,7 @@ export const DataProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    fetchData(); // Call fetchData function when component mounts
+    fetchData();
   }, [fetchData]);
 
   return (

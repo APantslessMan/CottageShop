@@ -85,7 +85,9 @@ function App() {
               </Route>
               <Route
                 path="/login"
-                element={<Wrapper component={Login} onLogin={handleLogin} />}
+                element={
+                  <Login onLogin={handleLogin} showSb={handleOpenSnackbar} />
+                }
               />
               <Route
                 path="/register"

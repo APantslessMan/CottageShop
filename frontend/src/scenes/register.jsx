@@ -43,13 +43,14 @@ const Register = ({ onLogin, showSb }) => {
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
     if (password !== confirmPassword) {
+      //TODO: Fix ShowSb, currently always says success
       showSb("Password Mismatch", "Error");
       return;
     }
 
     await authService.register(username, email, password, f_name, l_name);
+    onLogin(email, password);
     showSb(`Registration Successful`, "success");
-    // onLogin(email, password);
   };
 
   return (

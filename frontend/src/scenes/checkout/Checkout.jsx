@@ -226,7 +226,7 @@ const Checkout = () => {
           {cartList.map((item) => (
             <Grid item xs={12} key={item.id}>
               <Paper sx={{ display: "flex", p: 2 }}>
-                <Box sx={{ width: "120px" }}>
+                <Box>
                   <img src={item.img_url} alt={item.name} />
                 </Box>
                 <Box sx={{ ml: 2, flexGrow: 1 }}>

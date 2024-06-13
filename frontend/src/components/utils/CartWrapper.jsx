@@ -14,6 +14,7 @@ export const CartProvider = ({ children }) => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  // load increase decrease cart items to local storage, if user is not logged in
   const loadCart = (cartItems) => {
     setCartItems(cartItems);
   };
