@@ -197,6 +197,21 @@ const apiService = {
       throw error;
     }
   },
+  clearcart: async (op, userName) => {
+    try {
+      authService.refreshToken();
+      const response = await axios.post(
+        `${apiUrl}/api/cart`,
+        { op: "clear", userName },
+        {
+          withCredentials: true,
+        }
+      );
+    } catch {
+      console.error("Error clearing cart:", error);
+      throw error;
+    }
+  },
   // Get Cart For cart modal,no JWT required for this route
   getcartitems: async (items) => {
     try {
@@ -213,6 +228,7 @@ const apiService = {
       throw error;
     }
   },
+
   submitorder: async (formData) => {
     try {
       authService.refreshToken();

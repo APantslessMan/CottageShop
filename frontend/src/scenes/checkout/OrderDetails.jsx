@@ -1,11 +1,14 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Paper, Box, Typography, Button, Grid, Divider } from "@mui/material";
 import dayjs from "dayjs";
 import apiService from "../../components/api/apiService";
 import { useSnackbar } from "../../components/utils/SbProvider";
+import { useCart } from "../../components/utils/CartWrapper";
 
 const OrderDetails = () => {
+  const navigate = useNavigate();
+  const { clearCart } = useCart();
   const location = useLocation();
   const formData = location.state || {};
   const { showSnackbar } = useSnackbar();
@@ -47,6 +50,8 @@ const OrderDetails = () => {
     if (response.status === 201) {
       showSnackbar("Order Placed", "success");
       //Clear Cart, navigate to /
+      clearCart();
+      navigate("/");
     } else {
       showSnackbar("Order Creation Failed", "error");
     }

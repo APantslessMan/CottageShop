@@ -8,7 +8,7 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const auth = useAuth();
-  const { isLoggedIn } = auth;
+  const { isLoggedIn, userName } = auth;
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
@@ -20,6 +20,10 @@ export const CartProvider = ({ children }) => {
   };
   const clearCart = () => {
     setCartItems([]);
+    if (isLoggedIn) {
+      apiService.clearcart("clear", userName);
+    }
+    localStorage.removeItem("cartItems");
   };
 
   const updateLocalStorage = (items) => {

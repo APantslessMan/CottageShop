@@ -25,7 +25,7 @@ import os
 
 load_dotenv()
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
-COOKIE_SECURITY = True
+COOKIE_SECURITY = False
 COOKIE_TYPES = ["access_token_cookie", "refresh_token_cookie", "public_token_cookie"]
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
@@ -213,6 +213,25 @@ def del_from_cart(user_id, product_id, quantity):
             return False
 
 
+def clear_cart(username):
+    try:
+        user = User.query.filter_by(username=username).first()
+
+        if not user:
+            return False
+        cart_items = CartItem.query.filter_by(user_id=user.id).all()
+        if cart_items:
+            for item in cart_items:
+                db.session.delete(item)
+            db.session.commit()
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+
 def set_cookies(email, username, role, f_name, l_name):
     access_token = create_access_token(
         identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
@@ -385,6 +404,10 @@ def cart():
             product_id = request.json['product']
             qty = request.json.get('quantity', 1)
             del_from_cart(user.id, product_id, qty)
+            return 'Item deleted from cart successfully', 201
+        elif request.json['op'] == 'clear':
+            username = request.json['userName']
+            clear_cart(username)
             return 'Item deleted from cart successfully', 201
         else:
             return jsonify({"message": "Invalid request"}), 401
@@ -579,13 +602,14 @@ def submit_order():
         requested_date = request.form.get('requestedDate')
 
         cart_items = []
-        for i in range(len(request.form) // 6):  # assuming 6 fields per item
-            item = {
-
-                'id': request.form.get(f'cartItems[{i}][id]'),
-                'quantity': request.form.get(f'cartItems[{i}][quantity]'),
-            }
-            cart_items.append(item)
+        for i in range(len(request.form) // 6):
+            print(request.form.get(f'cartItems[{i}][id]') is not None)
+            if request.form.get(f'cartItems[{i}][id]') is not None:
+                item = {
+                    'id': request.form.get(f'cartItems[{i}][id]'),
+                    'quantity': request.form.get(f'cartItems[{i}][quantity]'),
+                }
+                cart_items.append(item)
 
         total = request.form.get('total')
         user = User.query.filter_by(email=email).first()
