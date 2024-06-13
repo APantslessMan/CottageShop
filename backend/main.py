@@ -238,13 +238,7 @@ def set_cookies(email, username, role, f_name, l_name):
 ###############################################################
 
 
-@app.route('/<path>')
-@app.route('/<path:path>')
-def index(path):
-    if path.startswith('api') or path.startswith('image') or path.startswith('manifest.json'):
-        pass
-    else:
-        return redirect('/')
+
 
 
 @app.route('/')
@@ -257,6 +251,7 @@ def root():
     else:
         # Handle the case where no data is found
         return render_template('index.html')
+
 
 @app.route('/manifest.json')
 def manifest():
@@ -683,6 +678,14 @@ def logout():
         response.delete_cookie(i)
     return response
 
+
+@app.route('/<path>')
+@app.route('/<path:path>')
+def index(path):
+    if path.startswith('api') or path.startswith('image') or path.startswith('manifest.json'):
+        pass
+    else:
+        return redirect('/')
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
