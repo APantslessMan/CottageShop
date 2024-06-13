@@ -241,18 +241,14 @@ def set_cookies(email, username, role, f_name, l_name):
 @app.route('/<path>')
 @app.route('/<path:path>')
 def index(path):
-    print(f'Path1: {path}')
     if path.startswith('api'):
-        print(f'Path2: {path}')
         pass
     else:
-        print(f'Path3: {path}')
         return redirect('/')
 
 
 @app.route('/')
 def root():
-    print("gone here")
     # Fetch OG data from the database
     data = Site.query.filter_by(name='seo_meta').first()
     if data:
