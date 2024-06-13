@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from flask import Flask, request, jsonify, make_response, render_template, send_from_directory
+from flask import Flask, request, jsonify, make_response, render_template, send_from_directory, redirect
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -241,14 +241,22 @@ def set_cookies(email, username, role, f_name, l_name):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    if not path.startswith('/api'):
-        # OG data from database
-        data = Site.query.filter_by(name='seo_meta').first()
-        print(data.params)
+    if path.startswith('api'):
+        return "API route", 404
+    else:
+        return redirect('/')
+
+
+@app.route('/')
+def root():
+    # Fetch OG data from the database
+    data = Site.query.filter_by(name='seo_meta').first()
+    if data:
         og_data = data.params
         return render_template('index.html', **og_data)
     else:
-        pass
+        # Handle the case where no data is found
+        return render_template('index.html')
 
 @app.route('/manifest.json')
 def manifest():

@@ -48,7 +48,7 @@ const Home = () => {
   return (
     <div>
       {siteData.home_hero ? <Hero {...siteData.home_hero} /> : null}
-      {/* {console.log("consolesiteData", siteData.products)} */}
+
       {siteData.home_story ? <Story {...siteData.home_story} /> : null}
       {siteData.home_products ? (
         <ProductCards {...siteData.home_products} />

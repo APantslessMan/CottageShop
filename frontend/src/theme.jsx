@@ -56,7 +56,7 @@ export const themeSettings = (mode) => {
         : {
             // Light Mode colors
             primary: {
-              main: "#474536",
+              main: "#B2AC88",
             },
             secondary: {
               main: "#FFFFF0",
@@ -65,12 +65,12 @@ export const themeSettings = (mode) => {
               main: "#FFFFF0",
             },
             background: {
-              default: "#FFFFF0",
-              paper: "#c1bda0",
+              default: "#F5F5DC",
+              paper: "#FFFFF0",
             },
             text: {
               primary: "#333333",
-              secondary: "#FFFFF0",
+              secondary: "#B8860B",
               menuSelected: "#8B4513",
               disabled: "grey",
             },

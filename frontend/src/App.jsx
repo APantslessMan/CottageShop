@@ -6,12 +6,11 @@ import Login from "./scenes/login";
 import Checkout from "./scenes/checkout/Checkout";
 import OrderDetails from "./scenes/checkout/OrderDetails";
 import Register from "./scenes/register";
-import Wrapper from "./components/utils/wrapper";
 import Home from "./scenes/home/home";
 import SecureRoutes from "./components/utils/secureroutes";
 import Dashboard from "./scenes/dashboard/index";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import { useAuth } from "./components/utils/AuthContext"; // Import useAuth hook
+import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
+import { useAuth } from "./components/utils/AuthContext";
 import apiService from "./components/api/apiService";
 import { useCart } from "./components/utils/CartWrapper";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -27,7 +26,6 @@ function App() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
-  // const location = useLocation();
 
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);
@@ -35,24 +33,12 @@ function App() {
     setShowSnackbar(true);
   };
 
-  // const useResetZoomAndScroll = () => {
-  //   const location = useLocation();
-
-  // useEffect(() => {
-  //   const resetZoomAndScroll = () => {
-  //     document.body.style.zoom = "1";
-  //     window.scrollTo(0, 0);
-  //   };
-
-  //   resetZoomAndScroll();
-  // }, [location]);
-
   useEffect(() => {
     const loadCart = async () => {
       if (isLoggedIn) {
         try {
           const cartItems = await apiService.getcart();
-          console.log("cartItems", cartItems);
+
           cart.loadCart(cartItems);
         } catch (error) {
           console.error("Error loading cart:", error);
@@ -98,6 +84,7 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-details" element={<OrderDetails />} />
               <Route path="/" element={<Home />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
             <Snackbar

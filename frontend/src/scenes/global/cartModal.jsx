@@ -30,7 +30,7 @@ const CartModal = ({ open, onClose }) => {
   const fetchCartItems = async () => {
     try {
       const items = await apiService.getcartitems(cartItems); // Adjust this based on your API
-      console.log("Cart items:", items);
+
       setCartList(items);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -39,7 +39,7 @@ const CartModal = ({ open, onClose }) => {
   const calculateTotalPrice = () => {
     return cartList.reduce((total, item) => {
       const price = parseFloat(item.price); // Ensure price is treated as a number
-      console.log("Price:", price, "Quantity:", item.quantity, item);
+
       return total + price * item.quantity;
     }, 0);
   };
@@ -71,7 +71,6 @@ const CartModal = ({ open, onClose }) => {
             key={item.id}
             sx={{ marginTop: "10px" }}
           >
-            {console.log("Item in jsx:", item)}
             <Grid item xs={3}>
               <img
                 src={item.img_url}

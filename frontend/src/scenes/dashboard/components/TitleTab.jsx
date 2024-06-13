@@ -73,7 +73,6 @@ const TitleTab = (props) => {
 
       // TODO: Replace with actual API call
       await apiService.editsite(formData);
-      console.log(formData.getAll("img"));
     } catch (error) {
       console.error("Error changing setting:", error);
     }

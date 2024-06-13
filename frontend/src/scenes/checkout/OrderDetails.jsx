@@ -22,15 +22,12 @@ const OrderDetails = () => {
   const formattedDate = requestedDate
     ? dayjs(requestedDate).format("MM-DD")
     : "N/A";
-  console.log("Requested Date:", dayjs(requestedDate).format("MM-DD"));
 
   const handleSubmit = () => {
-    console.log("Order submitted:", formData);
     const submissionData = {
       ...formData,
       requestedDate: formattedDate, // Ensure the date is correctly formatted
     };
-    console.log("Order submitted:", formData);
   };
   return (
     <Box

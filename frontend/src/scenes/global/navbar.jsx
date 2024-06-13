@@ -22,7 +22,8 @@ import CartModal from "./cartModal";
 import { DataContext } from "../../components/utils/DataContext";
 import { useAuth } from "../../components/utils/AuthContext";
 
-const pages = ["Breads", "About", "Blog"];
+//Load pages here
+const pages = [];
 
 const CartButton = ({ onClick }) => {
   const { cartItemCount } = useCart();

@@ -28,8 +28,6 @@ const ProductCards = (products) => {
             {Object.keys(products).map((key) => (
               <Grid item xs={12} lg={4} key={key}>
                 <ProductCard product={products[key]} />
-
-                {/* {console.log("ProductCards:", props[product])} */}
               </Grid>
             ))}
           </Grid>

@@ -2,27 +2,25 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
-import authService from "../api/authService"; // Import your authentication service
+import { useAuth } from "./AuthContext";
 
 const SecureRoutes = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // Initial state set to null
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [showSnackbar, setShowSnackbar] = useState(true);
-  const [error, setError] = useState(null); // State to store authentication error
+  const [error, setError] = useState(null);
+  const { role, isLoggedIn } = useAuth();
 
   useEffect(() => {
-    const authCheck = async () => {
-      try {
-        const auth = await authService.isAuthenticated();
-        setIsAuthenticated(auth);
-        setShowSnackbar(false); // Hide the snackbar after authentication check
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        setError(error); // Store authentication error
-        setIsAuthenticated(false); // Handle error by setting isAuthenticated to false
-        setShowSnackbar(false); // Hide the snackbar in case of error
+    if (!isLoggedIn) {
+      setIsAuthenticated(false);
+    } else {
+      if (role === "admin") {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
       }
-    };
-    authCheck();
+    }
+    setShowSnackbar(false);
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -30,7 +28,6 @@ const SecureRoutes = () => {
   };
 
   if (showSnackbar) {
-    // Show loading indicator while authentication check is in progress
     return (
       <Snackbar
         open={true}
@@ -50,8 +47,6 @@ const SecureRoutes = () => {
     return <Navigate to="/login" />;
   }
 
-  // Render routes based on authentication status
-  //TODO: add role check to make sure can enter secureRoute they are targeting
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 };
 

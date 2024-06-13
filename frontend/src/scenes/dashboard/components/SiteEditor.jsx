@@ -17,7 +17,7 @@ const SiteEditor = ({ showSb }) => {
     const fetchData = async () => {
       const data = await ApiDataFetch.main({ type: "home" });
       const newFormattedData = {};
-      console.log("data", data);
+
       Object.keys(data).forEach((key) => {
         const [prefix, component] = key.split("_");
         if (!newFormattedData[component]) {
