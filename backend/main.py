@@ -297,6 +297,7 @@ def login():
     user = User.query.filter((User.email == loginid) | (User.username == loginid)).first()
     if user and check_password_hash(user.password, password):
         response = set_cookies(user.email, user.username, user.role, user.f_name, user.l_name)
+        print(response)
         return response
     else:
         return jsonify({"message": "Invalid credentials"}), 401

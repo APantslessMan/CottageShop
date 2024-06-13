@@ -27,12 +27,25 @@ function App() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
+  // const location = useLocation();
 
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);
     setSbType(type);
     setShowSnackbar(true);
   };
+
+  // const useResetZoomAndScroll = () => {
+  //   const location = useLocation();
+
+  // useEffect(() => {
+  //   const resetZoomAndScroll = () => {
+  //     document.body.style.zoom = "1";
+  //     window.scrollTo(0, 0);
+  //   };
+
+  //   resetZoomAndScroll();
+  // }, [location]);
 
   useEffect(() => {
     const loadCart = async () => {

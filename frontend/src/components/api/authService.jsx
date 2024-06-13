@@ -18,11 +18,11 @@ const authService = {
       if (response.status === 200) {
         Cookies.set("access_token_cookie", response.data.access_token, {
           secure: true,
-          sameSite: "Strict",
+          sameSite: "lax",
         });
         Cookies.set("refresh_token_cookie", response.data.refresh_token, {
           secure: true,
-          sameSite: "Strict",
+          sameSite: "lax",
         });
         return response.data;
       } else {
@@ -115,8 +115,7 @@ const authService = {
         }
       );
       if (response.status === 200) {
-        Cookies.remove("access_token_cookie");
-        Cookies.remove("refresh_token_cookie");
+        Cookies.remove("public_token_cookie");
         return true;
       }
     } catch (error) {

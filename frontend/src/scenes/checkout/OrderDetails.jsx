@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Paper, Box, Typography, Button, Grid } from "@mui/material";
+import { Paper, Box, Typography, Button, Grid, Divider } from "@mui/material";
 import dayjs from "dayjs";
 
 const OrderDetails = () => {
@@ -30,7 +30,7 @@ const OrderDetails = () => {
       ...formData,
       requestedDate: formattedDate, // Ensure the date is correctly formatted
     };
-    console.log("Order submitted:", submissionData);
+    console.log("Order submitted:", formData);
   };
   return (
     <Box
@@ -53,6 +53,14 @@ const OrderDetails = () => {
         <Typography variant="h4" gutterBottom>
           Order Details
         </Typography>
+        <Divider
+          variant="middle"
+          sx={{
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "10px 0",
+          }}
+        />
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Personal Information</Typography>
           <Typography>First Name: {firstName}</Typography>
@@ -72,14 +80,16 @@ const OrderDetails = () => {
                   </Box>
                   <Box sx={{ ml: 2, flexGrow: 1 }}>
                     <Typography variant="h6">{item.name}</Typography>
-                    <Typography variant="body2">{item.description}</Typography>
+                    {/* <Typography variant="body2">{item.description}</Typography> */}
                   </Box>
-                  <Typography variant="h6">
-                    Quantity: {item.quantity}
-                  </Typography>
-                  <Typography variant="h6">
-                    Price: ${item.price * item.quantity}
-                  </Typography>
+                  <Box sx={{ textAlign: "right", flexGrow: 1 }}>
+                    <Typography variant="h6">
+                      Quantity: {item.quantity}
+                    </Typography>
+                    <Typography variant="h6">
+                      Price: ${item.price * item.quantity}
+                    </Typography>
+                  </Box>
                 </Paper>
               </Grid>
             ))}
