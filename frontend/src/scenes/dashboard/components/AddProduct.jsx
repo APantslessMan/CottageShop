@@ -75,8 +75,8 @@ const AddProductForm = ({ showSb }) => {
       formData.append("name", productData.name);
       formData.append("description", productData.description);
       formData.append("price", productData.price);
-      formData.append("img_url", productData.img_url); // Add this only if you want to keep the URL option
-      formData.append("image", imageFile); // Add the image file
+      formData.append("img_url", productData.img_url);
+      formData.append("image", imageFile);
       formData.append("stockItems", JSON.stringify(productData.stockItems));
       //TODO: switch to api service component
       await apiService.editProduct("add", null, formData);

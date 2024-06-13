@@ -30,7 +30,7 @@ const SiteEditor = ({ showSb }) => {
       setLoading(false);
     };
     fetchData();
-  }, []); // Add an empty dependency array to the useEffect hook
+  }, []);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);

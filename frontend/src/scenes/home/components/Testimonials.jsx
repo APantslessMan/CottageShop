@@ -37,9 +37,9 @@ const Testimonials = (props) => {
         <Divider
           variant="middle"
           sx={{
-            height: "2px", // Adjust the height of the line
-            backgroundColor: "primary.main", // Set the background color of the line
-            margin: "16px 0", // Add margin for spacing
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "16px 0",
           }}
         />
       </Box>

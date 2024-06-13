@@ -106,15 +106,15 @@ const NavBar = () => {
 
   const userMenuItems = isLoggedIn
     ? [
-        {
-          label: "Profile",
-          action: [
-            () => {
-              handleCloseUserMenu();
-              navigate("/login");
-            },
-          ],
-        },
+        // {
+        //   label: "Profile",
+        //   action: [
+        //     () => {
+        //       handleCloseUserMenu();
+        //       navigate("/login");
+        //     },
+        //   ],
+        // },
         ...(role === "admin"
           ? [
               {

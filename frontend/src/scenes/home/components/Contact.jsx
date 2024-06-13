@@ -17,7 +17,7 @@ const Footer = () => {
             </Typography>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom>
+            {/* <Typography variant="h6" gutterBottom>
               Quick Links
             </Typography>
             <Box>
@@ -53,27 +53,27 @@ const Footer = () => {
               >
                 Contact Us
               </Link>
-            </Box>
+            </Box> */}
           </Grid>
           <Grid item xs={12} sm={4}>
             <Typography variant="h6" gutterBottom>
               Contact Information
             </Typography>
             <Typography variant="body2">
-              123 Bakery Street
+              In the beautiful Bulkley Valley
               <br />
-              Breadtown, BK 12345
+              Houston, BC V0J 1Z2
               <br />
-              Phone: (123) 456-7890
+              Phone: (778) 533-4972
               <br />
-              Email: info@sourdoughbakery.com
+              Email: info@littleacres.ca
             </Typography>
           </Grid>
         </Grid>
         <Box mt={4} textAlign="center">
           <Typography variant="body2">
-            &copy; {new Date().getFullYear()} Sourdough Bakery. All rights
-            reserved. Powered by CottageShop
+            &copy; {new Date().getFullYear()} Little Acres. All rights reserved.
+            Powered by CottageShop
           </Typography>
         </Box>
       </Container>

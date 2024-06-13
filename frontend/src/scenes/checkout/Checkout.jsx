@@ -58,8 +58,6 @@ const Checkout = () => {
 
     setFormData(newFormData);
     sessionStorage.setItem("checkoutFormData", JSON.stringify(newFormData));
-
-    // Validate input
     validateField(name, formattedValue);
   };
 
@@ -98,7 +96,7 @@ const Checkout = () => {
   };
 
   const formatPhoneNumber = (value) => {
-    const cleaned = value.replace(/\D/g, ""); // Remove all non-digit characters
+    const cleaned = value.replace(/\D/g, "");
     const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
 
     if (match) {
@@ -170,13 +168,12 @@ const Checkout = () => {
       });
       return;
     }
-    // Update the total in formData
+
     const updatedFormData = {
       ...formData,
       total: calculateTotal(),
     };
 
-    // Navigate to the next step and pass the formData
     navigate("/order-details", { state: updatedFormData });
   };
 

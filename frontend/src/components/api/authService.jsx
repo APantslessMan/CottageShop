@@ -67,14 +67,14 @@ const authService = {
       );
       if (response.status === 201) {
         console.log("Registration successful:", response.data);
-        return response.data; // Return success message
+        return response.data;
       } else {
         console.error("Registration failed:", response.data.message);
         throw new Error(response.data.message);
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      return error; // Return error object
+      return error;
     }
   },
 

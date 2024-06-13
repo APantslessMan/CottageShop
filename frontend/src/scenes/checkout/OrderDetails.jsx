@@ -7,7 +7,6 @@ const OrderDetails = () => {
   const location = useLocation();
   const formData = location.state || {};
 
-  // Destructure formdata and format date
   const {
     email,
     firstName,
@@ -26,7 +25,7 @@ const OrderDetails = () => {
   const handleSubmit = () => {
     const submissionData = {
       ...formData,
-      requestedDate: formattedDate, // Ensure the date is correctly formatted
+      requestedDate: formattedDate,
     };
   };
   return (

@@ -1,6 +1,6 @@
 //  Code to wrap entire app, for loading data from an API and storing it in a context provider
 import React, { createContext, useState, useEffect, useCallback } from "react";
-import ApiDataFetch from "../api/ApiDataFetch"; // Import your data fetching function
+import ApiDataFetch from "../api/ApiDataFetch";
 
 export const DataContext = createContext();
 

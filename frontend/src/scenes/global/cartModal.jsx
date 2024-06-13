@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Typography, Box, Badge, Grid } from "@mui/material";
-import apiService from "../../components/api/apiService"; // Import API service for fetching cart items
+import apiService from "../../components/api/apiService";
 import { useCart } from "../../components/utils/CartWrapper";
-import { ShoppingCartOutlined } from "@mui/icons-material";
+
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/utils/AuthContext";
 
@@ -29,7 +29,7 @@ const CartModal = ({ open, onClose }) => {
 
   const fetchCartItems = async () => {
     try {
-      const items = await apiService.getcartitems(cartItems); // Adjust this based on your API
+      const items = await apiService.getcartitems(cartItems);
 
       setCartList(items);
     } catch (error) {
@@ -38,7 +38,7 @@ const CartModal = ({ open, onClose }) => {
   };
   const calculateTotalPrice = () => {
     return cartList.reduce((total, item) => {
-      const price = parseFloat(item.price); // Ensure price is treated as a number
+      const price = parseFloat(item.price);
 
       return total + price * item.quantity;
     }, 0);

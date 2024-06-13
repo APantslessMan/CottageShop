@@ -64,9 +64,9 @@ const Information = (props) => {
               height: "auto",
               objectFit: "cover",
               minHeight: "294px",
-              marginBottom: isSmallScreen ? "-20px" : "0", // Overlapping effect for small screens
-              marginRight: isSmallScreen || index % 2 !== 0 ? "0" : "-20px", // Overlapping effect for larger screens
-              marginLeft: isSmallScreen || index % 2 === 0 ? "0" : "-20px", // Overlapping effect for larger screens
+              marginBottom: isSmallScreen ? "-20px" : "0",
+              marginRight: isSmallScreen || index % 2 !== 0 ? "0" : "-20px",
+              marginLeft: isSmallScreen || index % 2 === 0 ? "0" : "-20px",
               zIndex: 1,
             }}
             elevation={10}

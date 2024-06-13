@@ -92,20 +92,16 @@ const UserEditor = ({ showSb }) => {
 
   const handleUpdate = async (action, id, column, newField) => {
     try {
-      // Perform the update operation
-
       await authService.editUser(action, id, column, newField);
       console.log("handleUpdate", action, id, column, newField);
-      // If the update is successful, fetch the updated user data
+
       const response = await axios.get(`${apiUrl}/api/user`, {
         withCredentials: true,
       });
       setUsers(response.data);
 
-      // Show a success message
       showSb(`User Updated`, "success");
     } catch (error) {
-      // Handle errors
       showSb(`User Update Failed: ${error}`, "error");
     }
   };
@@ -116,8 +112,6 @@ const UserEditor = ({ showSb }) => {
       field: "email",
       headerName: "Email",
       width: 150,
-
-      // valueGetter: (params) => params?.row?.email || "N/A",
     },
     {
       field: "purchases",
@@ -161,19 +155,11 @@ const UserEditor = ({ showSb }) => {
       <Box
         style={{
           width: "100%",
-          // border: "2px solid white",
-          // borderRadius: "15px",
-          // overflow: "hidden",
+
           margin: "10px",
         }}
       >
-        <Typography
-          variant="h5"
-          gutterBottom
-          align="left"
-          // borderBottom="solid 2px white"
-          p={2}
-        >
+        <Typography variant="h5" gutterBottom align="left" p={2}>
           User Editor
         </Typography>
         <Box style={{ height: 600, width: "100%" }}>

@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authService.login(login, password, email);
       setIsLoggedIn(true);
-      // Add local cart items to logged in cart
       if (localStorage.getItem("cartItems")) {
         const cartItems = JSON.parse(localStorage.getItem("cartItems"));
         cartItems.forEach((item) => {

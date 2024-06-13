@@ -42,7 +42,6 @@ const SecureRoutes = () => {
   }
 
   if (error) {
-    // Handle authentication error
     console.error("Authentication failed:", error.message);
     return <Navigate to="/login" />;
   }

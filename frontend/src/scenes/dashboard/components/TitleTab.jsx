@@ -1,11 +1,8 @@
-// Added necessary imports
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import apiService from "../../../components/api/apiService";
 
-// Added functional component declaration
 const TitleTab = (props) => {
-  // Initialized state
   const [homeData, setHomeData] = useState({
     title: "",
     sub: "",
@@ -14,17 +11,15 @@ const TitleTab = (props) => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
 
-  // Used useEffect to set initial state from props
   useEffect(() => {
     setHomeData({
-      title: props.title, // Updated to use individual props
-      sub: props.sub, // Updated to use individual props
-      img: props.img, // Updated to use individual props
+      title: props.title,
+      sub: props.sub,
+      img: props.img,
     });
-    setImagePreview(props.img); // Updated to use individual props
-  }, [props.title, props.sub, props.img]); // Added dependency array to include individual props
+    setImagePreview(props.img);
+  }, [props.title, props.sub, props.img]);
 
-  // Handle image change and preview
   //   const handleImageChange = (event) => {
   //     const file = event.target.files[0];
   //     if (file) {
@@ -59,14 +54,14 @@ const TitleTab = (props) => {
       reader.readAsDataURL(file);
     }
   };
-  // Handle form submission
+
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
       formData.append("op", "home_hero");
-      formData.append("title", homeData.title); // Corrected form data field
-      formData.append("sub", homeData.sub); // Corrected form data field
-      formData.append("img", homeData.img); // Corrected form data field
+      formData.append("title", homeData.title);
+      formData.append("sub", homeData.sub);
+      formData.append("img", homeData.img);
       if (imageFile) {
         formData.append("image", imageFile);
       }
@@ -86,28 +81,24 @@ const TitleTab = (props) => {
             fullWidth
             label="Title"
             name="title"
-            value={homeData.title} // Updated to use homeData state
-            onChange={
-              (e) => setHomeData({ ...homeData, title: e.target.value }) // Corrected onChange handler
+            value={homeData.title}
+            onChange={(e) =>
+              setHomeData({ ...homeData, title: e.target.value })
             }
           />
           <TextField
             fullWidth
             label="Subtitle"
-            name="sub" // Corrected field name
-            value={homeData.sub} // Updated to use homeData state
-            onChange={
-              (e) => setHomeData({ ...homeData, sub: e.target.value }) // Corrected onChange handler
-            }
+            name="sub"
+            value={homeData.sub}
+            onChange={(e) => setHomeData({ ...homeData, sub: e.target.value })}
           />
           <TextField
             fullWidth
             label="Image URL"
-            name="img" // Corrected field name
-            value={homeData.img} // Updated to use homeData state
-            onChange={
-              (e) => setHomeData({ ...homeData, img: e.target.value }) // Corrected onChange handler
-            }
+            name="img"
+            value={homeData.img}
+            onChange={(e) => setHomeData({ ...homeData, img: e.target.value })}
           />
           <input type="file" accept="image/*" onChange={handleImageChange} />
         </Box>
