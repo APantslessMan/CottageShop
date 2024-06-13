@@ -213,5 +213,23 @@ const apiService = {
       throw error;
     }
   },
+  submitorder: async (formData) => {
+    try {
+      authService.refreshToken();
+      console.log(formData);
+      const response = await axios.post(`${apiUrl}/api/submitorder`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.status === 201) {
+        return response;
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch {
+      console.error("Error submitting order:", error);
+      return error;
+    }
+  },
 };
 export default apiService;

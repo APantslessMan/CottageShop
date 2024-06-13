@@ -25,7 +25,7 @@ import os
 
 load_dotenv()
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
-COOKIE_SECURITY = True
+COOKIE_SECURITY = False
 COOKIE_TYPES = ["access_token_cookie", "refresh_token_cookie", "public_token_cookie"]
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
@@ -76,6 +76,7 @@ class User(db.Model):
     email = db.Column(db.String(250), unique=True, nullable=False)
     f_name = db.Column(db.String(250), unique=True, nullable=False)
     l_name = db.Column(db.String(250), unique=True, nullable=False)
+    phone_number = db.Column(db.String(20), nullable=True)
     password = db.Column(db.String(250), nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
     purchases = db.Column(db.String(250), nullable=True)
@@ -567,11 +568,47 @@ def edit_stock():
         return jsonify({"error": "Unauthorized"}), 401
 
 
-@app.route('/api/order_submit', methods=['POST'])
+@app.route('/api/submitorder', methods=['POST'])
 @jwt_required()
 def submit_order():
-    data = request.get_data()
-    new_order = Order()
+    try:
+        email = request.form.get('email')
+        phone_number = request.form.get('phoneNumber')
+
+        contact_method = request.form.get('contactMethod')
+        requested_date = request.form.get('requestedDate')
+
+        cart_items = []
+        for i in range(len(request.form) // 6):  # assuming 6 fields per item
+            item = {
+
+                'id': request.form.get(f'cartItems[{i}][id]'),
+                'quantity': request.form.get(f'cartItems[{i}][quantity]'),
+            }
+            cart_items.append(item)
+
+        total = request.form.get('total')
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            return jsonify({'message': 'User not found', 'status': 'error'}), 404
+        if user.phone_number != phone_number:
+            user.phone_number = phone_number
+            db.session.commit()
+        new_order = Order(
+            items=str(cart_items),
+            status='Pending',
+            payment_type=contact_method,
+            date_requested=requested_date,
+            ordered_by=user.id
+        )
+        db.session.add(new_order)
+        db.session.commit()
+
+        return jsonify({'message': 'Order received', 'status': 'success'}), 201
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'Failed to process order', 'status': 'error'}), 400
 
 
 @app.route('/api/order')
