@@ -60,7 +60,7 @@ const Register = ({ onLogin, showSb }) => {
           <Box
             className="register-image"
             style={{
-              backgroundImage: "url(https://source.unsplash.com/random)", // Replace with your image URL
+              backgroundImage: "url(./build/assets/img/site/register.jpg)", // Replace with your image URL
             }}
           />
           <Paper className="register-form" elevation={5}>

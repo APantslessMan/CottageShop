@@ -238,14 +238,17 @@ def set_cookies(email, username, role, f_name, l_name):
 ###############################################################
 
 
-@app.route('/')
-def index():
-    # Sample data from database
-    data = Site.query.filter_by(name='seo_meta').first()
-    print(data.params)
-    og_data = data.params
-    return render_template('index.html', **og_data)
-
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
+    if not path.startswith('/api'):
+        # OG data from database
+        data = Site.query.filter_by(name='seo_meta').first()
+        print(data.params)
+        og_data = data.params
+        return render_template('index.html', **og_data)
+    else:
+        pass
 
 @app.route('/manifest.json')
 def manifest():
@@ -265,7 +268,7 @@ def send_icon(path):
     return send_from_directory('./build/assets/img', path)
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
     print(data)
@@ -289,7 +292,7 @@ def register():
     return response, 201
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
     loginid = data['login'].lower()
@@ -303,7 +306,7 @@ def login():
         return jsonify({"message": "Invalid credentials"}), 401
 
 
-@app.route('/refresh', methods=['POST'])
+@app.route('/api/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
@@ -313,14 +316,14 @@ def refresh():
 
 
 # deprecated
-@app.route('/protected', methods=['GET'])
+@app.route('/api/protected', methods=['GET'])
 @jwt_required()
 def protected():
     refresh_user = get_jwt_identity()
     return jsonify(logged_in_as=refresh_user), 200
 
 
-@app.route('/products', methods=['POST', 'GET'])
+@app.route('/api/products', methods=['POST', 'GET'])
 @jwt_required()
 def get_products():
     # TODO: add error checking and return
@@ -356,7 +359,7 @@ def get_products():
             return jsonify(products_data), 200
 
 
-@app.route('/cart', methods=['POST'])
+@app.route('/api/cart', methods=['POST'])
 @jwt_required()
 def cart():
     username = get_jwt_identity()
@@ -383,7 +386,7 @@ def cart():
             return jsonify({"message": "Invalid request"}), 401
 
 
-@app.route('/cartitems', methods=['POST'])
+@app.route('/api/cartitems', methods=['POST'])
 def load_cart_items():
     data = request.json
     if data:
@@ -424,7 +427,7 @@ def get_user():
         return jsonify({"message": "User is not admin"}), 401
 
 
-@app.route('/editproduct', methods=['POST'])
+@app.route('/api/editproduct', methods=['POST'])
 @jwt_required()
 def edit_product():
     identity = get_jwt_identity()
@@ -474,12 +477,12 @@ def edit_product():
         return jsonify({"error": "User is not admin"}), 401
 
 
-@app.route('/uploads/<filename>')
+@app.route('/api/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-@app.route('/useredit', methods=['POST'])
+@app.route('/api/useredit', methods=['POST'])
 @jwt_required()
 def edit_user():
     raw_data = request.get_data()
@@ -526,14 +529,14 @@ def edit_user():
     return jsonify({"message": "Unauthorized"}), 401
 
 
-@app.route('/stock_items', methods=['GET'])
+@app.route('/api/stock_items', methods=['GET'])
 def get_stock_items():
     stock_items = StockPart.query.all()
     stock_items_list = [{"id": item.id, "name": item.name} for item in stock_items]
     return jsonify(stock_items_list)
 
 
-@app.route('/editstock', methods=['POST'])
+@app.route('/api/editstock', methods=['POST'])
 @jwt_required()
 def edit_stock():
     identity = get_jwt_identity()
@@ -561,7 +564,7 @@ def edit_stock():
         return jsonify({"error": "Unauthorized"}), 401
 
 
-@app.route('/order_submit', methods=['POST'])
+@app.route('/api/order_submit', methods=['POST'])
 @jwt_required()
 def submit_order():
     data = request.get_data()
@@ -647,7 +650,7 @@ def edit_site():
         return jsonify({"error": "Unauthorized"}), 401
 
 
-@app.route('/auth', methods=['GET'])
+@app.route('/api/auth', methods=['GET'])
 @jwt_required()
 def check_authentication():
     user_id = get_jwt_identity()
@@ -655,7 +658,7 @@ def check_authentication():
                     'role': user_id['role']}), 200
 
 
-@app.route('/admin')
+@app.route('/api/admin')
 @jwt_required()
 def admin():
     identity = get_jwt_identity()
@@ -664,7 +667,7 @@ def admin():
     return jsonify({"message": "Welcome, admin!"}), 200
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/api/logout', methods=['POST'])
 def logout():
     response = make_response(jsonify(message="Logged out"))
 

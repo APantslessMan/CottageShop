@@ -27,7 +27,7 @@ const AddProductForm = ({ showSb }) => {
     //TODO: switch to api service component
     const fetchStockItems = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/stock_items`);
+        const response = await axios.get(`${apiUrl}/api/stock_items`);
         setStockOptions(response.data);
       } catch (error) {
         console.error("Error fetching stock items:", error);

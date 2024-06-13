@@ -10,12 +10,16 @@ const apiService = {
       authService.refreshToken().then(console.log("Token refreshed"));
 
       if (op === "add" && formData) {
-        const response = await axios.post(`${apiUrl}/editproduct`, formData, {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const response = await axios.post(
+          `${apiUrl}/api/editproduct`,
+          formData,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
         if (response.status === 201) {
           console.log("Product added successfully");
@@ -24,7 +28,7 @@ const apiService = {
         }
       } else if (op === "del" || op === "edit") {
         const response = await axios.post(
-          `${apiUrl}/products`,
+          `${apiUrl}/api/products`,
           { op, id },
           {
             headers: { "Content-Type": "application/json" },
@@ -37,7 +41,7 @@ const apiService = {
           console.error("Failed to add product");
         }
       } else if (op === "list") {
-        const response = await axios.get(`${apiUrl}/products`, {
+        const response = await axios.get(`${apiUrl}/api/products`, {
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -74,7 +78,7 @@ const apiService = {
     try {
       await authService.refreshToken();
       const response = await axios.post(
-        `${apiUrl}/products`,
+        `${apiUrl}/api/products`,
         { op: "list" },
         {
           headers: { "Content-Type": "application/json" },
@@ -95,7 +99,7 @@ const apiService = {
     authService.refreshToken();
     try {
       const response = await axios.post(
-        `${apiUrl}/editUser`,
+        `${apiUrl}/api/editUser`,
         {
           action,
           id,
@@ -119,7 +123,7 @@ const apiService = {
   editStock: async (id = null, formData = null) => {
     authService.refreshToken();
     try {
-      const response = await axios.post(`${apiUrl}/editstock`, formData, {
+      const response = await axios.post(`${apiUrl}/api/editstock`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -137,7 +141,7 @@ const apiService = {
     try {
       authService.refreshToken();
       const response = await axios.post(
-        `${apiUrl}/cart`,
+        `${apiUrl}/api/cart`,
         {},
         {
           withCredentials: true,
@@ -157,7 +161,7 @@ const apiService = {
     try {
       authService.refreshToken();
       const response = await axios.post(
-        `${apiUrl}/cart`,
+        `${apiUrl}/api/cart`,
         { op, product, quantity },
         {
           withCredentials: true,
@@ -177,7 +181,7 @@ const apiService = {
     try {
       authService.refreshToken();
       const response = await axios.post(
-        `${apiUrl}/cart`,
+        `${apiUrl}/api/cart`,
         { op, product },
         {
           withCredentials: true,
@@ -198,7 +202,7 @@ const apiService = {
     try {
       authService.refreshToken();
       console.log(items);
-      const response = await axios.post(`${apiUrl}/cartitems`, { items });
+      const response = await axios.post(`${apiUrl}/api/cartitems`, { items });
       if (response.status === 200) {
         return response.data;
       } else {

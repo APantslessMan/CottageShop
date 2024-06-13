@@ -8,7 +8,7 @@ const authService = {
   login: async (login, password) => {
     try {
       const response = await axios.post(
-        `${apiUrl}/login`,
+        `${apiUrl}/api/login`,
         { login, password },
         {
           withCredentials: true,
@@ -41,7 +41,7 @@ const authService = {
         return { isAuthenticated: false, userName: "" };
       } else {
         const response = await axios.post(
-          `${apiUrl}/refresh`,
+          `${apiUrl}/api/refresh`,
           {},
           {
             withCredentials: true,
@@ -61,7 +61,7 @@ const authService = {
   register: async (username, email, password, f_name, l_name) => {
     try {
       const response = await axios.post(
-        `${apiUrl}/register`,
+        `${apiUrl}/api/register`,
         { username, email, password, f_name, l_name },
         { withCredentials: true }
       );
@@ -86,7 +86,7 @@ const authService = {
         return { isAuthenticated: false, userName: "" };
       } else {
         authService.refreshToken();
-        const response = await axios.get(`${apiUrl}/auth`, {
+        const response = await axios.get(`${apiUrl}/api/auth`, {
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -108,7 +108,7 @@ const authService = {
   logout: async () => {
     try {
       const response = await axios.post(
-        `${apiUrl}/logout`,
+        `${apiUrl}/api/logout`,
         {},
         {
           withCredentials: true,
@@ -128,7 +128,7 @@ const authService = {
     authService.refreshToken();
     try {
       const response = await axios.post(
-        `${apiUrl}/useredit`,
+        `${apiUrl}/api/useredit`,
         { op, userid },
         {
           withCredentials: true,
