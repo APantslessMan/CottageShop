@@ -227,11 +227,7 @@ const Checkout = () => {
             <Grid item xs={12} key={item.id}>
               <Paper sx={{ display: "flex", p: 2 }}>
                 <Box sx={{ width: "120px" }}>
-                  <img
-                    src={item.img_url}
-                    alt={item.name}
-                    sx={{ width: "120px" }}
-                  />
+                  <img src={item.img_url} alt={item.name} />
                 </Box>
                 <Box sx={{ ml: 2, flexGrow: 1 }}>
                   <Typography variant="h6">{item.name}</Typography>
