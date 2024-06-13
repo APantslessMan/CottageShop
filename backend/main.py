@@ -244,7 +244,13 @@ def index(path):
     if path.startswith('api'):
         return "API route", 404
     else:
-        return redirect('/')
+        data = Site.query.filter_by(name='seo_meta').first()
+        if data:
+            og_data = data.params
+            return render_template('index.html', **og_data)
+        else:
+            # Handle the case where no data is found
+            return render_template('index.html')
 
 
 @app.route('/')
