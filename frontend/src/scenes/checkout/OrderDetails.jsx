@@ -87,6 +87,18 @@ const OrderDetails = () => {
             margin: "10px 0",
           }}
         />
+        <Typography variant="h6" gutterBottom>
+          When your order is received will contact you via the specified method
+          for payment and delivery details. :)
+        </Typography>
+        <Divider
+          variant="middle"
+          sx={{
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "10px 0",
+          }}
+        />
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Personal Information</Typography>
           <Typography>First Name: {firstName}</Typography>
