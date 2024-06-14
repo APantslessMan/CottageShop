@@ -60,6 +60,11 @@ product_stock_association = db.Table('product_stock_association',
                                      db.Column('quantity', db.Integer, nullable=False))
 
 
+product_category_association = db.Table(
+    'product_category_association', db.Column('product_id', db.Integer, db.ForeignKey('products.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('categories.id'), primary_key=True))
+
+
 class CartItem(db.Model):
     __tablename__ = "cart_items"
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
@@ -86,6 +91,12 @@ class User(db.Model):
                            overlaps="user,cart_items,product")
 
 
+class Category(db.Model):
+    __tablename__ = 'categories'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(250), nullable=False, unique=True)
+    products = db.relationship('Product', secondary='product_category_association', back_populates='categories')
+
 class Product(db.Model):
     __tablename__ = "products"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -95,7 +106,7 @@ class Product(db.Model):
     img_url = db.Column(db.String(250), nullable=True)
     stockparts = db.relationship('StockPart', secondary=product_stock_association, backref='products')
     users = db.relationship("User", secondary="cart_items", back_populates="cart", overlaps="cart_items,user,product")
-
+    categories = db.relationship('Category', secondary=product_category_association, back_populates='products')
 
 class StockPart(db.Model):
     __tablename__ = "stockparts"
@@ -679,8 +690,51 @@ def get_json():
         for row in rows:
             if row.toggle:
                 row_dict[row.name] = row.params
+        categories = Category.query.all()
+        cat_dict = {}
+        for category in categories:
+            cat_dict[category.name] = [product.id for product in category.products]
+
+        row_dict["categories"] = cat_dict
         return jsonify(row_dict), 200
     return data, 200
+
+
+@app.route('/api/site/cat', methods=['POST'])
+@jwt_required()
+def edit_cat():
+    identity = get_jwt_identity()
+    if identity['role'] == 'admin':
+        # try:
+            data = request.json
+            print(data)
+            db.session.execute(product_category_association.delete())
+            Category.query.delete()
+            db.session.commit()
+    for category_data in data['categories']:
+        print(category_data)
+
+        # Create a new category
+        category = Category(name=str(category_data['name']))
+        db.session.add(category)
+        db.session.commit()  # Commit to get the category ID
+
+        # Associate products
+        for product_id in category_data['products']:
+            product = db.session.get(Product, product_id)
+            if product:
+                assoc = product_category_association.insert().values(
+                    category_id=category.id,
+                    product_id=product.id
+                )
+                db.session.execute(assoc)
+
+    db.session.commit()
+    return jsonify({"message": "Save Successful"}), 201
+
+        # except Exception as e:
+        #     db.session.rollback()  # Rollback transaction in case of error
+        #     return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/json/edit', methods=['POST'])
@@ -689,20 +743,40 @@ def edit_site():
     identity = get_jwt_identity()
     if identity['role'] == 'admin':
         try:
-
             data = request.form
             op = data.get('op')
+            print(data)
             params_json = {}
-            for i in data:
-                if i != 'op':
-                    params_json.update({i: data[i]})
+
+            if op == "home_products":
+                # Parse the products JSON string
+                products_str = data.get('products')
+                if products_str:
+                    params_json = json.loads(products_str)
+                    print(params_json)
+                    for listing in params_json:
+                        print("listing", listing)
+                        to_string = listing['id']
+                        listing['id'] = str(to_string)  # Correctly update the id to string
+                else:
+                    params_json = []
+            else:
+                # Process form data for other operations
+                for i in data:
+                    if i != 'op':
+                        params_json.update({i: data[i]})
+
+            print(params_json)
+
             if 'image' in request.files:
                 file = request.files['image']
                 if file and allowed_file(file.filename):
                     img_url = file_parse(op, file)
                     params_json.update({'img': img_url})
+
             section = Site.query.filter_by(name=op).first()
             section.params = params_json
+            print(section.params)
             section.uuid = uuid.uuid4()
             db.session.commit()
             return jsonify({"message": "Save Successful"}), 201
