@@ -4,6 +4,7 @@ import { Paper, Typography, Tabs, Tab } from "@mui/material";
 import AddProductTab from "./AddProduct";
 import ShowProduct from "./ShowProduct";
 import AddStockTab from "./AddStock";
+import CategoryEditor from "./CategoryEditor";
 
 const ProductEditor = ({ showSb }) => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -31,14 +32,16 @@ const ProductEditor = ({ showSb }) => {
       >
         <Tab label="Add Product" />
         <Tab label="Edit Product" />
+        <Tab label="Categories" />
         <Tab label="Add Stock" />
         <Tab label="Edit Stock" />
       </Tabs>
       <div>
         {selectedTab === 0 && <AddProductTab showSb={showSb} />}
         {selectedTab === 1 && <ShowProduct showSb={showSb} />}
-        {selectedTab === 2 && <AddStockTab />}
-        {selectedTab === 3 && <EditStockTab />}
+        {selectedTab === 2 && <CategoryEditor showSb={showSb} />}
+        {selectedTab === 3 && <AddStockTab />}
+        {selectedTab === 4 && <EditStockTab />}
       </div>
     </Paper>
   );
