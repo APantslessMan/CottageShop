@@ -745,38 +745,27 @@ def edit_site():
         try:
             data = request.form
             op = data.get('op')
-            print(data)
             params_json = {}
-
             if op == "home_products":
-                # Parse the products JSON string
                 products_str = data.get('products')
                 if products_str:
                     params_json = json.loads(products_str)
-                    print(params_json)
                     for listing in params_json:
-                        print("listing", listing)
                         to_string = listing['id']
-                        listing['id'] = str(to_string)  # Correctly update the id to string
+                        listing['id'] = str(to_string)
                 else:
                     params_json = []
             else:
-                # Process form data for other operations
                 for i in data:
                     if i != 'op':
                         params_json.update({i: data[i]})
-
-            print(params_json)
-
             if 'image' in request.files:
                 file = request.files['image']
                 if file and allowed_file(file.filename):
                     img_url = file_parse(op, file)
                     params_json.update({'img': img_url})
-
             section = Site.query.filter_by(name=op).first()
             section.params = params_json
-            print(section.params)
             section.uuid = uuid.uuid4()
             db.session.commit()
             return jsonify({"message": "Save Successful"}), 201
