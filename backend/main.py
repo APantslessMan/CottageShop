@@ -125,6 +125,7 @@ class Order(db.Model):
     status = db.Column(db.String(80), nullable=False)
     payment_type = db.Column(db.String(80), nullable=False)
     date_requested = db.Column(db.String(80), nullable=False)
+    comments = db.Column(db.String(250), nullable=True)
     ordered_by = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = relationship("User", back_populates="orders")
 
@@ -611,7 +612,7 @@ def submit_order():
 
         contact_method = request.form.get('contactMethod')
         requested_date = request.form.get('requestedDate')
-
+        comments = request.form.get('comments')
         cart_items = []
         for i in range(len(request.form) // 6):
             print(request.form.get(f'cartItems[{i}][id]') is not None)
@@ -635,7 +636,8 @@ def submit_order():
             status='Pending',
             payment_type=contact_method,
             date_requested=requested_date,
-            ordered_by=user.id
+            ordered_by=user.id,
+            comments=comments
         )
         db.session.add(new_order)
         db.session.commit()
@@ -646,21 +648,31 @@ def submit_order():
         return jsonify({'message': 'Failed to process order', 'status': 'error'}), 400
 
 
-@app.route('/api/order')
+@app.route('/api/orders', methods=['GET'])
 @jwt_required()
 def get_orders():
-    orders = Order.query.all()
-    order_data = [
-        {
-            "id": order.id,
-            "name": order.userid,
-            "email": order.productid,
-            "purchases": order.order_status,
-        }
-        for order in orders
-    ]
-    return jsonify(order_data)
-
+    identity = get_jwt_identity()
+    if identity['role'] == 'admin':
+        try:
+            orders = Order.query.all()
+            orders_list = [
+                {
+                    "id": order.id,
+                    "items": order.items,
+                    "status": order.status,
+                    "payment_type": order.payment_type,
+                    "date_requested": order.date_requested,
+                    "comments": order.comments,
+                    "ordered_by": order.ordered_by,
+                }
+                for order in orders
+            ]
+            print(orders_list)
+            return jsonify(orders_list), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "Unauthorized"}), 401
 
 @app.route('/api/order/<int:order_id>')
 @jwt_required()
