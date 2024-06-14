@@ -21,6 +21,7 @@ const OrderDetails = () => {
     requestedDate,
     cartItems,
     total,
+    comments,
   } = formData;
 
   const formattedDate = requestedDate
@@ -93,6 +94,7 @@ const OrderDetails = () => {
           <Typography>Phone Number: {phoneNumber}</Typography>
           <Typography>Contact Method: {contactMethod}</Typography>
           <Typography>Requested Date: {formattedDate?.toString()}</Typography>
+          <Typography>Comments: {comments?.toString()}</Typography>
         </Box>
         <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Cart Items</Typography>

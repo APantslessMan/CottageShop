@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import UserEditor from "../components/UserEditor";
 import ProductEditor from "../components/ProductEditor";
 import SiteEditor from "../components/SiteEditor";
+import OrderEditor from "../components/OrderEditor";
 
 const Panel = ({ selectedItem, showSb }) => {
   useEffect(() => {}, [selectedItem]);
@@ -15,6 +16,8 @@ const Panel = ({ selectedItem, showSb }) => {
         return <ProductEditor showSb={showSb} />;
       case "homeSettings":
         return <SiteEditor showSb={showSb} />;
+      case "orderEditor":
+        return <OrderEditor showSb={showSb} />;
       case "dashboard":
         return <div>Dashboard</div>;
       default:

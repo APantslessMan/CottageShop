@@ -35,6 +35,7 @@ const Checkout = () => {
     requestedDate: null,
     cartItems: [],
     total: 0,
+    comments: "",
   };
 
   const [formData, setFormData] = useState(
@@ -383,6 +384,26 @@ const Checkout = () => {
             </LocalizationProvider>
           </Tooltip>
         </Box>
+        <Divider
+          variant="middle"
+          sx={{
+            height: "2px",
+            backgroundColor: "primary.main",
+            margin: "30px 0",
+            marginBottom: "15px",
+          }}
+        />
+        <TextField
+          sx={{ width: "40vw" }}
+          id="outlined-multiline-static"
+          label="Comments or Preferences"
+          multiline
+          name="comments"
+          value={formData.comments}
+          onChange={handleInputChange}
+          rows={4}
+          defaultValue=""
+        />
         <Divider
           variant="middle"
           sx={{

@@ -47,12 +47,6 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
       value: "userManagement",
       display: "true",
     },
-    // {
-    //   type: "title",
-    //   title: "Products",
-    //   value: "siteSettings",
-    //   display: "false",
-    // },
     {
       type: "item",
       title: "Product Management",
@@ -62,9 +56,10 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
     },
     {
       type: "item",
-      title: "Analytics",
+      title: "Orders",
       icon: <BarChartOutlinedIcon />,
-      value: "analytics",
+      value: "orderEditor",
+      display: "true",
     },
     // {
     //   type: "title",
