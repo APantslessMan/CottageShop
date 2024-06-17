@@ -11,6 +11,13 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
   const [userName, setUserName] = useState("");
+  const [userDetails, setUserDetails] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+  });
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,20 +46,29 @@ export const AuthProvider = ({ children }) => {
         });
         localStorage.removeItem("cartItems");
       }
-      setUserName(data.login);
 
+      setUserName(login);
+      setRole(data.role);
+      setUserDetails({
+        firstName: data.f_name,
+        lastName: data.l_name,
+        email: data.email,
+        number: data.phone_number,
+      });
       navigate("/");
-      window.location.reload();
     } catch (error) {
       console.error("Login failed:", error.message);
     }
   };
+
+  useEffect(() => {}, [userDetails]);
 
   const handleLogout = async () => {
     try {
       await authService.logout();
       setIsLoggedIn(false);
       setUserName("");
+      setUserDetails({});
       setRole("");
       navigate("/");
     } catch (error) {
@@ -62,7 +78,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, handleLogin, handleLogout, role, userName }}
+      value={{
+        isLoggedIn,
+        handleLogin,
+        handleLogout,
+        role,
+        userName,
+        userDetails,
+      }}
     >
       {children}
     </AuthContext.Provider>

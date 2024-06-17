@@ -41,7 +41,6 @@ const CartButton = ({ onClick }) => {
 
 const NavBar = () => {
   const theme = useTheme();
-  const { clearCart } = useCart();
   const { toggleColorMode, mode } = useContext(ColorModeContext);
   const [navAnchor, setNavAnchor] = useState(null);
   const [userAnchor, setUserAnchor] = useState(null);
@@ -70,11 +69,7 @@ const NavBar = () => {
     };
   }, [isScrolled]);
 
-  // useEffect(() => {
-  //   // Simulate a delay to ensure all state updates are processed
-  //   const timer = setTimeout(() => setIsLoaded(true), 500);
-  //   return () => clearTimeout(timer);
-  // }, [isLoggedIn, role, userName]);
+  useEffect(() => {}, [userName]);
 
   const handleOpenNavMenu = (event) => {
     setNavAnchor(event.currentTarget);
@@ -133,7 +128,7 @@ const NavBar = () => {
           action: [
             () => {
               handleCloseUserMenu();
-              handleLogout().then(() => clearCart());
+              handleLogout().then(() => localStorage.removeItem("cartItems"));
               navigate("/");
             },
           ],

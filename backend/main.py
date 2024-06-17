@@ -25,7 +25,7 @@ import os
 
 load_dotenv()
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
-COOKIE_SECURITY = True
+COOKIE_SECURITY = False
 COOKIE_TYPES = ["access_token_cookie", "refresh_token_cookie", "public_token_cookie"]
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__, static_url_path='', static_folder='build', template_folder='build')
@@ -244,14 +244,18 @@ def clear_cart(username):
         return False
 
 
-def set_cookies(email, username, role, f_name, l_name):
+def set_cookies(email, username, role, f_name, l_name, phone_number):
     access_token = create_access_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
+        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
+                  'phone_number': phone_number})
     refresh_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
+        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
+                  'phone_number': phone_number})
     session_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name})
-    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=l_name, l_name=l_name), 200)
+        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
+                  'phone_number': phone_number})
+    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=l_name, l_name=l_name,
+                                     phone_number=phone_number), 200)
     for i in COOKIE_TYPES:
         if "public" in i:
             response.set_cookie(i, value=session_token, expires=datetime.now(timezone.utc) + timedelta(days=30),
@@ -312,6 +316,7 @@ def register():
     password = data['password']
     f_name = data['f_name']
     l_name = data['l_name']
+    phone_number = 1
     role = data.get('role', 'user')  # Default role is 'user'
     print(data)
     if User.query.filter_by(email=email).first():
@@ -323,7 +328,7 @@ def register():
     new_user = User(username=username, email=email, password=hashed_password, role=role, f_name=f_name, l_name=l_name)
     db.session.add(new_user)
     db.session.commit()
-    response = set_cookies(email, username, role, f_name, l_name)
+    response = set_cookies(email, username, role, f_name, l_name, phone_number)
     return response, 201
 
 
@@ -334,7 +339,7 @@ def login():
     password = data['password']
     user = User.query.filter((User.email == loginid) | (User.username == loginid)).first()
     if user and check_password_hash(user.password, password):
-        response = set_cookies(user.email, user.username, user.role, user.f_name, user.l_name)
+        response = set_cookies(user.email, user.username, user.role, user.f_name, user.l_name, user.phone_number)
         print(response)
         return response
     else:
@@ -346,7 +351,7 @@ def login():
 def refresh():
     identity = get_jwt_identity()
     response = set_cookies(identity['email'], identity['username'],
-                           identity['role'], identity['f_name'], identity['l_name'])
+                           identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
     return response
 
 
