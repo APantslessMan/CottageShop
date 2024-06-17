@@ -63,15 +63,19 @@ const Checkout = () => {
   };
 
   const handleDateChange = (newDate) => {
+    const formattedDate = dayjs(newDate).isValid()
+      ? dayjs(newDate).toISOString()
+      : null;
+
     const newFormData = {
       ...formData,
-      requestedDate: newDate,
+      requestedDate: formattedDate,
     };
 
     setFormData(newFormData);
     sessionStorage.setItem("checkoutFormData", JSON.stringify(newFormData));
 
-    if (!newDate || !dayjs(newDate).isValid()) {
+    if (!formattedDate) {
       setErrors((prevErrors) => ({
         ...prevErrors,
         requestedDate: "Please select a valid date.",
@@ -149,6 +153,8 @@ const Checkout = () => {
 
   const handleCheckout = () => {
     const { email, firstName, lastName, phoneNumber, requestedDate } = formData;
+    const dateObject = dayjs(requestedDate);
+
     if (
       !email ||
       !firstName ||
@@ -163,7 +169,7 @@ const Checkout = () => {
         lastName: !lastName ? "Last name is required." : "",
         phoneNumber: !phoneNumber ? "Phone number is required." : "",
         requestedDate:
-          !requestedDate || !dayjs(requestedDate).isValid()
+          !requestedDate || !dateObject.isValid()
             ? "Requested date is required and must be valid."
             : "",
       });
@@ -175,7 +181,9 @@ const Checkout = () => {
       total: calculateTotal(),
     };
 
-    navigate("/order-details", { state: updatedFormData });
+    navigate("/order-details", {
+      state: { ...updatedFormData, requestedDate: dateObject.toISOString() },
+    });
   };
 
   const fetchCartItems = async () => {
@@ -370,19 +378,22 @@ const Checkout = () => {
           </Box>
 
           <Typography variant="h6">Requested Date</Typography>
-          <Tooltip
-            title={errors.requestedDate || ""}
-            open={!!errors.requestedDate}
-            arrow
-          >
+          <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 value={dayjs(formData.requestedDate)}
                 onChange={handleDateChange}
-                slotProps={{ textField: { variant: "outlined" } }}
+                disablePast={true}
+                slotProps={{
+                  textField: {
+                    variant: "outlined",
+                    error: !!errors.requestedDate,
+                    helperText: errors.requestedDate,
+                  },
+                }}
               />
             </LocalizationProvider>
-          </Tooltip>
+          </div>
         </Box>
         <Divider
           variant="middle"
@@ -402,7 +413,6 @@ const Checkout = () => {
           value={formData.comments}
           onChange={handleInputChange}
           rows={4}
-          defaultValue=""
         />
         <Divider
           variant="middle"

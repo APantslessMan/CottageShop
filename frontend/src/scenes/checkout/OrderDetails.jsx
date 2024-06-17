@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Paper, Box, Typography, Button, Grid, Divider } from "@mui/material";
 import dayjs from "dayjs";
+
 import apiService from "../../components/api/apiService";
 import { useSnackbar } from "../../components/utils/SbProvider";
 import { useCart } from "../../components/utils/CartWrapper";
@@ -24,33 +25,14 @@ const OrderDetails = () => {
     comments,
   } = formData;
 
-  const formattedDate = requestedDate
-    ? dayjs(requestedDate).format("MM-DD")
-    : "N/A";
+  const formattedDate = dayjs(requestedDate);
 
-  //   const handleSubmit = async () => {
-  //     try {
-  //       const submissionData = {
-  //         ...formData,
-  //         requestedDate: formattedDate,
-  //       };
-  //       console.log(submissionData);
-  //       const response = await apiService.submitorder(submissionData);
-  //       if (response.status === 201) {
-  //         showSnackbar(response, "success");
-  //       } else {
-  //         throw new Error(response.data.message);
-  //       }
-  //     } catch (error) {
-  //       showSnackbar(error, "error");
-  //     }
-  //   };
   const handleSubmit = async () => {
     const response = await apiService.submitorder(formData);
     console.log("response:", response);
     if (response.status === 201) {
       showSnackbar("Order Placed", "success");
-      //Clear Cart, navigate to /
+
       clearCart();
       navigate("/");
     } else {
@@ -105,7 +87,12 @@ const OrderDetails = () => {
           <Typography>Last Name: {lastName}</Typography>
           <Typography>Phone Number: {phoneNumber}</Typography>
           <Typography>Contact Method: {contactMethod}</Typography>
-          <Typography>Requested Date: {formattedDate?.toString()}</Typography>
+          <Typography>
+            Requested Date:{" "}
+            {formattedDate.isValid()
+              ? formattedDate.format("MMMM D, YYYY")
+              : "Invalid Date"}
+          </Typography>
           <Typography>Comments: {comments?.toString()}</Typography>
         </Box>
         <Box sx={{ mb: 2 }}>
