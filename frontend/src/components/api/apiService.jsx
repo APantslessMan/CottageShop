@@ -216,7 +216,7 @@ const apiService = {
   getcartitems: async (items) => {
     try {
       authService.refreshToken();
-      console.log(items);
+
       const response = await axios.post(`${apiUrl}/api/cartitems`, { items });
       if (response.status === 200) {
         return response.data;
@@ -232,7 +232,7 @@ const apiService = {
   submitorder: async (formData) => {
     try {
       authService.refreshToken();
-      console.log(formData);
+
       const response = await axios.post(`${apiUrl}/api/submitorder`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
@@ -250,7 +250,7 @@ const apiService = {
   editcategory: async (formData) => {
     try {
       authService.refreshToken();
-      console.log(formData);
+
       const response = await axios.post(`${apiUrl}/api/site/cat`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },

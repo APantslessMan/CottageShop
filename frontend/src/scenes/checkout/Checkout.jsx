@@ -23,14 +23,14 @@ import dayjs from "dayjs";
 const Checkout = () => {
   const { cartItemCount, cartItems, decCartItem, incCartItem } = useCart();
   const [cartList, setCartList] = useState([]);
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userDetails } = useAuth();
   const navigate = useNavigate();
 
   const initialFormData = {
-    email: "",
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
+    email: userDetails.email,
+    firstName: userDetails.firstName,
+    lastName: userDetails.lastName,
+    phoneNumber: userDetails.number || "",
     contactMethod: "email",
     requestedDate: null,
     cartItems: [],

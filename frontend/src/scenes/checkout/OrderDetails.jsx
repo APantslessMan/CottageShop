@@ -29,7 +29,6 @@ const OrderDetails = () => {
 
   const handleSubmit = async () => {
     const response = await apiService.submitorder(formData);
-    console.log("response:", response);
     if (response.status === 201) {
       showSnackbar("Order Placed", "success");
 
