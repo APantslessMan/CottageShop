@@ -9,14 +9,22 @@ export const DataProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
-    const data = await ApiDataFetch.main({ type: "home" });
-    setSiteData(data);
-    setLoading(false);
+    try {
+      const data = await ApiDataFetch.main({ type: "home" });
+      setSiteData(data);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+  if (loading || !siteData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <DataContext.Provider value={{ siteData, loading, fetchData }}>
