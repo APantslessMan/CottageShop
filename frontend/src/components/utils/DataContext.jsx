@@ -10,27 +10,35 @@ export const DataProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [productData, setProductData] = useState([]);
 
-  const fetchData = useCallback(async () => {
+  const fetchSiteData = async () => {
     try {
-      const [data, response] = await Promise.all([
-        ApiDataFetch.main({ type: "home" }),
-        apiService.listProducts(),
-      ]);
-
+      const data = await ApiDataFetch.main({ type: "home" });
       setSiteData(data);
+    } catch (error) {
+      console.error("Failed to fetch site data:", error);
+    }
+  };
+
+  const fetchProductData = async () => {
+    try {
+      const response = await apiService.listProducts();
       setProductData(response);
     } catch (error) {
-      console.error("Failed to fetch data:", error);
-    } finally {
-      setLoading(false);
+      console.error("Failed to fetch product data:", error);
     }
+  };
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    await Promise.all([fetchSiteData(), fetchProductData()]);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  if (loading || !siteData) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 
