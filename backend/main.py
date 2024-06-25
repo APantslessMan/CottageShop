@@ -20,10 +20,11 @@ import json
 import logging
 import uuid
 from dotenv import load_dotenv
-# import smtplib # For email
+import smtplib
 import os
 
 load_dotenv()
+
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
 COOKIE_SECURITY = True
 COOKIE_TYPES = ["access_token_cookie", "refresh_token_cookie", "public_token_cookie"]
@@ -721,37 +722,40 @@ def get_json():
 @jwt_required()
 def edit_cat():
     identity = get_jwt_identity()
-    if identity['role'] == 'admin':
-        # try:
-            data = request.json
-            print(data)
-            db.session.execute(product_category_association.delete())
-            Category.query.delete()
+    if identity['role'] != 'admin':
+        return jsonify({"message": "Unauthorized"}), 403
+
+    data = request.json
+    if not data or 'categories' not in data:
+        return jsonify({"message": "Invalid data"}), 400
+
+    try:
+        db.session.execute(product_category_association.delete())
+        Category.query.delete()
+        db.session.commit()
+
+        for category_name, product_ids in data['categories'].items():
+            print(f"Processing category: {category_name} with products: {product_ids}")
+
+            category = Category(name=category_name)
+            db.session.add(category)
             db.session.commit()
-    for category_data in data['categories']:
-        print(category_data)
 
-        # Create a new category
-        category = Category(name=str(category_data['name']))
-        db.session.add(category)
-        db.session.commit()  # Commit to get the category ID
+            for product_id in product_ids:
+                product = db.session.get(Product, product_id)
+                if product:
+                    assoc = product_category_association.insert().values(
+                        category_id=category.id,
+                        product_id=product.id
+                    )
+                    db.session.execute(assoc)
 
-        # Associate products
-        for product_id in category_data['products']:
-            product = db.session.get(Product, product_id)
-            if product:
-                assoc = product_category_association.insert().values(
-                    category_id=category.id,
-                    product_id=product.id
-                )
-                db.session.execute(assoc)
-
-    db.session.commit()
-    return jsonify({"message": "Save Successful"}), 201
-
-        # except Exception as e:
-        #     db.session.rollback()  # Rollback transaction in case of error
-        #     return jsonify({"error": str(e)}), 500
+        db.session.commit()
+        return jsonify({"message": "Save Successful"}), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {e}")
+        return jsonify({"message": "An error occurred"}), 500
 
 
 @app.route('/api/json/edit', methods=['POST'])

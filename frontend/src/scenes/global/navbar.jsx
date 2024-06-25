@@ -23,7 +23,6 @@ import { DataContext } from "../../components/utils/DataContext";
 import { useAuth } from "../../components/utils/AuthContext";
 
 //Load pages here
-const pages = [];
 
 const CartButton = ({ onClick }) => {
   const { cartItemCount } = useCart();
@@ -51,7 +50,21 @@ const NavBar = () => {
   const handleOpenCartModal = () => {
     setOpenCartModal(true);
   };
-
+  const pages = [
+    {
+      name: "Products",
+      action: () => {
+        navigate("/shop");
+      },
+    },
+    {
+      name: "Contact",
+      action: () => {
+        navigate("/contact");
+      },
+    },
+    // Add more pages as needed
+  ];
   const handleCloseCartModal = () => {
     setOpenCartModal(false);
   };
@@ -208,8 +221,8 @@ const NavBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.name} onClick={page.action}>
+                  <Typography textAlign="center">{page.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -245,8 +258,8 @@ const NavBar = () => {
             <Box sx={{ flexGrow: 1 }}></Box>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.name}
+                onClick={page.action}
                 sx={{
                   my: 2,
                   color: "text.secondary",
@@ -255,7 +268,7 @@ const NavBar = () => {
                   display: "block",
                 }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>

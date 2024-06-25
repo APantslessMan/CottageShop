@@ -4,6 +4,7 @@ import UserEditor from "../components/UserEditor";
 import ProductEditor from "../components/ProductEditor";
 import SiteEditor from "../components/SiteEditor";
 import OrderEditor from "../components/OrderEditor";
+import ThemeEditor from "../components/ThemeEditor";
 
 const Panel = ({ selectedItem, showSb }) => {
   useEffect(() => {}, [selectedItem]);
@@ -18,6 +19,8 @@ const Panel = ({ selectedItem, showSb }) => {
         return <SiteEditor showSb={showSb} />;
       case "orderEditor":
         return <OrderEditor showSb={showSb} />;
+      case "themeEditor":
+        return <ThemeEditor showSb={showSb} />;
       case "dashboard":
         return <div>Dashboard</div>;
       default:

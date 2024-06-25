@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider, Snackbar, Alert } from "@mui/material";
 import Navbar from "./scenes/global/navbar";
 import Login from "./scenes/login";
+import Shop from "./scenes/shop/shop";
 import Checkout from "./scenes/checkout/Checkout";
 import OrderDetails from "./scenes/checkout/OrderDetails";
 import Register from "./scenes/register";
@@ -15,6 +16,7 @@ import apiService from "./components/api/apiService";
 import { useCart } from "./components/utils/CartWrapper";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DataContext } from "./components/utils/DataContext";
 
 function App() {
   const [theme, colorMode, mode] = useMode();
@@ -26,7 +28,8 @@ function App() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
-
+  const { siteData } = useContext(DataContext);
+  console.log(siteData);
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);
     setSbType(type);
@@ -81,6 +84,8 @@ function App() {
                   <Register onLogin={handleLogin} showSb={handleOpenSnackbar} />
                 }
               />
+              <Route path="/shop" element={<Shop />} />
+
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-details" element={<OrderDetails />} />
               <Route path="/" element={<Home />} />

@@ -3,9 +3,11 @@ import { Sidebar, Menu } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+import CottageOutlinedIcon from "@mui/icons-material/CottageOutlined";
+import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
+import ShoppingBasketOutlinedIcon from "@mui/icons-material/ShoppingBasketOutlined";
+import PrecisionManufacturingOutlinedIcon from "@mui/icons-material/PrecisionManufacturingOutlined";
+import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
 import { MenuItem } from "react-pro-sidebar";
 import "./sidebar.css";
 
@@ -43,24 +45,25 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
     {
       type: "item",
       title: "User Editor",
-      icon: <PeopleOutlinedIcon />,
+      icon: <ManageAccountsOutlinedIcon />,
       value: "userManagement",
       display: "true",
     },
     {
       type: "item",
       title: "Product Management",
-      icon: <ContactsOutlinedIcon />,
+      icon: <PrecisionManufacturingOutlinedIcon />,
       value: "productManagement",
       display: "true",
     },
     {
       type: "item",
       title: "Orders",
-      icon: <BarChartOutlinedIcon />,
+      icon: <ShoppingBasketOutlinedIcon />,
       value: "orderEditor",
       display: "true",
     },
+
     // {
     //   type: "title",
     //   title: "Site",
@@ -70,8 +73,15 @@ const AdminSidebar = ({ handleItemClick, selectedItem }) => {
     {
       type: "item",
       title: "Home Settings",
-      icon: <BarChartOutlinedIcon />,
+      icon: <CottageOutlinedIcon />,
       value: "homeSettings",
+      display: "true",
+    },
+    {
+      type: "item",
+      title: "Theme",
+      icon: <ColorLensOutlinedIcon />,
+      value: "themeEditor",
       display: "true",
     },
   ];
