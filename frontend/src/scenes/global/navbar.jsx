@@ -178,7 +178,7 @@ const NavBar = () => {
               fontSize: "1.5rem",
               fontWeight: 800,
               letterSpacing: ".2rem",
-              color: theme.palette.navbar.main,
+              color: "#FFFFF0",
               textDecoration: "none",
             }}
           >
@@ -239,7 +239,7 @@ const NavBar = () => {
               fontFamily: "Source Sans Pro",
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: theme.palette.navbar.main,
+              color: "#FFFFF0",
               textDecoration: "none",
             }}
           >
