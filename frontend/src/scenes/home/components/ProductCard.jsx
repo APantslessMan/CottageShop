@@ -27,9 +27,10 @@ const ProductCard = (props) => {
     >
       <CardMedia
         sx={{ height: 200 }}
-        image={product.img_url}
+        image={product.img_url || "https://placehold.co/324x200"}
         title={product.name}
       />
+
       <CardContent sx={{ textAlign: "left", padding: 3 }}>
         <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold" }}>
           {product.name}
