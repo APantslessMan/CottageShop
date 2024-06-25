@@ -351,6 +351,8 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
+    if not identity['phone_number']:
+        identity['phone_number'] = '111-111-1111'
     response = set_cookies(identity['email'], identity['username'],
                            identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
     return response
