@@ -52,9 +52,7 @@ const Shop = () => {
           <Paper
             style={{
               padding: 2,
-
               minHeight: "80vh",
-              marginTop: "80px",
               marginLeft: "10px",
               marginRight: "10px",
             }}
@@ -69,7 +67,7 @@ const Shop = () => {
         )}
       </Grid>
 
-      <Grid item xs={12} md={10} mt={10} ml={4}>
+      <Grid item xs={12} md={9} mt={10} ml={4}>
         <Typography variant="h4" mb={2}>
           {selectedCategory}
         </Typography>

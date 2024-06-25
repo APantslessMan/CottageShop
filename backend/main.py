@@ -402,6 +402,23 @@ def get_products():
             return jsonify(products_data), 200
 
 
+@app.route('/api/listproducts', methods=[ 'GET'])
+def list_products():
+        products = Product.query.all()
+        products_data = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "description": product.description,
+                "price": product.price,
+                "img_url": product.img_url
+
+            }
+            for product in products
+        ]
+        return jsonify(products_data), 200
+
+
 @app.route('/api/cart', methods=['POST'])
 @jwt_required()
 def cart():
