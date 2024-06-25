@@ -6,11 +6,61 @@ import {
   ListItemButton,
   Typography,
   useTheme,
+  Menu,
+  Button,
+  MenuItem,
 } from "@mui/material";
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
 
-export const DropCategories = (categories) => {
-  return <div>Dropdown</div>;
+export const DropCategories = ({
+  categories,
+  selectedIndex,
+  setSelectedIndex,
+}) => {
+  const categoryNames = Object.keys(categories);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (index) => {
+    setAnchorEl(null);
+    if (index !== undefined) {
+      setSelectedIndex(index);
+    }
+  };
+
+  return (
+    <div>
+      <Button
+        id="basic-button"
+        sx={{ border: "1px, solid", marginBottom: "8px" }}
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={handleClick}
+      >
+        Categories
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={() => handleClose()}
+        MenuListProps={{
+          "aria-labelledby": "basic-button",
+        }}
+      >
+        {categoryNames.map((category, index) => (
+          <MenuItem key={index} onClick={() => handleClose(index)}>
+            {category}
+          </MenuItem>
+        ))}
+      </Menu>
+    </div>
+  );
 };
 
 export const Categories = ({ categories, selectedIndex, setSelectedIndex }) => {

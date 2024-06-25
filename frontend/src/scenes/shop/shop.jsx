@@ -29,7 +29,19 @@ const Shop = () => {
   }
   return (
     <Grid container>
-      <Grid item xs={12} md={2}>
+      <Grid
+        item
+        xs={12}
+        md={2}
+        mb={-10}
+        style={{
+          padding: 2,
+
+          marginTop: "80px",
+          marginLeft: "10px",
+          marginRight: "10px",
+        }}
+      >
         {isXs ? (
           <DropCategories
             categories={siteData["categories"]}
@@ -40,9 +52,7 @@ const Shop = () => {
           <Paper
             style={{
               padding: 2,
-
               minHeight: "80vh",
-              marginTop: "80px",
               marginLeft: "10px",
               marginRight: "10px",
             }}
@@ -57,8 +67,10 @@ const Shop = () => {
         )}
       </Grid>
 
-      <Grid item xs={12} md={10} mt={10}>
-        <Typography variant="h4">Products for {selectedCategory}</Typography>
+      <Grid item xs={12} md={9} mt={10} ml={4}>
+        <Typography variant="h4" mb={2}>
+          {selectedCategory}
+        </Typography>
         <Grid container spacing={2}>
           {products.map((productId) => {
             const product = productData.find((p) => p.id === productId);

@@ -77,14 +77,7 @@ const apiService = {
   listProducts: async () => {
     try {
       await authService.refreshToken();
-      const response = await axios.post(
-        `${apiUrl}/api/products`,
-        { op: "list" },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${apiUrl}/api/listproducts`);
       if (response.status === 200) {
         return response.data;
       } else {

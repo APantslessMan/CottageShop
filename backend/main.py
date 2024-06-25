@@ -351,6 +351,8 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
+    if not identity['phone_number']:
+        identity['phone_number'] = '111-111-1111'
     response = set_cookies(identity['email'], identity['username'],
                            identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
     return response
@@ -398,6 +400,23 @@ def get_products():
                 for product in products
             ]
             return jsonify(products_data), 200
+
+
+@app.route('/api/listproducts', methods=[ 'GET'])
+def list_products():
+        products = Product.query.all()
+        products_data = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "description": product.description,
+                "price": product.price,
+                "img_url": product.img_url
+
+            }
+            for product in products
+        ]
+        return jsonify(products_data), 200
 
 
 @app.route('/api/cart', methods=['POST'])
