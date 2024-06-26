@@ -1,6 +1,6 @@
 # CottageShop CMS
 
-CottageShop CMS is a web application for Cottage craft and Industry. planned features are a store front, and </nr>
+CottageShop CMS is an E-Commerce application for Cottage craft and Industry. planned features are a store front, and </nr>
 an admin panel with CMS and Supply stock tracking. </br>
 
 Also planned is a Plugin system, with plugins for different aspects of the industry. these would include:</br>
@@ -14,8 +14,13 @@ Also planned is a Plugin system, with plugins for different aspects of the indus
 
 - User authentication: Users can register and log in to the system.
 - Product management: Admin users can add, edit, and delete products from the inventory.
+- User Editing: Admin users can promote, demote or delete existing users. 
 - Order processing: Users can add products to their cart and place orders.
-
+- Order Haandling: Admin users can see new orders and change status or modify them.
+- Theme Editing: Admin users can create new themes and set the site to use them.
+- Category editing: admin users can create categories that appear on the product page.
+- Site Content editing: Admin users can change all the text and images from the admin panel.
+  
 ## Technologies Used
 
 - **Frontend**: React.js, React Router, MaterialUI
@@ -25,44 +30,13 @@ Also planned is a Plugin system, with plugins for different aspects of the indus
 
 ## Installation
 
-1. Clone the repository:
+**Docker**
+use the compose file in the root of this repository to install cottageshop and postgres. 
 
-   ```bash
-   git clone https://github.com/your-username/CottageShop-CMS.git
-   ```
-Navigate to the project directory:
-
-  ```bash
-
-cd CottageShop-CMS
-```
-
-Install dependencies:
-
-```bash
-
-npm install    # Install frontend dependencies
-pip install -r requirements.txt   # Install backend dependencies
-```
-
-Set up environment variables:
-
-Create a .env file in the root directory of the backend (backend/.env) and define the necessary environment variables such as REACT_APP_API_URL for the frontend and SECRET_KEY for the backend.
-Start the development server:
-
-```bash
-
-npm start   # Start the frontend development server
-python app.py   # Start the Flask backend server
-```
-
-Access the application in your web browser:<br/> <br/> 
-
-Open http://localhost:3000 to view the frontend.<br/> 
-The backend API will be available at http://localhost:5000.<br/> <br/> 
 
 ## Usage<br/> 
-Register as a new user or log in with existing credentials.<br/> 
+CS will be in Demo mode by default, so use the demo login button on the login page<br/> 
+Be sure to toggle off Demo mode and update the demo admin account to your own credentials<br/>
 Explore the product catalog, add items to your cart, and place orders.<br/> 
 Admin users can access the admin dashboard to manage products and view orders.<br/> 
 
