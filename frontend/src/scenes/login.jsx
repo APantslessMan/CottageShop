@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   Paper,
@@ -9,10 +9,13 @@ import {
 } from "@mui/material";
 import "../css/Register.css";
 import { useNavigate } from "react-router-dom";
+import { DataContext } from "../components/utils/DataContext";
 
 const Login = ({ onLogin }) => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { siteData } = useContext(DataContext);
+  console.log(siteData.home_demo);
   React.useEffect(() => {
     document.documentElement.style.setProperty(
       "--background-paper",
@@ -31,13 +34,18 @@ const Login = ({ onLogin }) => {
     theme.palette.background.default,
     theme.palette.text.primary,
   ]);
-
+  const handleDemoClick = () => {
+    const username = "demo";
+    const password = "demo";
+    onLogin(username, password);
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const username = e.target.elements.username.value;
     const password = e.target.elements.password.value;
     onLogin(username, password);
   };
+
   const registerClick = () => {
     navigate("/register");
   };
@@ -102,6 +110,17 @@ const Login = ({ onLogin }) => {
                 Don't have an account?{" "}
                 <Button onClick={registerClick}>Register here</Button>
               </Typography>
+              {siteData.home_demo ? (
+                <Button
+                  onClick={handleDemoClick}
+                  name="demo"
+                  variant="contained"
+                  color="primary"
+                  className="register-button"
+                >
+                  Login as Demo Admin
+                </Button>
+              ) : null}
             </Box>
           </Paper>
         </Box>
