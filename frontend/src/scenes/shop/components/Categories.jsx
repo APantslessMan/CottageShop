@@ -16,6 +16,7 @@ export const DropCategories = ({
   categories,
   selectedIndex,
   setSelectedIndex,
+  theme,
 }) => {
   const categoryNames = Object.keys(categories);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -36,7 +37,12 @@ export const DropCategories = ({
     <div>
       <Button
         id="basic-button"
-        sx={{ border: "1px, solid", marginBottom: "8px" }}
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+          border: "1px, solid",
+          marginBottom: "8px",
+          color: theme.palette.text.primary,
+        }}
         aria-controls={open ? "basic-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}

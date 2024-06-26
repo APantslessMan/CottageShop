@@ -54,12 +54,14 @@ const NavBar = () => {
     {
       name: "Products",
       action: () => {
+        handleCloseNavMenu();
         navigate("/shop");
       },
     },
     {
       name: "Contact",
       action: () => {
+        handleCloseNavMenu();
         navigate("/contact");
       },
     },
@@ -110,6 +112,23 @@ const NavBar = () => {
     });
   };
 
+  // convert hex to rgb values for navbar theming
+  const hexToRgba = (hex, alpha) => {
+    if (!/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+      throw new Error("Invalid hex color");
+    }
+
+    let c = hex.substring(1).split("");
+    if (c.length === 3) {
+      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c = "0x" + c.join("");
+    return `rgba(${(c >> 16) & 255}, ${(c >> 8) & 255}, ${c & 255}, ${alpha})`;
+  };
+  const navBackgroundColor = isScrolled
+    ? hexToRgba(theme.palette.navbar.main, 0.2)
+    : hexToRgba(theme.palette.navbar.main, 1);
+
   const navigate = useNavigate();
 
   const userMenuItems = isLoggedIn
@@ -148,8 +167,24 @@ const NavBar = () => {
         },
       ]
     : [
-        { label: "Login", action: [() => navigate("/login")] },
-        { label: "Register", action: [() => navigate("/register")] },
+        {
+          label: "Login",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              navigate("/login");
+            },
+          ],
+        },
+        {
+          label: "Register",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              navigate("/register");
+            },
+          ],
+        },
       ];
 
   return (
@@ -157,7 +192,7 @@ const NavBar = () => {
       color="transparent"
       elevation={0}
       sx={{
-        background: isScrolled ? "rgba(0, 0, 0, .2)" : "rgba(0, 0, 0, 1)",
+        background: navBackgroundColor,
         backdropFilter: "blur(10px)",
         boxShadow: "none",
         transition: "background-color 1s ease",

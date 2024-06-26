@@ -26,9 +26,9 @@ export const useThemeSettings = (mode) => {
             text: {
               primary: darkTheme.text,
               secondary: darkTheme.secondaryText,
-              menuSelected: darkTheme.menuSelected,
               disabled: "grey",
             },
+            divider: darkTheme.primary,
           }
         : {
             primary: { main: lightTheme.primary },
