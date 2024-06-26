@@ -16,7 +16,7 @@ Also planned is a Plugin system, with plugins for different aspects of the indus
 - Product management: Admin users can add, edit, and delete products from the inventory.
 - User Editing: Admin users can promote, demote or delete existing users. 
 - Order processing: Users can add products to their cart and place orders.
-- Order Haandling: Admin users can see new orders and change status or modify them.
+- Order Handling: Admin users can see new orders and change status or modify them.
 - Theme Editing: Admin users can create new themes and set the site to use them.
 - Category editing: admin users can create categories that appear on the product page.
 - Site Content editing: Admin users can change all the text and images from the admin panel.
