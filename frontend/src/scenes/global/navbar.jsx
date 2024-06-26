@@ -54,12 +54,14 @@ const NavBar = () => {
     {
       name: "Products",
       action: () => {
+        handleCloseNavMenu();
         navigate("/shop");
       },
     },
     {
       name: "Contact",
       action: () => {
+        handleCloseNavMenu();
         navigate("/contact");
       },
     },
@@ -148,8 +150,24 @@ const NavBar = () => {
         },
       ]
     : [
-        { label: "Login", action: [() => navigate("/login")] },
-        { label: "Register", action: [() => navigate("/register")] },
+        {
+          label: "Login",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              navigate("/login");
+            },
+          ],
+        },
+        {
+          label: "Register",
+          action: [
+            () => {
+              handleCloseUserMenu();
+              navigate("/register");
+            },
+          ],
+        },
       ];
 
   return (

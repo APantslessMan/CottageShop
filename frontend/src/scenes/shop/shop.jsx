@@ -47,6 +47,7 @@ const Shop = () => {
             categories={siteData["categories"]}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}
+            theme={theme}
           />
         ) : (
           <Paper
@@ -71,7 +72,13 @@ const Shop = () => {
         <Typography variant="h4" mb={2}>
           {selectedCategory}
         </Typography>
-        <Grid container spacing={2}>
+        <Grid
+          container
+          sx={{
+            justifyContent: { xs: "center", sm: "flex-start" },
+            alignItems: { xs: "center", sm: "flex-start" },
+          }}
+        >
           {products.map((productId) => {
             const product = productData.find((p) => p.id === productId);
             if (!product) {
@@ -85,8 +92,10 @@ const Shop = () => {
             }
             return (
               //   <Grid item xs={12} sm={6} md={4} key={productId}>
-              <Grid item sm={6} md={4} lg={3} key={productId}>
-                <ProductCard product={product} />
+              <Grid item sm={6} md={4} lg={3} p={2} key={productId}>
+                <Box>
+                  <ProductCard product={product} />
+                </Box>
               </Grid>
             );
           })}
