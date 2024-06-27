@@ -100,7 +100,8 @@ export const ThemeModeEditor = () => {
     setNewThemeName("");
     setNameError(false);
     setHelperText("");
-    alert("Theme saved successfully.");
+    console.log(themeData);
+    alert("Theme saved successfully."); //TODO: move to snackbar
   };
 
   const handleNewThemeNameChange = (event) => {
@@ -140,7 +141,7 @@ export const ThemeModeEditor = () => {
                 sx={{
                   marginLeft: "auto",
                   bgcolor: colors.primary,
-                  color: colors.secondaryText,
+                  color: colors.text.secondary,
                 }}
               />
             </Grid>
@@ -204,7 +205,7 @@ export const ThemeModeEditor = () => {
             key={key}
             id={key}
             defaultColor={colors[key]}
-            onColorChange={(color) => handleColorChange(key, color)}
+            onColorChange={handleColorChange}
           />
         ))}
       </Grid>
