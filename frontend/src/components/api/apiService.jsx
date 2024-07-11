@@ -133,17 +133,17 @@ const apiService = {
   getcart: async (user) => {
     try {
       // authService.refreshToken();
-      const response = await axios.post(
+      const cart = await axios.post(
         `${apiUrl}/api/cart`,
         {},
         {
           withCredentials: true,
         }
       );
-      if (response.status === 201) {
-        return response.data;
+      if (cart.status === 201) {
+        return cart.data;
       } else {
-        throw new Error(response.data.message);
+        throw new Error(cart.data.message);
       }
     } catch {
       console.error("Error getting cart:", error);
@@ -153,17 +153,17 @@ const apiService = {
   addcart: async (op, product, quantity) => {
     try {
       // authService.refreshToken();
-      const response = await axios.post(
+      const cart = await axios.post(
         `${apiUrl}/api/cart`,
         { op, product, quantity },
         {
           withCredentials: true,
         }
       );
-      if (response.status === 201) {
+      if (cart.status === 201) {
         console.log("Product added to cart successfully");
       } else {
-        throw new Error(response.data.message);
+        throw new Error(cart.data.message);
       }
     } catch {
       console.error("Error adding to cart:", error);
