@@ -66,7 +66,6 @@ const authService = {
         { withCredentials: true }
       );
       if (response.status === 201) {
-        console.log("Registration successful:", response.data);
         return response.data;
       } else {
         console.error("Registration failed:", response.data.message);

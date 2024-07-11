@@ -29,7 +29,6 @@ function App() {
   const [sbError, setSbError] = useState("");
   const [sbType, setSbType] = useState("");
   const { siteData } = useContext(DataContext);
-  console.log(siteData);
   const handleOpenSnackbar = (error, type) => {
     setSbError(error);
     setSbType(type);

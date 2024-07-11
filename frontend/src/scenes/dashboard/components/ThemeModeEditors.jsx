@@ -100,7 +100,6 @@ export const ThemeModeEditor = () => {
     setNewThemeName("");
     setNameError(false);
     setHelperText("");
-    console.log(themeData);
     alert("Theme saved successfully."); //TODO: move to snackbar
   };
 

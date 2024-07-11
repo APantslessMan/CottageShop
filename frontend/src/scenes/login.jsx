@@ -15,7 +15,7 @@ const Login = ({ onLogin }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { siteData } = useContext(DataContext);
-  console.log(siteData.home_demo);
+
   React.useEffect(() => {
     document.documentElement.style.setProperty(
       "--background-paper",

@@ -7,7 +7,7 @@ const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
 const apiService = {
   editProduct: async (op, id = null, formData = null) => {
     try {
-      authService.refreshToken().then(console.log("Token refreshed"));
+      // authService.refreshToken().then(console.log("Token refreshed"));
 
       if (op === "add" && formData) {
         const response = await axios.post(
@@ -45,7 +45,6 @@ const apiService = {
           withCredentials: true,
         });
         if (response.status === 200) {
-          console.log(response.data);
           return response.data;
         } else {
           console.error("Failed to Fetch products");
@@ -141,7 +140,6 @@ const apiService = {
         }
       );
       if (cart.status === 201) {
-        console.log("cart", cart.data);
         return cart.data;
       } else {
         throw new Error(cart.data.message);

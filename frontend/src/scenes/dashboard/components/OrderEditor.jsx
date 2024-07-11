@@ -14,7 +14,6 @@ const OrdersGrid = () => {
         const response = await axios.get(`${apiUrl}/api/orders`, {
           withCredentials: true,
         });
-        console.log("API response:", response.data);
 
         // Ensure each order has a unique id
         const ordersWithId = response.data.map((order) => {
