@@ -278,8 +278,11 @@ def refresh_expiring_jwts(response):
         now = datetime.now(timezone.utc)
         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
         if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
-            set_cookies(response, access_token)
+            identity = get_jwt_identity()
+            if not identity['phone_number']:
+                identity['phone_number'] = '111-111-1111'
+            response = set_cookies(identity['email'], identity['username'],
+                                   identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
         return response
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original response
