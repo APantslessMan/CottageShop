@@ -281,8 +281,8 @@ def refresh_expiring_jwts(response):
             identity = get_jwt_identity()
             if not identity['phone_number']:
                 identity['phone_number'] = '111-111-1111'
-            response = set_cookies(identity['email'], identity['username'],
-                                   identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
+            set_cookies(identity['email'], identity['username'],
+                        identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
         return response
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original response
@@ -440,6 +440,7 @@ def cart():
         return "User not found", 404
     if not request.json:
         cart_items = get_from_cart(user.id)
+        print(jsonify(cart_items))
         return jsonify(cart_items), 201
     elif request.json:
         if request.json['op'] == "add":
@@ -864,4 +865,4 @@ def index(path):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    app.run(host='10.10.18.11', port=5000, debug=True)
+    app.run(host='10.10.18.11', port=5012, debug=True)

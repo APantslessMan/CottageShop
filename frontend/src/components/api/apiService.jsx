@@ -141,6 +141,7 @@ const apiService = {
         }
       );
       if (cart.status === 201) {
+        console.log("cart", cart.data);
         return cart.data;
       } else {
         throw new Error(cart.data.message);
