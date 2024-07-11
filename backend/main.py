@@ -13,7 +13,7 @@ from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     create_refresh_token,
-    get_jwt_identity
+    get_jwt_identity, get_jwt
 )
 import json
 # import sys
@@ -271,7 +271,19 @@ def set_cookies(email, username, role, f_name, l_name, phone_number):
 ###############################################################
 
 
-
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original response
+        return response
 
 
 @app.route('/')
@@ -346,12 +358,12 @@ def login():
 @app.route('/api/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    identity = get_jwt_identity()
-    if not identity['phone_number']:
-        identity['phone_number'] = '111-111-1111'
-    response = set_cookies(identity['email'], identity['username'],
-                           identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
-    return response
+#     identity = get_jwt_identity()
+#     if not identity['phone_number']:
+#         identity['phone_number'] = '111-111-1111'
+#     response = set_cookies(identity['email'], identity['username'],
+#                            identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
+    return 201
 
 
 # deprecated
