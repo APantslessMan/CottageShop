@@ -9,7 +9,7 @@ import authService from "../../../components/api/authService";
 const UserEditor = ({ showSb }) => {
   const [users, setUsers] = useState([]);
   const [newValue, setNewValue] = useState("");
-  authService.refreshToken();
+  // authService.refreshToken();
   const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
 
   useEffect(() => {

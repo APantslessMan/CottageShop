@@ -58,7 +58,7 @@ const apiService = {
   },
   editsite: async (formData) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
       const response = await axios.post(`${apiUrl}/api/json/edit`, formData, {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
@@ -76,7 +76,7 @@ const apiService = {
 
   listProducts: async () => {
     try {
-      await authService.refreshToken();
+      // await authService.refreshToken();
       const response = await axios.get(`${apiUrl}/api/listproducts`);
       if (response.status === 200) {
         return response.data;
@@ -89,7 +89,7 @@ const apiService = {
     }
   },
   editUser: async (action, id, column = null, item = null) => {
-    authService.refreshToken();
+    // authService.refreshToken();
     try {
       const response = await axios.post(
         `${apiUrl}/api/editUser`,
@@ -114,7 +114,7 @@ const apiService = {
     }
   },
   editStock: async (id = null, formData = null) => {
-    authService.refreshToken();
+    // authService.refreshToken();
     try {
       const response = await axios.post(`${apiUrl}/api/editstock`, formData, {
         withCredentials: true,
@@ -132,7 +132,7 @@ const apiService = {
   },
   getcart: async (user) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
       const response = await axios.post(
         `${apiUrl}/api/cart`,
         {},
@@ -152,7 +152,7 @@ const apiService = {
   },
   addcart: async (op, product, quantity) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
       const response = await axios.post(
         `${apiUrl}/api/cart`,
         { op, product, quantity },
@@ -172,7 +172,7 @@ const apiService = {
   },
   delcart: async (op, product) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
       const response = await axios.post(
         `${apiUrl}/api/cart`,
         { op, product },
@@ -192,7 +192,7 @@ const apiService = {
   },
   clearcart: async (op, userName) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
       const response = await axios.post(
         `${apiUrl}/api/cart`,
         { op: "clear", userName },
@@ -208,7 +208,7 @@ const apiService = {
   // Get Cart For cart modal,no JWT required for this route
   getcartitems: async (items) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
 
       const response = await axios.post(`${apiUrl}/api/cartitems`, { items });
       if (response.status === 200) {
@@ -224,7 +224,7 @@ const apiService = {
 
   submitorder: async (formData) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
 
       const response = await axios.post(`${apiUrl}/api/submitorder`, formData, {
         withCredentials: true,
@@ -242,7 +242,7 @@ const apiService = {
   },
   editcategory: async (formData) => {
     try {
-      authService.refreshToken();
+      // authService.refreshToken();
 
       const response = await axios.post(`${apiUrl}/api/site/cat`, formData, {
         withCredentials: true,
