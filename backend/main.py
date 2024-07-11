@@ -13,7 +13,7 @@ from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     create_refresh_token,
-    get_jwt_identity
+    get_jwt_identity, get_jwt
 )
 import json
 # import sys
@@ -246,16 +246,12 @@ def clear_cart(username):
 
 
 def set_cookies(email, username, role, f_name, l_name, phone_number):
-    access_token = create_access_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
-                  'phone_number': phone_number})
-    refresh_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
-                  'phone_number': phone_number})
-    session_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
-                  'phone_number': phone_number})
-    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=l_name, l_name=l_name,
+    identity_dict = {'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
+                     'phone_number': phone_number }
+    access_token = create_access_token(identity=identity_dict)
+    refresh_token = create_access_token(identity=identity_dict)
+    session_token = create_access_token(identity=identity_dict)
+    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=f_name, l_name=l_name,
                                      phone_number=phone_number), 200)
     for i in COOKIE_TYPES:
         if "public" in i:
@@ -275,7 +271,22 @@ def set_cookies(email, username, role, f_name, l_name, phone_number):
 ###############################################################
 
 
-
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            identity = get_jwt_identity()
+            if not identity['phone_number']:
+                identity['phone_number'] = '111-111-1111'
+            set_cookies(identity['email'], identity['username'],
+                        identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original response
+        return response
 
 
 @app.route('/')
@@ -350,12 +361,12 @@ def login():
 @app.route('/api/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
-    identity = get_jwt_identity()
-    if not identity['phone_number']:
-        identity['phone_number'] = '111-111-1111'
-    response = set_cookies(identity['email'], identity['username'],
-                           identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
-    return response
+#     identity = get_jwt_identity()
+#     if not identity['phone_number']:
+#         identity['phone_number'] = '111-111-1111'
+#     response = set_cookies(identity['email'], identity['username'],
+#                            identity['role'], identity['f_name'], identity['l_name'], identity['phone_number'])
+    return 201
 
 
 # deprecated
@@ -429,6 +440,7 @@ def cart():
         return "User not found", 404
     if not request.json:
         cart_items = get_from_cart(user.id)
+        print(jsonify(cart_items))
         return jsonify(cart_items), 201
     elif request.json:
         if request.json['op'] == "add":
@@ -853,4 +865,4 @@ def index(path):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    app.run(host='10.10.18.11', port=5000, debug=True)
+    app.run(host='10.10.18.11', port=5012, debug=True)

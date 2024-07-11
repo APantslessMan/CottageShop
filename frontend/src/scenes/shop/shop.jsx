@@ -21,9 +21,6 @@ const Shop = () => {
   const selectedCategory = categoryNames[selectedIndex];
   const products = siteData.categories[selectedCategory] || [];
 
-  console.log("inShop", siteData["categories"]);
-
-  console.log("productData", productData);
   if (loading || !productData) {
     return <div mt="75px">Loading...</div>;
   }

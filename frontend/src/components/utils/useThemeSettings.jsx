@@ -5,7 +5,6 @@ export const useThemeSettings = (mode) => {
   const { siteData } = useContext(DataContext);
 
   if (!siteData || !siteData.home_theme) {
-    console.log("siteData", siteData);
     return null;
   }
 

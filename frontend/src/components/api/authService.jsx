@@ -66,7 +66,6 @@ const authService = {
         { withCredentials: true }
       );
       if (response.status === 201) {
-        console.log("Registration successful:", response.data);
         return response.data;
       } else {
         console.error("Registration failed:", response.data.message);
@@ -85,7 +84,7 @@ const authService = {
         console.log("No session cookie found");
         return { isAuthenticated: false, userName: "" };
       } else {
-        authService.refreshToken();
+        // authService.refreshToken();
         const response = await axios.get(`${apiUrl}/api/auth`, {
           withCredentials: true,
         });
@@ -125,7 +124,7 @@ const authService = {
   },
 
   editUser: async (op, userid) => {
-    authService.refreshToken();
+    // authService.refreshToken();
     try {
       const response = await axios.post(
         `${apiUrl}/api/useredit`,
