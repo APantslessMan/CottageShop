@@ -246,16 +246,12 @@ def clear_cart(username):
 
 
 def set_cookies(email, username, role, f_name, l_name, phone_number):
-    access_token = create_access_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
-                  'phone_number': phone_number})
-    refresh_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
-                  'phone_number': phone_number})
-    session_token = create_refresh_token(
-        identity={'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
-                  'phone_number': phone_number})
-    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=l_name, l_name=l_name,
+    identity_dict = {'email': email, 'username': username, 'role': role, 'f_name': f_name, 'l_name': l_name,
+                     'phone_number': phone_number }
+    access_token = create_access_token(identity=identity_dict)
+    refresh_token = create_access_token(identity=identity_dict)
+    session_token = create_access_token(identity=identity_dict)
+    response = make_response(jsonify(message="Logged in", role=role, email=email, f_name=f_name, l_name=l_name,
                                      phone_number=phone_number), 200)
     for i in COOKIE_TYPES:
         if "public" in i:
