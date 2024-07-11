@@ -572,6 +572,7 @@ def edit_user():
         operation_user = session.get(User, operation_id)
         if operation_user:
             if operation == 'del':
+                clear_cart(operation_user.username)
                 session.delete(operation_user)
                 session.commit()
                 return jsonify({"message": "User Deleted"}), 200
