@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Paper, Box, Typography, Button, Grid, Divider } from "@mui/material";
+import {
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Divider,
+  CircularProgress,
+} from "@mui/material";
 import dayjs from "dayjs";
 
 import apiService from "../../components/api/apiService";
@@ -13,6 +21,8 @@ const OrderDetails = () => {
   const location = useLocation();
   const formData = location.state || {};
   const { showSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
+
   const {
     email,
     firstName,
@@ -28,14 +38,21 @@ const OrderDetails = () => {
   const formattedDate = dayjs(requestedDate);
 
   const handleSubmit = async () => {
-    const response = await apiService.submitorder(formData);
-    if (response.status === 201) {
-      showSnackbar("Order Placed", "success");
-
-      clearCart();
-      navigate("/");
-    } else {
+    setLoading(true);
+    try {
+      const response = await apiService.submitorder(formData);
+      if (response.status === 201) {
+        showSnackbar("Order Placed", "success");
+        clearCart();
+        navigate("/");
+      } else {
+        showSnackbar("Order Creation Failed", "error");
+      }
+    } catch (error) {
+      console.error("Order submission error:", error);
       showSnackbar("Order Creation Failed", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,8 +146,13 @@ const OrderDetails = () => {
             color="primary"
             sx={{ mt: 2 }}
             onClick={handleSubmit}
+            disabled={loading}
           >
-            Submit Order
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Submit Order"
+            )}
           </Button>
         </Box>
       </Paper>
