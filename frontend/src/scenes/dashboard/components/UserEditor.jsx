@@ -107,7 +107,7 @@ const UserEditor = ({ showSb }) => {
   };
   const columns = [
     { field: "id", headerName: "ID", width: 60 },
-    { field: "name", headerName: "Name", width: 100 },
+    { field: "name", headerName: "User Name", width: 100 },
     {
       field: "email",
       headerName: "Email",
@@ -121,6 +121,9 @@ const UserEditor = ({ showSb }) => {
         params?.row?.purchases ? params.row.purchases.length : "None",
     },
     { field: "role", headerName: "Role", width: 70 },
+    { field: "number", hearderName: "Number", width: 100 },
+    { field: "fullName", hearderName: "Name ", width: 100 },
+
     {
       field: "actions",
       headerName: "Actions",
