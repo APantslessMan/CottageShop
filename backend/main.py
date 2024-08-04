@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone, date
 
 from flask import Flask, request, jsonify, make_response, render_template, send_from_directory, redirect
-
+from jinja2 import Template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 import smtplib
@@ -24,7 +24,7 @@ import uuid
 from dotenv import load_dotenv
 import smtplib
 import os
-import aiosmtplib
+from aiosmtplib import SMTP
 import asyncio
 load_dotenv()
 
@@ -269,8 +269,12 @@ def set_cookies(email, username, role, f_name, l_name, phone_number):
     return response
 
 
+
+
+
 async def send_mail(order, cart_items, email, order_id, name):
     print(cart_items[0])
+
     email_order = {
         "items": cart_items,
         "contact": order.payment_type,
@@ -278,51 +282,73 @@ async def send_mail(order, cart_items, email, order_id, name):
         "customer": email,
         "comments": order.comments
     }
+
     subject = f"Cottage Shop - Order Created for {order.date_requested}"
 
     email_info = Site.query.filter_by(name="email").first()
     params = email_info.params
-    # print(params)
+    print(params)
+
     smtp_server = params['smtp_server']
     smtp_port = params['smtp_port']
     sender_email = params['sender_email']
     sender_password = params['sender_pass']
     receiver_email = email_order['customer']
+
     order_items = []
-    items_str = ""
-    order_total = float()
+    order_total = 0.0
+
     for i in cart_items:
         print(i['id'])
         item = Product.query.filter_by(id=i['id']).first()
-        item_list = {"item": item.name, "price": f"{item.price:.2f}", "quantity": i['quantity'] }
+        item_list = {"item": item.name, "price": f"{item.price:.2f}", "quantity": i['quantity']}
         order_items.append(item_list)
-        items_str += f"Product: {item.name}, Price: {item.price:.2f} QTY: {i['quantity']} \n"
         order_total += float(item.price) * float(i['quantity'])
+
     print(order_total)
+
+    email_template = """
+    <h1>Order Confirmation</h1>
+    <p>Order ID: {{ order_id }}</p>
+    <p>Customer: {{ name }} ({{ email_order.customer }})</p>
+    <p>Contact type: {{ email_order.contact }}</p>
+    <p>Date: {{ email_order.date }}</p>
+    <p>Comments: {{ email_order.comments }}</p>
+    <h2>Items:</h2>
+    <ul>
+    {% for item in order_items %}
+        <li>{{ item.item }} - ${{ item.price }} x {{ item.quantity }}</li>
+    {% endfor %}
+    </ul>
+    <p>Total: ${{ order_total }}</p>
+    </br>
+    <p>Payment can be made via E-Transfer to kccpetersen@gmail.com</p>
+    """
+
+    template = Template(email_template)
+    body = template.render(order_id=order_id, name=name, email_order=email_order, order_items=order_items,
+                           order_total=f"{order_total:.2f}")
+
     msg = MIMEMultipart()
     msg['From'] = sender_email
     msg['To'] = receiver_email
     msg['Subject'] = subject
-    bcc_email = sender_email
-    # TODO: use Jinja template for email content
-    body = f"""
-    Order ID: {order_id}
-    \n{items_str}
-    Total: {order_total}
-    Contact type: {email_order['contact']}
-    Date: {email_order['date']}
-    Customer: {name}, {email_order['customer']}
-    Comments: {email_order['comments']}
-    """
-    print(body)
-    msg.attach(MIMEText(body, 'plain'))
-    recipients = [receiver_email] + [bcc_email]
-    async with aiosmtplib.SMTP(hostname=smtp_server, port=smtp_port) as server:
-        await server.starttls()
-        await server.login(sender_email, sender_password)
-        await server.sendmail(sender_email, recipients, msg.as_string())
+    msg.attach(MIMEText(body, 'html'))
 
-    print("Email sent successfully!")
+    recipients = [receiver_email, sender_email]
+
+    try:
+        async with SMTP(hostname=smtp_server, port=smtp_port) as server:
+
+            await server.login(sender_email, sender_password)
+            await server.sendmail(sender_email, recipients, msg.as_string())
+
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
+# Note: Make sure to adjust your import paths and dependencies according to your project setup.
 
 
 ###############################################################
