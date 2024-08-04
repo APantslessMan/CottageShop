@@ -579,7 +579,9 @@ def get_user():
                 "name": user.username,
                 "email": user.email,
                 "purchases": user.purchases,
-                "role": user.role
+                "role": user.role,
+                "number": user.phone_number,
+                "fullName": user.f_name + " " + user.l_name
             }
             for user in users
         ]
