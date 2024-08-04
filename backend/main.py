@@ -1,14 +1,16 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 
 from flask import Flask, request, jsonify, make_response, render_template, send_from_directory, redirect
-
+from jinja2 import Template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from werkzeug.utils import secure_filename
 
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from sqlalchemy.exc import SQLAlchemyError
 from flask_cors import CORS
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -22,7 +24,8 @@ import uuid
 from dotenv import load_dotenv
 import smtplib
 import os
-
+from aiosmtplib import SMTP
+import asyncio
 load_dotenv()
 
 allowed_origins = os.getenv('ALLOWED_ORIGINS').split(',')
@@ -264,6 +267,88 @@ def set_cookies(email, username, role, f_name, l_name, phone_number):
             response.set_cookie(i, value=refresh_token, expires=datetime.now(timezone.utc) + timedelta(days=30),
                                 httponly=True, secure=COOKIE_SECURITY, samesite='Lax')
     return response
+
+
+
+
+
+async def send_mail(order, cart_items, email, order_id, name):
+    print(cart_items[0])
+
+    email_order = {
+        "items": cart_items,
+        "contact": order.payment_type,
+        "date": order.date_requested,
+        "customer": email,
+        "comments": order.comments
+    }
+
+    subject = f"Cottage Shop - Order Created for {order.date_requested}"
+
+    email_info = Site.query.filter_by(name="email").first()
+    params = email_info.params
+    print(params)
+
+    smtp_server = params['smtp_server']
+    smtp_port = params['smtp_port']
+    sender_email = params['sender_email']
+    sender_password = params['sender_pass']
+    receiver_email = email_order['customer']
+
+    order_items = []
+    order_total = 0.0
+
+    for i in cart_items:
+        print(i['id'])
+        item = Product.query.filter_by(id=i['id']).first()
+        item_list = {"item": item.name, "price": f"{item.price:.2f}", "quantity": i['quantity']}
+        order_items.append(item_list)
+        order_total += float(item.price) * float(i['quantity'])
+
+    print(order_total)
+
+    email_template = """
+    <h1>Order Confirmation</h1>
+    <p>Order ID: {{ order_id }}</p>
+    <p>Customer: {{ name }} ({{ email_order.customer }})</p>
+    <p>Contact type: {{ email_order.contact }}</p>
+    <p>Date: {{ email_order.date }}</p>
+    <p>Comments: {{ email_order.comments }}</p>
+    <h2>Items:</h2>
+    <ul>
+    {% for item in order_items %}
+        <li>{{ item.item }} - ${{ item.price }} x {{ item.quantity }}</li>
+    {% endfor %}
+    </ul>
+    <p>Total: ${{ order_total }}</p>
+    </br>
+    <p>Payment can be made via E-Transfer to kccpetersen@gmail.com</p>
+    """
+
+    template = Template(email_template)
+    body = template.render(order_id=order_id, name=name, email_order=email_order, order_items=order_items,
+                           order_total=f"{order_total:.2f}")
+
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html'))
+
+    recipients = [receiver_email, sender_email]
+
+    try:
+        async with SMTP(hostname=smtp_server, port=smtp_port) as server:
+
+            await server.login(sender_email, sender_password)
+            await server.sendmail(sender_email, recipients, msg.as_string())
+
+        print("Email sent successfully!")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+
+
+# Note: Make sure to adjust your import paths and dependencies according to your project setup.
 
 
 ###############################################################
@@ -572,6 +657,7 @@ def edit_user():
         operation_user = session.get(User, operation_id)
         if operation_user:
             if operation == 'del':
+                clear_cart(operation_user.username)
                 session.delete(operation_user)
                 session.commit()
                 return jsonify({"message": "User Deleted"}), 200
@@ -640,19 +726,23 @@ def edit_stock():
         return jsonify({"error": "Unauthorized"}), 401
 
 
+from flask import jsonify, request
+from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import SQLAlchemyError
+import asyncio
+
 @app.route('/api/submitorder', methods=['POST'])
 @jwt_required()
 def submit_order():
     try:
         email = request.form.get('email')
         phone_number = request.form.get('phoneNumber')
-
+        name = request.form.get('firstName') + " " + request.form.get('lastName')
         contact_method = request.form.get('contactMethod')
         requested_date = request.form.get('requestedDate')
         comments = request.form.get('comments')
         cart_items = []
         for i in range(len(request.form) // 6):
-            print(request.form.get(f'cartItems[{i}][id]') is not None)
             if request.form.get(f'cartItems[{i}][id]') is not None:
                 item = {
                     'id': request.form.get(f'cartItems[{i}][id]'),
@@ -668,6 +758,7 @@ def submit_order():
         if user.phone_number != phone_number:
             user.phone_number = phone_number
             db.session.commit()
+
         new_order = Order(
             items=str(cart_items),
             status='Pending',
@@ -677,12 +768,22 @@ def submit_order():
             comments=comments
         )
         db.session.add(new_order)
-        db.session.commit()
+        db.session.flush()
 
+        try:
+            asyncio.run(send_mail(new_order, cart_items, email, new_order.id, name))
+        except Exception as e:
+            db.session.rollback()
+            print(e)
+            return jsonify({'message': 'Failed to send email', 'status': 'error'}), 500
+
+        db.session.commit()
         return jsonify({'message': 'Order received', 'status': 'success'}), 201
-    except Exception as e:
+    except SQLAlchemyError as e:
+        db.session.rollback()
         print(e)
         return jsonify({'message': 'Failed to process order', 'status': 'error'}), 400
+
 
 
 @app.route('/api/orders', methods=['GET'])
