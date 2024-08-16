@@ -348,8 +348,6 @@ async def send_mail(order, cart_items, email, order_id, name):
         print(f"Failed to send email: {e}")
 
 
-# Note: Make sure to adjust your import paths and dependencies according to your project setup.
-
 
 ###############################################################
 #                         API Routes                          #
