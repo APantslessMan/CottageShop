@@ -83,8 +83,8 @@ class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
-    f_name = db.Column(db.String(250), unique=True, nullable=False)
-    l_name = db.Column(db.String(250), unique=True, nullable=False)
+    f_name = db.Column(db.String(250), unique=False, nullable=False)
+    l_name = db.Column(db.String(250), unique=False, nullable=False)
     phone_number = db.Column(db.String(20), nullable=True)
     password = db.Column(db.String(250), nullable=False)
     username = db.Column(db.String(250), unique=True, nullable=False)
